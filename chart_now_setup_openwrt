@@ -40,14 +40,7 @@ wget -O /etc/chart_now/places.zip https://download.geonames.org/export/dump/allC
 bsdtar -x -f /etc/chart_now/places.zip -C /etc/chart_now
 rm /etc/chart_now/places.zip
 awk -v FS='\t' -v OFS='\t' '{ if ($15 != "" && $15 >= 1 && $18 != "") print $1, $2, $3, $5, $6, $9, $16, $15, $18 }' /etc/chart_now/allCountries.txt > /etc/chart_now/places.txt
-rm /media/ameya/Data/Programming/chart_now/allCountries.txt
-
-touch /etc/chart_now/column_options.csv
-
-touch /etc/chart_now/app.py
-touch /etc/chart_now/lib/python3.11/site-packages/stdout_to_pd.py
-vi /etc/chart_now/app.py
-vi /etc/chart_now/lib/python3.11/site-packages/stdout_to_pd.py
+rm /etc/chart_now/allCountries.txt
 
 shiny run --host 0.0.0.0 --port 1506
 
