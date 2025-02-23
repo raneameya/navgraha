@@ -126,6 +126,8 @@ def server(input, output, session):
     @reactive.calc
     def convert_birth_datetime_to_utc():
         req(input.b_tz())
+        ## Somewhat complex process of timezone conversion.
+        # Read here: https://stackoverflow.com/questions/6410971/python-datetime-object-show-wrong-timezone-offset
         # Need to specify initial datetime without timezone
         birth_datetime=datetime(
             year=input.b_date().year,
@@ -150,13 +152,21 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
+        # Get birthdate arguments for swetest
         birth_datetime_utc=convert_birth_datetime_to_utc()
+        # location argument
         location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
         wd = '/media/ameya/Data/Programming/Astro/swisseph-master/'
+        # Point to where do the ephemeris data files live
         edir = wd + 'ephe'
+        # Binary to run, in this case swetest
         binary = [wd + 'swetest']
+        # These arguments won't be exposed to the user 
+        # (with the possible exception of planets)
         common_args = ['-pp', '-head', '-edir' + edir]
+        # User inputs
         input_args = [birth_datetime_utc[0], birth_datetime_utc[1], location]
+        # Ayanamsa and output columns
         config_args = ['-sid29', '-fTPlLsBgG']
         format_args = [
             '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'', 
