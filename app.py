@@ -4,62 +4,19 @@ import stdout_to_pd as std2pd
 import pytz
 import pandas as pd
 
-ui_sidebar=ui.sidebar(
-    ui.input_date(
-        id='b_date',
-        label='Input date',                
-        value=datetime.today().strftime('%Y-%m-%d'),        
-        format='yyyy-mm-dd',            
-        weekstart=0,            
-        autoclose=True            
-    ), 
-    ui.input_text(
-        id='b_time',
-        label='Input time',        
-        value=datetime.now().strftime('%H:%M:%S')
-    ),
-    ui.input_text(
-        id='b_place',
-        label='Enter place',
-        placeholder='Auckland'
-    ),
-    ui.input_numeric(
-        id='b_lon',
-        label='Longitude',
-        value=0,
-        min=-180,
-        max=180
-    ),
-    ui.input_numeric(
-        id='b_lat',
-        label='Latitude',
-        value=0,
-        min=-90,
-        max=90
-    ),
-    ui.input_text(
-        id='b_tz',
-        label='Timezone',
-        placeholder='Pacific/Auckland'
-    )
-)
-
-input_nav_panel=ui.nav_panel(
-    'Input',
-    #ui.output_text('birth_data_input'), # convenient print statement
-    ui.output_data_frame('birth_lat_lon')
-)
-
 table_nav_panel=ui.nav_panel(
     'Table',
     ui.output_data_frame('get_chart_data')
 )
 
-app_ui = ui.page_sidebar(
-    ui_sidebar,
+app_ui = ui.page_fillable(
+    ui.output_ui(id='user_input'),
     ui.navset_card_tab(
-        input_nav_panel,
-        table_nav_panel,
+        ui.nav_control(ui.input_switch(
+            id='input_done', label='Enter inputs', value=True
+        )),
+        ui.nav_spacer(),
+        table_nav_panel,        
         ui.nav_control(ui.input_dark_mode()),
         id='pill'
     )
@@ -78,7 +35,7 @@ def server(input, output, session):
         return ' '.join(birth_input)
 
     @render.data_frame
-    def birth_lat_lon():
+    def filtered_places():
         # Avoid updating table for small inputs (i.e. large searches in file)
         req(len(input.b_place()) >= 3)
         # Filter file for only matches to entered birth place
@@ -94,28 +51,39 @@ def server(input, output, session):
         )
         places=places.sort_values(by=['population'], ascending=False)
         return render.DataGrid(places, selection_mode='rows')
+    
+    @reactive.effect
+    @reactive.event(input.search_place)
+    def input_modal():
+        m=ui.modal(
+            ui.output_data_frame(id='filtered_places'),
+            title='Click on a row and close this modal',
+            easy_close=True,
+            size='xl'
+        )
+        ui.modal_show(m)
 
     # Update values in input fields based on row selection by user
     @reactive.effect
     def update_birth_data_selected():
-        place_selected=birth_lat_lon.data_view(selected=True)   
+        place_selected=filtered_places.data_view(selected=True)   
         if len(input.b_place()) < 3:
             # If too few characters entered, ignore birth place input
-            birth_lat_lon.update_data(None)
+            filtered_places.update_data(None)
             rvals.set({'b_input_entered':False})
         elif len(input.b_place()) >= 3:
             # When enough characters entered and row chosen, update inputs
-            # for lon, lat, place & tz based on selection 
+            # for lon, lat & tz based on selection 
             req(not place_selected.empty)
             lon=place_selected.longitude.iloc[0]
             lat=place_selected.latitude.iloc[0]
             place=place_selected.name.iloc[0]
             tz=place_selected.timezone.iloc[0]
             ui.update_numeric('b_lon', value=lon)
-            ui.update_numeric('b_lat', value=lat)
-            ui.update_text('b_place', value=place)
+            ui.update_numeric('b_lat', value=lat)            
             ui.update_text('b_tz', value=tz)
             rvals_new=rvals.get()
+            rvals_new['place']=place
             rvals_new['lat']=lat
             rvals_new['lon']=lon
             rvals_new['tz']=tz
@@ -167,7 +135,7 @@ def server(input, output, session):
         # User inputs
         input_args = [birth_datetime_utc[0], birth_datetime_utc[1], location]
         # Ayanamsa and output columns
-        config_args = ['-sid29', '-fTPlLsBgG']
+        config_args = ['-sid29', '-fTPlLsbgG']
         format_args = [
             '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'', 
             '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
@@ -181,6 +149,58 @@ def server(input, output, session):
                 binary + common_args + input_args + config_args + format_args
             ), reader='table', sep='\s+', col_names=colnames
         )
+        p=p[['Graha', 'Lon','Speed', 'Lat']]
         return p
+    
+    @render.ui
+    def user_input():
+        ui_out=ui.panel_conditional(
+            'input.input_done',
+            ui.row(
+                ui.input_date(
+                    id='b_date',
+                    label='Input date',                
+                    value=datetime.today().strftime('%Y-%m-%d'),        
+                    format='yyyy-mm-dd',            
+                    weekstart=0,            
+                    autoclose=True            
+                ), 
+                ui.input_text(
+                    id='b_time',
+                    label='Input time',        
+                    value=datetime.now().strftime('%H:%M:%S')
+                ),
+                ui.input_text(
+                    id='b_place',
+                    label='Enter place',
+                    placeholder='Auckland'
+                ),
+                ui.input_numeric(
+                    id='b_lon',
+                    label='Longitude',
+                    value=0,
+                    min=-180,
+                    max=180
+                ),
+                ui.input_numeric(
+                    id='b_lat',
+                    label='Latitude',
+                    value=0,
+                    min=-90,
+                    max=90
+                ),
+                ui.input_text(
+                    id='b_tz',
+                    label='Timezone',
+                    placeholder='Pacific/Auckland'
+                ),
+                ui.input_action_button(
+                    id='search_place',
+                    label='Search places'
+                )
+            )            
+        )
+        return ui_out
+
 
 app = App(app_ui, server)
