@@ -1,0 +1,1 @@
+This folder contains everything unzipped from the GitHub repo https://github.com/aloistr/swisseph. This repo (as of early 2025) includes everything needed to make the shiny app run as intended.
