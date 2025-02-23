@@ -39,12 +39,8 @@ cc -g -fPIC -Wall -o swephlib swetest.o swecl.o sweph.o swephlib.o swejpl.o swem
 wget -O /etc/chart_now/places.zip https://download.geonames.org/export/dump/allCountries.zip
 bsdtar -x -f /etc/chart_now/places.zip -C /etc/chart_now
 rm /etc/chart_now/places.zip
-
-# Get places database v2
-wget -O /etc/chart_now/places.zip https://github.com/raneameya/loan-app/raw/refs/heads/main/places.zip
-bsdtar -x -f /etc/chart_now/places.zip -C /etc/chart_now
-rm /etc/chart_now/places.zip
-
+awk -v FS='\t' -v OFS='\t' '{ if ($15 != "" && $15 >= 1 && $18 != "") print $1, $2, $3, $5, $6, $9, $16, $15, $18 }' /etc/chart_now/allCountries.txt > /etc/chart_now/places.txt
+rm /media/ameya/Data/Programming/chart_now/allCountries.txt
 
 touch /etc/chart_now/column_options.csv
 
