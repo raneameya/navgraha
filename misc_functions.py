@@ -50,6 +50,19 @@ def swetest(sweedir, birth_args):
             house_args + format_args
         ), 
         reader='table', sep='\s+', col_names=colnames
-    )
-    p
+    )    
+    p=reorder_swetest_rows(p)
+    p['Graha']=p['Graha'].str.replace('mean_Node', 'Rahu (mean)')
+    p['Graha']=p['Graha'].str.replace('true_Node', 'Rahu (true)')
+    return p
+
+def reorder_swetest_rows(p):    
+    p['ix']=[
+        2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 10, 9, 14, 15, 16, 17, 18, 
+        19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 
+        35, 1, 36, 37, 38, 39, 40, 41, 42
+    ]
+    p.set_index('ix', inplace=True)    
+    p=p.sort_index()
+    p=p.rename_axis(None)
     return p
