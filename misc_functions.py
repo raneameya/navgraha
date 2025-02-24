@@ -54,6 +54,7 @@ def swetest(sweedir, birth_args):
     p=reorder_swetest_rows(p)
     p['Graha']=p['Graha'].str.replace('mean_Node', 'Rahu (mean)')
     p['Graha']=p['Graha'].str.replace('true_Node', 'Rahu (true)')
+    p['Graha']=p['Graha'].str.replace('Ascendant', 'Lagna')
     return p
 
 def reorder_swetest_rows(p):    
