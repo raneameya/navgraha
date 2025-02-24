@@ -1,19 +1,21 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 import stdout_to_pd as std2pd
+import misc_functions
 import pytz
 import pandas as pd
 
 table_nav_panel=ui.nav_panel(
     'Table',
-    ui.output_data_frame('get_chart_data')
+    ui.output_text(id='b_time_place'),
+    ui.output_data_frame(id='get_chart_data')
 )
 
 app_ui = ui.page_fillable(
     ui.output_ui(id='user_input'),
     ui.navset_card_tab(
         ui.nav_control(ui.input_switch(
-            id='input_done', label='Enter inputs', value=True
+            id='input_done', label='Show inputs', value=True
         )),
         ui.nav_spacer(),
         table_nav_panel,        
@@ -57,7 +59,7 @@ def server(input, output, session):
     def input_modal():
         m=ui.modal(
             ui.output_data_frame(id='filtered_places'),
-            title='Click on a row and close this modal',
+            title='Click on a place to confirm details',
             easy_close=True,
             size='xl'
         )
@@ -65,6 +67,7 @@ def server(input, output, session):
 
     # Update values in input fields based on row selection by user
     @reactive.effect
+    #@reactive.event(input.search_place)
     def update_birth_data_selected():
         place_selected=filtered_places.data_view(selected=True)   
         if len(input.b_place()) < 3:
@@ -82,6 +85,12 @@ def server(input, output, session):
             ui.update_numeric('b_lon', value=lon)
             ui.update_numeric('b_lat', value=lat)            
             ui.update_text('b_tz', value=tz)
+            ui.update_text('b_place', value=place)
+            # Update the show input switch to close the input panel
+            ui.update_switch(id='input_done', value=False)
+            # Close the place search modal
+            ui.modal_remove()
+            # Update values in the reactive values dict
             rvals_new=rvals.get()
             rvals_new['place']=place
             rvals_new['lat']=lat
@@ -89,29 +98,26 @@ def server(input, output, session):
             rvals_new['tz']=tz
             rvals.set(rvals_new)
     
+    @reactive.calc
+    def birth_datetime():
+        bdt=misc_functions.create_date_from_txt(
+            yr=input.b_date().year,
+            mo=input.b_date().month,
+            da=input.b_date().day,
+            hr=int(input.b_time()[0:2]),
+            mi=int(input.b_time()[3:5]),
+            se=int(input.b_time()[6:8]),
+            tz=input.b_tz()
+        )
+        return bdt
+
     # Once a single row of birth place is chosen, calculate the date and time 
     # in UTC
     @reactive.calc
-    def convert_birth_datetime_to_utc():
-        req(input.b_tz())
-        ## Somewhat complex process of timezone conversion.
-        # Read here: https://stackoverflow.com/questions/6410971/python-datetime-object-show-wrong-timezone-offset
-        # Need to specify initial datetime without timezone
-        birth_datetime=datetime(
-            year=input.b_date().year,
-            month=input.b_date().month,
-            day=input.b_date().day,
-            hour=int(input.b_time()[0:2]),
-            minute=int(input.b_time()[3:5]),
-            second=int(input.b_time()[6:7]),
-            tzinfo=None
-        )
-        # Create local timezone object
-        local_tz=pytz.timezone(input.b_tz())
-        # Then localise the initial datetime object without timezone
-        birth_datetime=local_tz.localize(birth_datetime)
+    def birth_datetime_args():        
+        bdt=birth_datetime()
         # Convert to UTC
-        birth_datetime_utc=birth_datetime.astimezone(pytz.utc)
+        birth_datetime_utc=bdt.astimezone(pytz.utc)
         # Create birthdate input for swetest
         birth_date='-b'+birth_datetime_utc.strftime('%d.%m.%Y')
         # Create birthtime input for swetest
@@ -121,36 +127,21 @@ def server(input, output, session):
     @render.data_frame
     def get_chart_data():
         # Get birthdate arguments for swetest
-        birth_datetime_utc=convert_birth_datetime_to_utc()
+        birth_datetime_utc_args=birth_datetime_args()
         # location argument
         location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
         wd = '/media/ameya/Data/Programming/Astro/swisseph-master/'
-        # Point to where do the ephemeris data files live
-        edir = wd + 'ephe'
-        # Binary to run, in this case swetest
-        binary = [wd + 'swetest']
-        # These arguments won't be exposed to the user 
-        # (with the possible exception of planets)
-        common_args = ['-pp', '-head', '-edir' + edir]
         # User inputs
-        input_args = [birth_datetime_utc[0], birth_datetime_utc[1], location]
-        # Ayanamsa and output columns
-        config_args = ['-sid29', '-fTPlLsbgG']
-        format_args = [
-            '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'', 
-            '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
-        ]
-        colnames = [
-            'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Speed', 
-            'Lat', 'House', 'House°'
-        ]
-        p=std2pd.read_stdout(
-            cmd=' '.join(
-                binary + common_args + input_args + config_args + format_args
-            ), reader='table', sep='\s+', col_names=colnames
-        )
-        p=p[['Graha', 'Lon','Speed', 'Lat']]
+        input_args = birth_datetime_utc_args+[location]
+        p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
+        p=p[['Graha', 'Lon', 'Lon°', 'Speed','Lat°', 'House']]
         return p
+    
+    @render.text
+    def b_time_place():
+        bdt=birth_datetime().strftime('%d-%m-%Y %H:%M:%S %Z')
+        location=input.b_place()
+        return location + ', ' + bdt
     
     @render.ui
     def user_input():
@@ -173,26 +164,26 @@ def server(input, output, session):
                 ui.input_text(
                     id='b_place',
                     label='Enter place',
-                    placeholder='Auckland'
+                    value='Auckland'
                 ),
                 ui.input_numeric(
                     id='b_lon',
                     label='Longitude',
-                    value=0,
+                    value=174.74304,
                     min=-180,
                     max=180
                 ),
                 ui.input_numeric(
                     id='b_lat',
                     label='Latitude',
-                    value=0,
+                    value=-36.85582,
                     min=-90,
                     max=90
                 ),
                 ui.input_text(
                     id='b_tz',
                     label='Timezone',
-                    placeholder='Pacific/Auckland'
+                    value='Pacific/Auckland'
                 ),
                 ui.input_action_button(
                     id='search_place',
@@ -201,6 +192,5 @@ def server(input, output, session):
             )            
         )
         return ui_out
-
 
 app = App(app_ui, server)
