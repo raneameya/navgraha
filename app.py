@@ -1,8 +1,8 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 import stdout_to_pd as std2pd
-import misc_functions
-import pytz, numpy
+import misc_functions, pytz, numpy
+
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -48,6 +48,7 @@ def server(input, output, session):
     @reactive.effect
     @reactive.event(input.search_place)
     def input_modal():
+        # Modal containing places
         m=ui.modal(
             ui.output_data_frame(id='filtered_places'),
             title='Click on a place to confirm details',
@@ -58,7 +59,6 @@ def server(input, output, session):
 
     # Update values in input fields based on row selection by user
     @reactive.effect
-    #@reactive.event(input.search_place)
     def update_birth_data_selected():
         place_selected=filtered_places.data_view(selected=True)   
         if len(input.b_place()) < 3:
@@ -67,7 +67,7 @@ def server(input, output, session):
             rvals.set({'b_input_entered':False})
         elif len(input.b_place()) >= 3:
             # When enough characters entered and row chosen, update inputs
-            # for lon, lat & tz based on selection 
+            # for lon, lat & tz based on selection
             req(not place_selected.empty)
             lon=place_selected.longitude.iloc[0]
             lat=place_selected.latitude.iloc[0]
@@ -79,15 +79,8 @@ def server(input, output, session):
             ui.update_text('b_place', value=place)
             # Update the show input switch to close the input panel
             ui.update_switch(id='input_done', value=False)
-            # Close the place search modal
+            # Close the place search modal on row being chosen
             ui.modal_remove()
-            # Update values in the reactive values dict
-            rvals_new=rvals.get()
-            rvals_new['place']=place
-            rvals_new['lat']=lat
-            rvals_new['lon']=lon
-            rvals_new['tz']=tz
-            rvals.set(rvals_new)
     
     @reactive.calc
     def birth_datetime():
@@ -136,6 +129,7 @@ def server(input, output, session):
         bdt=birth_datetime().strftime('%d-%m-%Y %H:%M:%S %Z')
         location=input.b_place()
         return location + ', ' + bdt
+    
     @render.ui
     def user_input():
         ui_out=ui.panel_conditional(
