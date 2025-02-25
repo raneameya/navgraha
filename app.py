@@ -2,7 +2,7 @@ from shiny import App, ui, render, req, reactive
 from datetime import datetime
 import stdout_to_pd as std2pd
 import misc_functions
-import pytz
+import pytz, numpy
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -133,7 +133,8 @@ def server(input, output, session):
         # User inputs
         input_args = birth_datetime_utc_args+[location]
         p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
-        p=p[['Graha', 'Lon', 'Lon°', 'Speed','Lat°', 'House']]        
+        p=p[['Graha', 'House', 'Lon°', 'Speed','Lat°']] 
+        p['House']=numpy.ceil(p['House'])%12
         p=p.head(10)
         return p
     
@@ -143,7 +144,6 @@ def server(input, output, session):
         bdt=birth_datetime().strftime('%d-%m-%Y %H:%M:%S %Z')
         location=input.b_place()
         return location + ', ' + bdt
-     
     @render.ui
     def user_input():
         ui_out=ui.panel_conditional(
