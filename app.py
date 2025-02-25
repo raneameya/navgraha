@@ -3,7 +3,6 @@ from datetime import datetime
 import stdout_to_pd as std2pd
 import misc_functions, pytz, numpy
 
-
 table_nav_panel=ui.nav_panel(
     'Table',
     ui.output_text(id='b_time_place'),
@@ -118,9 +117,18 @@ def server(input, output, session):
         # User inputs
         input_args = birth_datetime_utc_args+[location]
         p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
+        lagna=p[p['Graha']=='Lagna'].iloc[0].at['Lon']
         p=p[['Graha', 'House', 'Lon°', 'Speed','Lat°']] 
+        # Need to truncate house decimals
         p['House']=numpy.ceil(p['House'])%12
-        p=p.head(10)
+        # Keep classical planets (including Rahu, Ketu)
+        p=p.head(12)
+        # Add lagna details
+        signs=[
+            'Ar', 'Ta', 'Ge', 'Cn', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi'
+        ]
+        lagna_sign=signs[int(lagna//30)]        
+        p.iloc[0,0]='Lagna ('+lagna_sign+')'        
         return p
     
     @render.text
