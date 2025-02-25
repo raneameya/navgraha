@@ -46,3 +46,11 @@ shiny run --host 0.0.0.0 --port 1506
 
 # To restart everything again
 # rm -rf /etc/chart_now
+
+# To recopy app
+rm /etc/chart_now/app.py
+touch /etc/chart_now/app.py
+vi /etc/chart_now/app.py
+
+# Add this to startup
+cd /etc/chart_now/ && source /etc/chart_now/bin/activate && shiny run --reload --host 0.0.0.0 --port 1506 /etc/chart_now/app.py &&
