@@ -1,6 +1,7 @@
 from datetime import datetime
-import pytz
+import pytz, re
 import stdout_to_pd as sp
+import pandas as pd
 
 def create_date_from_txt(yr, mo, da, hr, mi, se, tz):
     ## Somewhat complex process of timezone conversion.
@@ -51,19 +52,33 @@ def swetest(sweedir, birth_args):
         ), 
         reader='table', sep='\s+', col_names=colnames
     )    
-    p=reorder_swetest_rows(p)
     p['Graha']=p['Graha'].str.replace('mean_Node', 'Rahu (mean)')
     p['Graha']=p['Graha'].str.replace('true_Node', 'Rahu (true)')
     p['Graha']=p['Graha'].str.replace('Ascendant', 'Lagna')
+    p=add_ketu(p, 'true')
+    p=add_ketu(p, 'mean')
+    p=reorder_swetest_rows(p)
     return p
 
 def reorder_swetest_rows(p):    
     p['ix']=[
         2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 10, 9, 14, 15, 16, 17, 18, 
         19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 
-        35, 1, 36, 37, 38, 39, 40, 41, 42
+        35, 1, 36, 37, 38, 39, 40, 41, 42, 9.5, 10.5
     ]
     p.set_index('ix', inplace=True)    
     p=p.sort_index()
     p=p.rename_axis(None)
     return p
+
+def add_ketu(p, true_mean):
+    ketu_row=p[p['Graha']=='Rahu ('+true_mean+')']
+    ketu_row.loc[:, 'Graha']='Ketu ('+true_mean+')'
+    ketu_row.loc[:, 'House']=ketu_row.loc[:, 'House'] + 7
+    kdms=ketu_row.iloc[0].at['Lon°']
+    kms='°'+re.search(r'(?<=°).*', kdms).group(0)
+    kd=str((int(re.search(r'^\d+', kdms).group(0))+180)%360)
+    ketu_row.loc[:, 'Lon°']=kd+kms
+    ketu_row.loc[:, 'Lat°']=''
+    p_out=pd.concat([p, ketu_row]) 
+    return p_out
