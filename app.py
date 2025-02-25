@@ -27,14 +27,6 @@ def server(input, output, session):
 
     rvals=reactive.Value({'b_input_entered':False})
 
-    @render.text
-    def birth_data_input():        
-        birth_input = [
-            input.b_date().strftime('%d.%m.%Y'), str(input.b_time()), input.b_place(), 
-            str(input.b_lon()), str(input.b_lat()), input.pill()
-        ]        
-        return ' '.join(birth_input)
-
     @render.data_frame
     def filtered_places():
         # Avoid updating table for small inputs (i.e. large searches in file)
