@@ -74,7 +74,7 @@ def reorder_swetest_rows(p):
 def add_ketu(p, true_mean):
     ketu_row=p[p['Graha']=='Rahu ('+true_mean+')']
     ketu_row.loc[:, 'Graha']='Ketu ('+true_mean+')'
-    ketu_row.loc[:, 'House']=ketu_row.loc[:, 'House'] + 7
+    ketu_row.loc[:, 'House']=ketu_row.loc[:, 'House'] + 6
     kdms=ketu_row.iloc[0].at['Lon°']
     kms='°'+re.search(r'(?<=°).*', kdms).group(0)
     kd=str((int(re.search(r'^\d+', kdms).group(0))+180)%360)
