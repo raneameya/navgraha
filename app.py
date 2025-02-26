@@ -120,7 +120,7 @@ def server(input, output, session):
         lagna=p[p['Graha']=='Lagna'].iloc[0].at['Lon']
         p=p[['Graha', 'House', 'Lon°', 'Speed','Lat°']] 
         # Need to truncate house decimals
-        p['House']=numpy.ceil(p['House'])%12
+        p['House']=(numpy.ceil(p['House']-1)%12)+1
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(12)
         # Add lagna details
