@@ -1,3 +1,6 @@
+opkg update
+opkg install python3 python3-pip python3-venv gcc bsdtar
+
 # Create virtual environment for the chart app and upgrade pip
 python -m venv /etc/chart_now
 source /etc/chart_now/bin/activate
@@ -51,6 +54,14 @@ shiny run --host 0.0.0.0 --port 1506
 rm /etc/chart_now/app.py
 touch /etc/chart_now/app.py
 vi /etc/chart_now/app.py
+
+rm /etc/chart_now/misc_functions.py
+touch /etc/chart_now/misc_functions.py
+vi /etc/chart_now/misc_functions.py
+
+rm /etc/chart_now/stdout_to_pd.py
+touch /etc/chart_now/stdout_to_pd.py
+vi /etc/chart_now/stdout_to_pd.py
 
 # Add this to startup
 cd /etc/chart_now/ && source /etc/chart_now/bin/activate && shiny run --reload --host 0.0.0.0 --port 1506 /etc/chart_now/app.py &&
