@@ -1,0 +1,40 @@
+option,description,descrption_short
+Y,year.fraction_of_year,year_fraction
+p,planet index,planet_index
+P,planet name,graha
+J,absolute juldate,absolute_julian_date
+T,date formatted like 23.02.1992,date
+t,date formatted like 920223 for 1992 february 23,date_yymmdd
+L,"longitude in degree ddd mm' ss""",longitude_degree
+l,longitude decimal,longitude_decimal
+Z,"longitude ddsignmm'ss""","longitude ddsignmm'ss"""
+S,speed in longitude in degree ddd:mm:ss per day,longitude_speed_degreeperday
+SS,speed for all values specified in fmt,speed for all values specified in fmt
+s,speed longitude decimal (degrees/day),longitude_speed_decimal
+ss,speed for all values specified in fmt,speed for all values specified in fmt
+B,latitude degree,latitude_degree
+b,latitude decimal,latitude_decimal
+R,distance decimal in AU,distance_decimal_au
+r,"distance decimal in AU, Moon in seconds parallax",distance_decimal_au_moon_parallax
+W,distance decimal in light years,distance_decimal_lightyear
+w,distance decimal in km,distance_decimal_km
+q,"relative distance (1000=nearest, 0=furthest)",relative_distance_0_furthest
+A,right ascension in hh:mm:ss,right_ascension_hhmmss
+a,right ascension hours decimal,right_ascension_decimal
+m,Meridian distance,meridian_distance
+z,Zenith distance,zenith_distance
+D,declination degree,declination_degree
+d,declination decimal,declination_decimal
+I,azimuth degree,azimuth_degree
+i,azimuth decimal,azimuth_decimal
+H,altitude degree,altitude_degree
+h,altitude decimal,altitude_decimal
+K,altitude (with refraction) degree,altitude_refraction_degree
+k,altitude (with refraction) decimal,altitude_refraction_decimal
+G,house position in degrees,house_position_degrees
+g,house position in degrees decimal,house_position_decimal
+j,house number 1.0 - 12.99999,house_number_decimal
+X,"x-, y-, and z-coordinates ecliptical",xyz_coordinates_ecliptical
+x,"x-, y-, and z-coordinates equatorial",xyz_coordinates_equatorial
+U,unit vector ecliptical,unit_vector_ecliptical
+u,unit vector equatorial,unit_vector_equatorial
