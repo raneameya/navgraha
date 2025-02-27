@@ -1,5 +1,6 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
+from constants import rnp
 import stdout_to_pd as std2pd
 import misc_functions, pytz, numpy
 
@@ -13,7 +14,7 @@ app_ui = ui.page_fillable(
     ui.output_ui(id='user_input'),
     ui.navset_card_tab(
         ui.nav_control(ui.input_switch(
-            id='input_done', label='Show inputs', value=True
+            id='input_done', label='Show inputs', value=False
         )),
         ui.nav_spacer(),
         table_nav_panel,        
@@ -117,18 +118,25 @@ def server(input, output, session):
         # User inputs
         input_args = birth_datetime_utc_args+[location]
         p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
-        lagna=p[p['Graha']=='Lagna'].iloc[0].at['Lon']
-        p=p[['Graha', 'House', 'Lon°', 'Speed','Lat°']] 
+        lagna=p[p['Graha']=='Lagna'].iloc[0].at['Lon']        
         # Need to truncate house decimals
         p['House']=(numpy.ceil(p['House']-1)%12)+1
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(12)
-        # Add lagna details
-        signs=[
-            'Ar', 'Ta', 'Ge', 'Cn', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi'
-        ]
-        lagna_sign=signs[int(lagna//30)]        
-        p.iloc[0,0]='Lagna ('+lagna_sign+')'        
+        # Lagna house is 1
+        #p.iat[0, p.columns.get_indexer('Graha')]=1
+        # Add other details
+        add_cols=['Rashi', 'Nakshatra', 'Vimshottari lord']
+        p=misc_functions.add_non_equi_col(
+            p1=p, 
+            p2=rnp,
+            p1col='Lon',
+            p2col_low='Start',
+            p2col_high='End',
+            p2col_get=add_cols
+        )
+        # Keep subset
+        p=p[['Graha', 'House', 'Lon°', 'Speed']+add_cols] 
         return p
     
     @render.text
