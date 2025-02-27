@@ -82,3 +82,12 @@ def add_ketu(p, true_mean):
     ketu_row.loc[:, 'Lat°']=''
     p_out=pd.concat([p, ketu_row]) 
     return p_out
+
+def add_non_equi_col(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
+    matched_idx=p1[p1col].apply(
+        lambda x: p2[(p2[p2col_low]<=x) & (x<p2[p2col_high])].index.item()
+    )
+    p1[p2col_get]=p2.iloc[
+        matched_idx, p2.columns.get_indexer(p2col_get)
+    ].reset_index(drop=True)
+    return p1
