@@ -114,17 +114,12 @@ def server(input, output, session):
         birth_datetime_utc_args=birth_datetime_args()
         # location argument
         location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
-        wd = '/media/ameya/Data/Programming/Astro/swisseph-master/'
+        wd = './swisseph-master/'
         # User inputs
         input_args = birth_datetime_utc_args+[location]
         p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
-        lagna=p[p['Graha']=='Lagna'].iloc[0].at['Lon']        
-        # Need to truncate house decimals
-        p['House']=(numpy.ceil(p['House']-1)%12)+1
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(12)
-        # Lagna house is 1
-        #p.iat[0, p.columns.get_indexer('Graha')]=1
         # Add other details
         add_cols=['Rashi', 'Nakshatra', 'Vimshottari lord']
         p=misc_functions.add_non_equi_col(
@@ -136,7 +131,7 @@ def server(input, output, session):
             p2col_get=add_cols
         )
         # Keep subset
-        p=p[['Graha', 'House', 'Lon°', 'Speed']+add_cols] 
+        p=p[['Graha', 'House', 'Sign', 'Lon', 'Speed']+add_cols] 
         return p
     
     @render.text
