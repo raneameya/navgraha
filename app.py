@@ -121,7 +121,7 @@ def server(input, output, session):
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(12)
         # Add other details
-        add_cols=['Rashi', 'Nakshatra', 'Vimshottari lord']
+        add_cols=['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
         p=misc_functions.add_non_equi_col(
             p1=p, 
             p2=rnp,
@@ -131,7 +131,7 @@ def server(input, output, session):
             p2col_get=add_cols
         )
         # Keep subset
-        p=p[['Graha', 'House', 'Sign', 'Lon', 'Speed']+add_cols] 
+        p=p[['Graha', 'House', 'Sign', 'Lon°', 'Speed']+add_cols]
         return p
     
     @render.text
