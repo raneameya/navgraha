@@ -132,8 +132,8 @@ def server(input, output, session):
         )
         # Keep subset
         p=p[[
-            'Graha', 'Lon°', 'Rashi', 'Nakshatra', 'Speed', 
-            'Nakshatra lord', 'Pada', 'House'
+            'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
+            'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return p
     
