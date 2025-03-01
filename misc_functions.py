@@ -90,8 +90,8 @@ def add_ketu(p):
     ]
     # Convenience function to add 180° to dms
     def add_180_deg(x):
-        x_min_sec='°'+re.search(r'(?<=°).*', x).group(0)
         x_deg=str((int(re.search(r'^\d+', x).group(0))+180)%360)
+        x_min_sec='°'+re.search(r'(?<=°).*', x).group(0)        
         return x_deg+x_min_sec
     # Replace 'Rahu' with 'Ketu' and add 180°
     # House calculation not done here as can be done in one fell swoop
@@ -117,3 +117,15 @@ def add_non_equi_col(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
         matched_idx, p2.columns.get_indexer(p2col_get)
     ].reset_index(drop=True)
     return p1
+
+def round_cols(p, cols, round):
+    for col, rd in zip(cols, round):
+        if pd.api.types.is_numeric_dtype(p[col]):
+            p[col]=p[col].round(rd)
+        elif pd.api.types.is_object_dtype(p[col]):
+            p[col]=p[col].str.replace(
+                r'(?<=\.).*', 
+                lambda m: m.group(0)[0:rd], 
+                regex=True
+            )
+    return p

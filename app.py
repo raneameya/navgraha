@@ -130,6 +130,8 @@ def server(input, output, session):
             p2col_high='End',
             p2col_get=add_cols
         )
+        # Round some cols
+        p=misc_functions.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
         p=p[[
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
