@@ -131,7 +131,10 @@ def server(input, output, session):
             p2col_get=add_cols
         )
         # Keep subset
-        p=p[['Graha', 'House', 'Sign', 'Lon°', 'Speed']+add_cols]
+        p=p[[
+            'Graha', 'Lon°', 'Rashi', 'Nakshatra', 'Speed', 
+            'Nakshatra lord', 'Pada', 'House'
+        ]]
         return p
     
     @render.text
