@@ -1,8 +1,7 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 from constants import rnp
-import stdout_to_pd as std2pd
-import misc_functions, pytz, numpy
+import stdout_to_pd as std2pd, misc_functions as mf, pytz
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -84,7 +83,7 @@ def server(input, output, session):
     
     @reactive.calc
     def birth_datetime():
-        bdt=misc_functions.create_date_from_txt(
+        bdt=mf.create_date_from_txt(
             yr=input.b_date().year,
             mo=input.b_date().month,
             da=input.b_date().day,
@@ -117,12 +116,12 @@ def server(input, output, session):
         wd = './swisseph-master/'
         # User inputs
         input_args = birth_datetime_utc_args+[location]
-        p=misc_functions.swetest(sweedir=wd, birth_args=input_args)
+        p=mf.swetest(sweedir=wd, birth_args=input_args)
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(12)
         # Add other details
         add_cols=['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
-        p=misc_functions.add_non_equi_col(
+        p=mf.add_non_equi_col(
             p1=p, 
             p2=rnp,
             p1col='Lon',
@@ -131,7 +130,7 @@ def server(input, output, session):
             p2col_get=add_cols
         )
         # Round some cols
-        p=misc_functions.round_cols(p, ['Lon°', 'Speed'], [1, 3])
+        p=mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
         p=p[[
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
@@ -144,7 +143,7 @@ def server(input, output, session):
         # To give user feedback about birth place & time selection
         bdt=birth_datetime().strftime('%d-%m-%Y %H:%M:%S %Z')
         location=input.b_place()
-        return location + ', ' + bdt
+        return location + ' ' + bdt
     
     @render.ui
     def user_input():
