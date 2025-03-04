@@ -9,6 +9,10 @@ table_nav_panel=ui.nav_panel(
     ui.output_data_frame(id='get_chart_data')
 )
 
+moon_nav_panel=ui.nav_panel(
+    'Lunar phase'
+)
+
 app_ui = ui.page_fillable(
     ui.output_ui(id='user_input'),
     ui.navset_card_tab(
@@ -16,7 +20,8 @@ app_ui = ui.page_fillable(
             id='input_done', label='Show inputs', value=False
         )),
         ui.nav_spacer(),
-        table_nav_panel,        
+        table_nav_panel,
+        moon_nav_panel,
         ui.nav_control(ui.input_dark_mode()),
         id='pill'
     )
@@ -56,7 +61,7 @@ def server(input, output, session):
         )
         ui.modal_show(m)
 
-    # Update values in input fields based on row selection by user
+    # Update values in input fields based on place selection by user
     @reactive.effect
     def update_birth_data_selected():
         place_selected=filtered_places.data_view(selected=True)   
@@ -94,23 +99,10 @@ def server(input, output, session):
         )
         return bdt
 
-    # Once a single row of birth place is chosen, calculate the date and time 
-    # in UTC
-    @reactive.calc
-    def birth_datetime_args():        
-        bdt=birth_datetime()
-        # Convert to UTC
-        birth_datetime_utc=bdt.astimezone(pytz.utc)
-        # Create birthdate input for swetest
-        birth_date='-b'+birth_datetime_utc.strftime('%d.%m.%Y')
-        # Create birthtime input for swetest
-        birth_time='-utc'+birth_datetime_utc.strftime('%H:%M.%S')
-        return [birth_date, birth_time]
-
     @render.data_frame
     def get_chart_data():
         # Get birthdate arguments for swetest
-        birth_datetime_utc_args=birth_datetime_args()
+        birth_datetime_utc_args=mf.birth_datetime_args(birth_datetime())
         # location argument
         location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
         wd = './swisseph-master/'

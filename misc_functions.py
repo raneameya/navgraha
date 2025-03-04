@@ -137,3 +137,15 @@ def round_cols(p, cols, round):
                 regex=True
             )
     return p
+
+def birth_datetime_args(dt):    
+    # Convert to UTC
+    birth_datetime_utc=dt.astimezone(pytz.utc)
+    # Create birthdate input for swetest
+    birth_date='-b'+birth_datetime_utc.strftime('%d.%m.%Y')
+    # Create birthtime input for swetest
+    birth_time='-utc'+birth_datetime_utc.strftime('%H:%M.%S')
+    return [birth_date, birth_time]
+
+def lunar_phase(dt):
+    return 0
