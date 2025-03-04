@@ -1,7 +1,5 @@
+import pytz, re, stdout_to_pd as sp, pandas as pd
 from datetime import datetime
-import pytz, re
-import stdout_to_pd as sp
-import pandas as pd
 
 def create_date_from_txt(yr, mo, da, hr, mi, se, tz):
     ## Somewhat complex process of timezone conversion.
@@ -147,5 +145,30 @@ def birth_datetime_args(dt):
     birth_time='-utc'+birth_datetime_utc.strftime('%H:%M.%S')
     return [birth_date, birth_time]
 
-def lunar_phase(dt):
-    return 0
+def lunar_phases(sweedir, dt, tz):
+    # Point to where the ephemeris data files live
+    edir=sweedir + 'ephe'
+    # Binary to run, in this case swetest
+    binary=[sweedir + 'swetest']
+    # These arguments won't be exposed to the user    
+    common_args=['-p1', '-head', '-edir' + edir, '-g ']
+    # Read stdout of swetest as dataframe
+    phases=sp.read_stdout(
+        cmd=' '.join(
+            binary+common_args+['-d0', '-n3000', '-s15m', '-fPTl']+
+            birth_datetime_args(dt)
+        ), reader='table', sep='\t', col_names=['Graha', 'Datetime', 'Phase']
+    )
+    phases=phases[['Datetime', 'Phase']]
+    # Convert string to datetime. todo:Are UT & UTC same?
+    phases['Datetime']=pd.to_datetime(
+        phases['Datetime'].str.replace('UT', 'UTC'), 
+        format='%d.%m.%Y %H:%M:%S %Z'
+    )
+    # Create local timezone object
+    local_tz=pytz.timezone(tz)
+    # Convert to local timezone
+    phases['Datetime']=phases['Datetime'].apply(
+        lambda x: x.astimezone(local_tz)
+    )
+    return phases

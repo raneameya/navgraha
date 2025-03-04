@@ -10,7 +10,8 @@ table_nav_panel=ui.nav_panel(
 )
 
 moon_nav_panel=ui.nav_panel(
-    'Lunar phase'
+    'Lunar phase',
+    ui.output_data_frame(id='moon_phases')
 )
 
 app_ui = ui.page_fillable(
@@ -137,6 +138,14 @@ def server(input, output, session):
         location=input.b_place()
         return location + ' ' + bdt
     
+    ## Lunar phases tab
+    @render.data_frame
+    def moon_phases():
+        p=mf.lunar_phases(
+            sweedir='./swisseph-master/', dt=birth_datetime(), tz=input.b_tz()
+        )
+        return p
+
     @render.ui
     def user_input():
         ui_out=ui.panel_conditional(
