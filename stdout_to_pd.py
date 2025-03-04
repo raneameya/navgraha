@@ -9,12 +9,13 @@ def read_stdout(cmd, reader, sep, col_names):
     match reader:
         case 'table':
             p = pd.read_table(
-                filepath_or_buffer='out.txt', delimiter='\s+', 
-                names = col_names        
+                filepath_or_buffer='out.txt', sep=sep, 
+                names = col_names, index_col=False   
             )
         case 'csv':
             p = pd.read_csv(
-                filepath_or_buffer='out.txt', sep=sep, names=col_names                
+                filepath_or_buffer='out.txt', sep=sep, names=col_names, 
+                index_col=False             
             )
     os.remove('out.txt')
     return p
