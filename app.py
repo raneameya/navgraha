@@ -1,7 +1,8 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 from constants import rnp
-import stdout_to_pd as std2pd, misc_functions as mf, pytz
+#from shinywidgets import output_widget, render_widget
+import stdout_to_pd as std2pd, misc_functions as mf#, plotly.express as px
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -11,7 +12,8 @@ table_nav_panel=ui.nav_panel(
 
 moon_nav_panel=ui.nav_panel(
     'Lunar phase',
-    ui.output_data_frame(id='moon_phases')
+    #ui.output_data_frame(id='moon_phases')
+    #output_widget(id='moon_phases')
 )
 
 app_ui = ui.page_fillable(
@@ -22,7 +24,7 @@ app_ui = ui.page_fillable(
         )),
         ui.nav_spacer(),
         table_nav_panel,
-        moon_nav_panel,
+        #moon_nav_panel,
         ui.nav_control(ui.input_dark_mode()),
         id='pill'
     )
@@ -139,12 +141,14 @@ def server(input, output, session):
         return location + ' ' + bdt
     
     ## Lunar phases tab
-    @render.data_frame
-    def moon_phases():
-        p=mf.lunar_phases(
-            sweedir='./swisseph-master/', dt=birth_datetime(), tz=input.b_tz()
-        )
-        return p
+    # @render_widget
+    # def moon_phases():
+    #     p=mf.lunar_phases(
+    #         sweedir='./swisseph-master/', dt=birth_datetime(), tz=input.b_tz()
+    #     )
+    #     fig=px.line(data_frame=p, x='Datetime', y='Phase')
+    #     fig.update_xaxes(dtick='w1', tickformat='%d %m')
+    #     return fig
 
     @render.ui
     def user_input():
