@@ -23,7 +23,7 @@ def create_date_from_txt(yr, mo, da, hr, mi, se, tz):
     return dt
 
 def swetest(sweedir, birth_args):
-    # Point to where do the ephemeris data files live
+    # Point to where the ephemeris data files live
     edir=sweedir + 'ephe'
     # Binary to run, in this case swetest
     binary=[sweedir + 'swetest']
@@ -62,6 +62,12 @@ def swetest(sweedir, birth_args):
     p=add_ketu(p)    
     # Reorder rows sensibly
     p=reorder_swetest_rows(p)
+    # Replace total degrees by degrees in house/sign
+    p['Lon°']=p['Lon°'].str.replace(
+        pat=r'^\d+',
+        repl=lambda m: str(int(m.group(0))%30),
+        regex=True
+    )
     # House calculation
     p=add_house(p)
     return p
@@ -125,6 +131,8 @@ def round_cols(p, cols, round):
         elif pd.api.types.is_object_dtype(p[col]):
             p[col]=p[col].str.replace(
                 r'(?<=\.).*', 
+                # The commented lambda works in terminal, but not in function
+                # lambda m: str(round(float(m.group(0)),rd)), 
                 lambda m: m.group(0)[0:rd], 
                 regex=True
             )
