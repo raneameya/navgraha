@@ -113,7 +113,7 @@ def server(input, output, session):
         input_args = birth_datetime_utc_args+[location]
         p=mf.swetest(sweedir=wd, birth_args=input_args)
         # Keep classical planets (including Rahu, Ketu)
-        p=p.head(12)
+        p=p.head(10)
         # Add other details
         add_cols=['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
         p=mf.add_non_equi_col(
