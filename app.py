@@ -36,8 +36,6 @@ def server(input, output, session):
 
     @render.data_frame
     def filtered_places():
-        # Avoid updating table for small inputs (i.e. large searches in file)
-        req(len(input.b_place()) >= 3)
         # Filter file for only matches to entered birth place
         cmd='grep -i "' + input.b_place() + '" places.txt'
         # Column names as reference. Not used as explained below
