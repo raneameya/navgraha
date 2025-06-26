@@ -68,26 +68,26 @@ def server(input, output, session):
     @reactive.effect
     def update_birth_data_selected():
         place_selected=filtered_places.data_view(selected=True)   
-        if len(input.b_place()) < 3:
+        # if len(input.b_place()) < 3:
             # If too few characters entered, ignore birth place input
-            filtered_places.update_data(None)
-            rvals.set({'b_input_entered':False})
-        elif len(input.b_place()) >= 3:
+        #    filtered_places.update_data(None)
+        #    rvals.set({'b_input_entered':False})
+        #elif len(input.b_place()) >= 3:
             # When enough characters entered and row chosen, update inputs
             # for lon, lat & tz based on selection
-            req(not place_selected.empty)
-            lon=place_selected.longitude.iloc[0]
-            lat=place_selected.latitude.iloc[0]
-            place=place_selected.name.iloc[0]
-            tz=place_selected.timezone.iloc[0]
-            ui.update_numeric('b_lon', value=lon)
-            ui.update_numeric('b_lat', value=lat)            
-            ui.update_text('b_tz', value=tz)
-            ui.update_text('b_place', value=place)
-            # Update the show input switch to close the input panel
-            ui.update_switch(id='input_done', value=False)
-            # Close the place search modal on row being chosen
-            ui.modal_remove()
+        req(not place_selected.empty)
+        lon=place_selected.longitude.iloc[0]
+        lat=place_selected.latitude.iloc[0]
+        place=place_selected.name.iloc[0]
+        tz=place_selected.timezone.iloc[0]
+        ui.update_numeric('b_lon', value=lon)
+        ui.update_numeric('b_lat', value=lat)            
+        ui.update_text('b_tz', value=tz)
+        ui.update_text('b_place', value=place)
+        # Close the place search modal on row being chosen
+        ui.modal_remove()
+        # Update the show input switch to close the input panel
+        ui.update_switch(id='input_done', value=False)
     
     @reactive.calc
     def birth_datetime():
