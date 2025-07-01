@@ -1,8 +1,7 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
-from constants import rnp
-#from shinywidgets import output_widget, render_widget
-import stdout_to_pd as std2pd, misc_functions as mf#, plotly.express as px
+from constants import rnp, ayanamsas
+import stdout_to_pd as std2pd, misc_functions as mf
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -47,7 +46,7 @@ def server(input, output, session):
         places=std2pd.read_stdout(
             cmd=cmd, reader='csv', sep='\t', col_names=colnames            
         )
-        places=places.sort_values(by=['population'], ascending=False)
+        places.sort_values(by=['population'], ascending=False, inplace=True)
         return render.DataGrid(places, selection_mode='rows')
     
     @reactive.effect
@@ -107,8 +106,8 @@ def server(input, output, session):
         # location argument
         location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
         wd = './swisseph-master/'
-        # User inputs
-        input_args = birth_datetime_utc_args+[location]
+        # User inputs: birth time, birth place, ayanamsa
+        input_args = birth_datetime_utc_args+[location]+[input.b_ayanamsa()]
         p=mf.swetest(sweedir=wd, birth_args=input_args)
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(10)
@@ -165,6 +164,11 @@ def server(input, output, session):
                     id='b_time',
                     label='Input time',        
                     value=datetime.now().strftime('%H:%M:%S')
+                ),
+                ui.input_select(
+                    id='b_ayanamsa',
+                    label='Choose Ayanamsa',
+                    choices=ayanamsas.to_dict(), 
                 ),
                 ui.input_text(
                     id='b_place',

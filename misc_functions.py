@@ -28,9 +28,10 @@ def swetest(sweedir, birth_args):
     # These arguments won't be exposed to the user 
     # (with the possible exception of planets)
     common_args=['-pp', '-head', '-edir' + edir]    
-    # Ayanamsa and output columns. todo: expose ayanamsa to user
-    config_args=['-sid29', '-fTPlLsBj']
+    # Ayanamsa and output columns
+    config_args=[birth_args[3], '-fTPlLsBj']
     # To get ascendant, we need to specify house system to swetest
+    # House system defaults to whole sign
     house_args=[
         birth_args[2].replace('geopos', 'house').replace(',0', ',W')
     ]
