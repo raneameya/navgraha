@@ -130,4 +130,4 @@ p=p[[
 ]]
 
 # Write out
-p.to_csv('rnp_py.csv', index=False)
+p.to_csv('rnp.csv', index=False)
