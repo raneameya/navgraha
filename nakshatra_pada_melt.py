@@ -35,6 +35,43 @@ Uttar Bhadrapada	Leo	Virgo	Libra	Scorpio
 Revati	Sagittarius	Capricorn	Aquarius	Pisces'''
 p = pd.read_csv(io.StringIO(txt_data), sep='\t')
 
+# Source: https://www.selfrealisation.net/UK/VedicAstrology/pada.htm
+snippet = [
+    'Tendency to use other\'s wealth', 'Childish in acts', 'Fortunate', 
+    'Enjoys pleasures; longlived', 'Sacrificial in disposition', 
+    'Rich and happy', 'Inflicting suffering ', 'Incurs poverty', 
+    'Radiant', 'Has knowledge of scriptures', 'Experiences grief', 
+    'Enjoys longevity and many sons', 'Highly prosperous', 'Incurs evils', 
+    'Timid in disposition', 'Truthful', 'Kingly in status', 
+    'Tendency to use other\'s wealth', 'Enjoys pleasures', 
+    'Endowed with wealth and grains', 'Spendthrift', 'In the grip of poverty', 
+    'Short-lived', 'Tendency to use other\'s wealth', 'Happy', 'Learned', 
+    'Weak health', 'Not truthful', 'Long-lived', 
+    'Tendency to use other\'s wealth', 'Enjoys pleasures', 'Intelligent', 
+    'Childless', 'In servitude', 'Weak health', 'Very prosperous', 
+    'No male progeny', 'Male progeny', 'Suffers from dangerous disease', 
+    'A scholar', 'Skilful person', 'Righteous', 'Inflicting suffering', 
+    'Short-lived', 'Scholar', 'Ruler of the earth', 'Successful ', 
+    'Righteous', 'Heroic', 'Learned', 'Weak health', 'Wealthy', 
+    'Tendency to use other\'s wealth', 'Artist', 'Truthful', 'Learned', 
+    'Tendency to use other\'s wealth', 'Short-lived', 'Charitable', 'King', 
+    'Well-versed in justice and policy-making', 'Versed in sciptures', 
+    'Learned', 'Endowed with longevity', 'Fierce', 'Charitable', 'Long-lived', 
+    'Questionable history', 'Inflicting suffering', 'Enjoys pleasures', 
+    'Quite intelligent', 'Male issues', 'Enjoys pleasures', 
+    'Sacrificial disposition', 'Endowed with good friends', 'Lordly', 
+    'Excellent person', 'Kingly', 'Eloquent in speech', 'Wealthy', 'Lordly', 
+    'Inimical (even) to friends', 'Honourable', 'Religious', 
+    'Highly honourable', 'Endowed with virtues', 'Scholar', 'Charitable', 
+    'Enjoys longevity', 'Scholar', 'Timid in disposition', 
+    'Under the influence of a great woman', 'Eloquent in speech', 
+    'Wealthy', 'Endowed with happiness', 'Male offspring', 'Valorous', 
+    'Tendency to use other\'s wealth', 'Possesses great intelligence', 
+    'Enjoys pleasures', 'Kingly', 'Tendency to use other\'s wealth', 
+    'Male issues', 'Happy', 'Spiritual wisdom', 
+    'Tendency to use other\'s wealth', 'Winner in battles', 'Incurring grief'
+]
+
 # Melt pada columns into one column to have 108 rows, each corresponding to
 # a pada/navamsa
 p = pd.melt(frame=p, id_vars=['Nakshatra'],var_name='Pada',value_name='Rashi')
@@ -76,6 +113,10 @@ p['Rashi']=pd.Series([r for r in rashis for _ in range(9)]).astype(
 # Append vimsottari info
 p[['Nakshatra lord', 'Vimshottari dasa (yrs)']]=vimsottari
 
+# Append snippet info from Yavana Jataka as mentioned in the 
+# Hora Ratnam of Bala Bhadra. 
+p['Snippet']=pd.Series(data=snippet)
+
 # Define start & end degrees for each navamsa/pada
 p[['Start', 'End']]=pd.DataFrame({
     'Start':[fr(i, 3) for i in range(1080) if i%10 == 0],
@@ -85,7 +126,7 @@ p[['Start', 'End']]=pd.DataFrame({
 # Reorder columns
 p=p[[
     'Rashi', 'Nakshatra', 'Nakshatra lord', 'Vimshottari dasa (yrs)', 
-    'Pada', 'Start', 'End'
+    'Pada', 'Start', 'End', 'Snippet'
 ]]
 
 # Write out
