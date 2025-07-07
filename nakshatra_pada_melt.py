@@ -1,5 +1,4 @@
-import pandas as pd
-import io as io
+import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
 
 # Read rashi nakshtra pada from text data. This is copied from the internet 
@@ -129,5 +128,15 @@ p=p[[
     'Pada', 'Start', 'End', 'Snippet'
 ]]
 
-# Write out
-p.to_csv('rnp.csv', index=False)
+nakshatra=p.groupby(by=['Nakshatra'], as_index=False, observed=True).agg({
+    'Nakshatra':'first','Nakshatra lord':'first',
+    'Vimshottari dasa (yrs)':'sum','Start':'min','End':'max'    
+}).sort_values(by=['Nakshatra'])
+
+# Pickle file and save on disk
+out={
+    'Nakshatra':nakshatra,
+    'Navamsa':p
+}
+with open('lut.pickle', 'wb') as handle:
+    pl.dump(out, handle, protocol=0)

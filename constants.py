@@ -1,10 +1,15 @@
-import pandas as pd
+import pandas as pd, pickle as pl
 from fractions import Fraction
 
-# Read in mapping table for rashi-nakshatra-pada
-rnp=pd.read_csv('rnp.csv')
-rnp['Start']=rnp['Start'].apply(lambda x: Fraction(x).limit_denominator())
-rnp['End']=rnp['End'].apply(lambda x: Fraction(x).limit_denominator())
+with open('lut.pickle', 'rb') as handle:
+    lut = pl.load(handle)
 
-# Read in list of ayanamsas and their swetest arguments
+# Read in mapping table for rashi-nakshatra-pada (i.e. 108 rows)
+rnp=lut['Navamsa']
+
+# Create aggregated table for only nakshatras
+nakshatra=lut['Nakshatra']
+
+# Read in list of ayanamsas and their swetest arguments. Used to expose 
+# list of available ayanmsas to user
 ayanamsas=pd.read_csv('ayanamsa_list.csv', index_col='Argument')
