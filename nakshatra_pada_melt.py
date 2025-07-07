@@ -2,8 +2,8 @@ import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
 
 # Read rashi nakshtra pada from text data. This is copied from the internet 
-# and is wrong in the rashi allocation. The rashi allocation is overwritten 
-# later
+# contains incorrect rashi allocation. The incorrect rashi allocation is 
+# overwritten later
 txt_data = '''Nakshatra	Pada-1	Pada-2	Pada-3	Pada-4
 Ashwini	Aries	Taurus	Gemini	Cancer
 Bharani	Leo	Virgo	Libra	Scorpio
