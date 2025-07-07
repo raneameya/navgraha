@@ -88,7 +88,7 @@ def reorder_swetest_rows(p):
     p=p.reset_index(drop=True)
     return p
 
-def add_ketu(p):    
+def add_ketu(p):
     # Select rows corresponding to Rahu
     ketu=p.loc[
         p['Graha'].isin(['Rahu (true)', 'Rahu (mean)'])
