@@ -1,5 +1,4 @@
 import pandas as pd, pickle as pl
-from fractions import Fraction
 
 with open('lut.pickle', 'rb') as handle:
     lut = pl.load(handle)
