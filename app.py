@@ -112,7 +112,10 @@ def server(input, output, session):
         # Keep classical planets (including Rahu, Ketu)
         p=p.head(10)
         # Add other details
-        add_cols=['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 'Snippet']
+        add_cols=[
+            'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 
+            'Snippet', 'Degrees'
+        ]
         p=mf.add_non_equi_col(
             p1=p, 
             p2=rnp,

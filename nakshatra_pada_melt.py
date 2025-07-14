@@ -1,5 +1,6 @@
 import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
+from fractional_interval import fractional_interval as fi
 
 # Read rashi nakshtra pada from text data. This is copied from the internet 
 # contains incorrect rashi allocation. The incorrect rashi allocation is 
@@ -122,10 +123,16 @@ p[['Start', 'End']]=pd.DataFrame({
     'End':[fr(i+10, 3) for i in range(1080) if i%10 == 0]
 })
 
+# Create fractional interval column
+p['Degrees']=pd.Series([
+    fi(left=fr(i, 3), right = fr(i+10, 3), closed = 'left') 
+    for i in range(1080) if i%10 == 0
+])
+
 # Reorder columns
 p=p[[
     'Rashi', 'Nakshatra', 'Nakshatra lord', 'Vimshottari dasa (yrs)', 
-    'Pada', 'Start', 'End', 'Snippet'
+    'Pada', 'Start', 'End', 'Degrees', 'Snippet'
 ]]
 
 nakshatra=p.groupby(by=['Nakshatra'], as_index=False, observed=True).agg({
