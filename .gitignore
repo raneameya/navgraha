@@ -9,3 +9,4 @@ lib64
 allCountries.txt
 pyvenv.cfg
 setup
+example_chart.pickle
