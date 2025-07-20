@@ -1,7 +1,7 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 from constants import rnp, ayanamsas
-import stdout_to_pd as std2pd, misc_functions as mf
+import stdout_to_pd as std2pd, misc_functions as mf, chart as crt
 
 table_nav_panel=ui.nav_panel(
     'Table',
@@ -87,43 +87,27 @@ def server(input, output, session):
         ui.update_switch(id='input_done', value=False)
     
     @reactive.calc
-    def birth_datetime():
-        bdt=mf.create_date_from_txt(
-            yr=input.b_date().year,
-            mo=input.b_date().month,
-            da=input.b_date().day,
-            hr=int(input.b_time()[0:2]),
-            mi=int(input.b_time()[3:5]),
-            se=int(input.b_time()[6:8]),
-            tz=input.b_tz()
+    def create_chart():
+        '''
+        Return a chart object that can be reused across the app
+        '''
+        c = crt.chart(
+            input.b_date().year,
+            input.b_date().month,
+            input.b_date().day,
+            int(input.b_time()[0:2]),
+            int(input.b_time()[3:5]),
+            int(input.b_time()[6:8]),
+            input.b_lon(),
+            input.b_lat(),
+            input.b_tz(), 
+            input.b_ayanamsa()
         )
-        return bdt
+        return c
 
     @render.data_frame
     def get_chart_data():
-        # Get birthdate arguments for swetest
-        birth_datetime_utc_args=mf.birth_datetime_args(birth_datetime())
-        # location argument
-        location='-geopos'+str(input.b_lon())+','+str(input.b_lat())+',0'
-        wd = './swisseph-master/'
-        # User inputs: birth time, birth place, ayanamsa
-        input_args = birth_datetime_utc_args+[location]+[input.b_ayanamsa()]
-        p=mf.swetest(sweedir=wd, birth_args=input_args)
-        # Keep classical planets (including Rahu, Ketu)
-        p=p.head(10)
-        # Add other details
-        add_cols=[
-            'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 
-            'Snippet', 'Degrees'
-        ]
-        p=mf.add_non_equi_col(
-            p1=p, 
-            p2=rnp,
-            p1col='Lon',
-            p2col_low='Start',
-            p2col_high='End',
-            p2col_get=add_cols
-        )
+        p = create_chart().placement_compute()
         # Round some cols
         p=mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
@@ -136,7 +120,7 @@ def server(input, output, session):
     @render.text
     def b_time_place():
         # To give user feedback about birth place & time selection
-        bdt=birth_datetime().strftime('%d-%m-%Y %H:%M:%S %Z')
+        bdt=create_chart().datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
         location=input.b_place()
         return location + ' ' + bdt
     
