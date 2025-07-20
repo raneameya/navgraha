@@ -65,13 +65,6 @@ def server(input, output, session):
     @reactive.effect
     def update_birth_data_selected():
         place_selected=filtered_places.data_view(selected=True)   
-        # if len(input.b_place()) < 3:
-            # If too few characters entered, ignore birth place input
-        #    filtered_places.update_data(None)
-        #    rvals.set({'b_input_entered':False})
-        #elif len(input.b_place()) >= 3:
-            # When enough characters entered and row chosen, update inputs
-            # for lon, lat & tz based on selection
         req(not place_selected.empty)
         lon=place_selected.longitude.iloc[0]
         lat=place_selected.latitude.iloc[0]
