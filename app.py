@@ -131,7 +131,7 @@ def server(input, output, session):
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
             'Nakshatra lord', 'Pada', 'Snippet','Speed'
         ]]
-        return p
+        return render.DataGrid(p, height = '800px')
     
     @render.text
     def b_time_place():
