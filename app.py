@@ -64,20 +64,20 @@ def server(input, output, session):
     # Update values in input fields based on place selection by user
     @reactive.effect
     def update_birth_data_selected():
-        place_selected=filtered_places.data_view(selected=True)   
+        place_selected = filtered_places.data_view(selected = True)
         req(not place_selected.empty)
-        lon=place_selected.longitude.iloc[0]
-        lat=place_selected.latitude.iloc[0]
-        place=place_selected.name.iloc[0]
-        tz=place_selected.timezone.iloc[0]
-        ui.update_numeric('b_lon', value=lon)
-        ui.update_numeric('b_lat', value=lat)            
-        ui.update_text('b_tz', value=tz)
-        ui.update_text('b_place', value=place)
+        lon = place_selected.longitude.iloc[0]
+        lat = place_selected.latitude.iloc[0]
+        place = place_selected.name.iloc[0]
+        tz = place_selected.timezone.iloc[0]
+        ui.update_numeric('b_lon', value = lon)
+        ui.update_numeric('b_lat', value = lat)            
+        ui.update_text('b_tz', value = tz)
+        ui.update_text('b_place', value = place)
         # Close the place search modal on row being chosen
         ui.modal_remove()
         # Update the show input switch to close the input panel
-        ui.update_switch(id='input_done', value=False)
+        ui.update_switch(id = 'input_done', value = False)
     
     @reactive.calc
     def create_chart():
@@ -102,11 +102,11 @@ def server(input, output, session):
     def get_chart_data():
         p = create_chart().placement_compute()
         # Round some cols
-        p=mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
+        p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
-        p=p[[
+        p = p[[
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
-            'Nakshatra lord', 'Pada', 'Snippet','Speed'
+            'Nakshatra lord', 'Pada','Speed'
         ]]
         return render.DataGrid(p, height = '800px')
     

@@ -44,15 +44,21 @@ class chart:
             p = p.head(10)
             # Add other details
             add_cols = [
-                'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 
-                'Snippet', 'Degrees'
+                'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada'                
             ]
+            # p = mf.add_non_equi_col(
+            #     p1 = p, 
+            #     p2 = rnp,
+            #     p1col = 'Lon',
+            #     p2col_low = 'Start',
+            #     p2col_high = 'End',
+            #     p2col_get = add_cols
+            # )
             p = mf.add_non_equi_col(
                 p1 = p, 
                 p2 = rnp,
                 p1col = 'Lon',
-                p2col_low = 'Start',
-                p2col_high = 'End',
+                p2col_range = 'Degrees',
                 p2col_get = add_cols
             )
             # Assign table to placements attribute
@@ -129,8 +135,8 @@ def reorder_swetest_rows(p):
         35, 1, 36, 37, 38, 39, 40, 41, 42, 10.5, 9.5
     ]
     p.set_index('ix', inplace = True)
-    p=p.sort_index()
-    p=p.reset_index(drop = True)
+    p = p.sort_index()
+    p = p.reset_index(drop = True)
     return p
 
 def add_ketu(p):

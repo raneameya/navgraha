@@ -1,7 +1,28 @@
 import pytz, re, stdout_to_pd as sp, pandas as pd
 from datetime import datetime
 
-def add_non_equi_col(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
+def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
+    '''
+    Join columns from p2 to p1, based on values in p1[p1col] lying in 
+    ranges specified p2[p2col_range]
+    '''
+    # Create list of p2's indices where the value of p1[p1col] 
+    # (for each value in p1[p1col]) lies in the 
+    # fractional_interval at p2.at[idx, p2col_range] 
+    matched_idx = [
+        p2_idx for p1_idx in p1.index.values 
+                for p2_idx in p2.index.values 
+                    if p2.at[p2_idx, p2col_range].isin(p1.at[p1_idx, p1col])
+    ]
+    # Append columns from p2 corresponding to the indices
+    # These columns may contain repeated rows, so reset index
+    p1[p2col_get] = p2.iloc[
+        matched_idx, p2.columns.get_indexer(p2col_get)
+    ].reset_index(drop = True)
+    return p1
+
+# Keep for performance testing
+def add_non_equi_col_old(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
     # Create column of p2's indices in p1 
     # that correspond to value between high and low
     matched_idx=p1[p1col].apply(

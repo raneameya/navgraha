@@ -1,6 +1,9 @@
 from fractions import Fraction
 class fractional_interval:
-    """A class to accommodate intervals of fractions"""
+    """
+    A class to accommodate intervals of fractions. This would be useful in 
+    cases where dashas need to be computed
+    """
     def __init__(self, left: Fraction, right: Fraction, closed: str):
         if (left > right):
             raise ValueError((
@@ -29,7 +32,9 @@ class fractional_interval:
         return f'{li}{self.left}, {self.right}{ri}'
 
     def point_in_range_coverage(self, point):
-        # Useful to compute how much of a dasha is over
+        '''
+        Useful to compute how much of a dasha is over
+        '''
         point = Fraction(point)
         if point <= self.left:
             return 0
@@ -38,3 +43,17 @@ class fractional_interval:
         else:
             out = (point - self.left)/(self.right - self.left)
             return float(out)
+    
+    def isin(self, point: float):
+        '''
+        Does a point lie within an interval
+        '''
+        if self.closed in ['left', 'both']:
+            left_in = point >= self.left
+        if self.closed in ['right', 'none']:
+            left_in = point > self.left
+        if self.closed in ['right', 'both']:
+            right_in = self.right >= point
+        if self.closed in ['left', 'none']:
+            right_in = self.right > point
+        return (left_in & right_in)
