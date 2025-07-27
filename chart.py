@@ -74,7 +74,7 @@ def birth_datetime_args(dt:datetime):
     # Create birthdate input for swetest
     birth_date = '-b'+birth_datetime_utc.strftime('%d.%m.%Y')
     # Create birthtime input for swetest
-    birth_time = '-utc'+birth_datetime_utc.strftime('%H:%M.%S')
+    birth_time = '-utc'+birth_datetime_utc.strftime('%H:%M:%S')
     return [birth_date, birth_time]
 
 def swetest(sweedir, birth_args):
