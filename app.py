@@ -100,7 +100,7 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
-        p = create_chart().placement_compute()
+        p = create_chart().compute_placements()
         # Round some cols
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset

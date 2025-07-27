@@ -27,7 +27,7 @@ class chart:
         # Then localise the initial timezoneless datetime object
         self.datetime = local_tz.localize(dt)    
     
-    def placement_compute(self):
+    def compute_placements(self):
         # Avoid repititous compute if already computed once
         if hasattr(self, 'placements'):
             return self.placements
