@@ -25,7 +25,10 @@ class chart:
         # Create local timezone object
         local_tz = pytz.timezone(b_tz)
         # Then localise the initial timezoneless datetime object
-        self.datetime = local_tz.localize(dt)    
+        self.datetime = local_tz.localize(dt)
+        # Compute placements, hopefully only once per chart. 
+        # TODO: Check whether this really compute only once?
+        self.placements = self.compute_placements()
     
     def compute_placements(self):
         # Avoid repititous compute if already computed once
@@ -61,8 +64,6 @@ class chart:
                 p2col_range = 'Degrees',
                 p2col_get = add_cols
             )
-            # Assign table to placements attribute
-            self.placements = p
             return p
 
 
