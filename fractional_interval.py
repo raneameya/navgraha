@@ -1,3 +1,4 @@
+import datetime as dt
 from fractions import Fraction
 class fractional_interval:
     """
@@ -12,28 +13,31 @@ class fractional_interval:
                 f'bounds if you wish to create an interval with '
                 f'these two values.'
             ))
-        self.left=left
-        self.right=right
-        self.closed=closed
+        self.left = left
+        self.right = right
+        self.closed = closed
     
     def __str__(self):
-        if self.closed=='left':
+        if self.closed == 'left':
             li = '['
             ri = ')'
-        elif self.closed=='right':
+        elif self.closed == 'right':
             li = '('
             ri = ']'
-        elif self.closed=='both':
+        elif self.closed == 'both':
             li = '['
             ri = ']'
-        elif self.closed=='none':
+        elif self.closed == 'none':
             li = '('
             ri = ')'
         return f'{li}{self.left}, {self.right}{ri}'
 
     def point_in_range_coverage(self, point):
         '''
-        Useful to compute how much of a dasha is over
+        Computes how "far" a point is, in an interval, with defaults of 100% 
+        if the point is beyond interval.right and 0% if point is less than 
+        interval.left.
+        This is useful to compute how much of a dasha is over.
         '''
         point = Fraction(point)
         if point <= self.left:
@@ -57,3 +61,16 @@ class fractional_interval:
         if self.closed in ['left', 'none']:
             right_in = self.right > point
         return (left_in & right_in)
+
+def get_endpoints_from_point_coverage(
+    point: float, coverage: float, interval_length
+):
+    '''
+    Compute a fractional interval given a point, the %age covered by the 
+    point in the desired interval and the length of the interval. If the 
+    length of the interval is a timedelta, the interval is returned as a 
+    tuple of start and end times.
+    '''
+    left = point - (coverage * interval_length)
+    right = left + interval_length
+    return (left, right)
