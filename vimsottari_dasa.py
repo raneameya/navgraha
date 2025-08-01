@@ -1,7 +1,8 @@
 import chart as crt # chart class used as input
 import numpy as np # cumsum
-import pandas as pd # dataframe & interval used
-from constants import rnp # default value to provide to class
+import pandas as pd # dataframe, interval
+from constants import rnp, nakshatra # lookup table to provide to class
+from misc_functions import cyclic_shift
 import fractional_interval as fi # isin and pointinrange functions used
 import datetime as dt # timedeltas used
 
@@ -22,8 +23,10 @@ class vimsottari_dasa:
         self.seed = seed_graha
         self.dasa_level = sub_dasa_level
         chart_df = chart.placements
-        # What longitude is the seed graha at?
-        seed_deg = chart_df.loc[chart_df['Graha'] == seed_graha, 'Lon'].squeeze()
+        # Longitude of the seed graha
+        seed_deg = chart_df.loc[
+            chart_df['Graha'] == seed_graha, 'Lon'
+        ].squeeze()
         # At the longitude of the seed graha, how much of an interval 
         # (in this case pada, i.e. a 3° 20' interval) has the graha covered?
         rnp_lut['Dasa covered'] = rnp_lut['Degrees'].apply(
@@ -33,67 +36,199 @@ class vimsottari_dasa:
         rnp_lut['Is in'] = rnp_lut['Degrees'].apply(
             lambda fi: fi.isin(seed_deg)
         )
+        # Sorting by categorical nakshatra is important because this 
+        # allows meaningful sequential subsets
         rnp_gb = rnp_lut.groupby(
-            ['Nakshatra', 'Nakshatra lord'], observed = True
+            ['Nakshatra', 'Nakshatra lord'], observed = True, sort = True
         ).agg(
             Dasa_covered = ('Dasa covered', 'mean'),
-            IsIn = ('Is in', 'mean')
+            IsIn = ('Is in', 'mean'), 
+            Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
+            Length = ('Vimshottari dasa (yrs)', 'sum')
         )
         # Only for test, delete next line
-        self.rnp_gb = rnp_gb
+        self.rnp_gb = rnp_gb        
         # Which nakshatra does the seed graha lie in, 
         # and who is that nakshatra's lord?
         self.nakshatra, self.nakshatra_lord = rnp_gb[
             rnp_gb['IsIn'] > 0
         ].index.values[0]
+        # What is the length of the mahadasa of the nakshatra lord?
+        nakshatra_lord_mahadasa_len = rnp_gb.at[
+            (self.nakshatra, self.nakshatra_lord), 'Length'
+        ].squeeze()
         # How much of the dasa is completed at the time of birth?
         self.dasa_covered = rnp_gb[rnp_gb['IsIn'] > 0][
             'Dasa_covered'
-        ].squeeze()
-        # Define the vimsottari dasa lords and their respective lengths
-        lords = [
-            'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 
-            'Saturn', 'Mercury'
-        ]
-        lengths = [7, 20, 6, 10, 7, 18, 16, 19, 17]
-        # Create dictionary with the first dasa as per nakshatra_lord 
-        dasa_lengths = {
-            lord: length for lord, length in zip(
-                lords[lords.index(self.nakshatra_lord):] + lords[
-                    0:lords.index(self.nakshatra_lord)
-                ], 
-                lengths[lords.index(self.nakshatra_lord):] + lengths[
-                    0:lords.index(self.nakshatra_lord)
-                ]
+        ].squeeze()        
+        # Start datetime of 120 year lifespan
+        first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered * 
+            dt.timedelta(
+                days = nakshatra_lord_mahadasa_len * yr_len
             )
-        }
-        # Compute the start datetime of the dasa of nakshatra_lord
-        first_dasa_start = chart.datetime - (self.dasa_covered * dt.timedelta(
-            days = dasa_lengths[self.nakshatra_lord] * yr_len
-        ))
-        # Helper array of timedeltas to add to first_dasa_start
-        dasa_start_deltas = np.cumsum(np.array([
-            dt.timedelta(yr_len * dasa_lengths[lord]) for lord in dasa_lengths
-        ]))
-        # Create list of dasa start datetimes
-        dasa_start_datetimes = [first_dasa_start] + [
-            first_dasa_start + delta for delta in dasa_start_deltas
-        ]
-        # Create datetime intervals of start and end times 
-        # end of current dasa = start of next dasa
-        dasa_intervals = [
-            (dasa_start_datetimes[i], dasa_start_datetimes[i + 1]) 
-            for i in range((len(dasa_start_datetimes) - 1))
-        ]
-        dasa_intervals = pd.arrays.IntervalArray.from_tuples(
-            dasa_intervals, closed = 'left'
         )
+        # Create pandas.Interval corresponding to the 120 year lifespan
+        lifespan = pd.Interval(
+            left = first_dasa_start,
+            right = first_dasa_start + dt.timedelta(days = 120 * yr_len),
+            closed = 'left'
+        )
+        # Create dasa_interval object corresponding to the lifespan
+        lifespan_di = dasa_interval(
+            lord = None, interval = lifespan, level = 0
+        )
+        # Compute mahadasas
+        dasa_intervals = compute_sub_dasa(
+            di = lifespan_di,
+            first_mahadasa_lord = self.nakshatra_lord
+        )
+        self.mahadasa = dasa_intervals
+        self.antardasa = [a for m in self.mahadasa for a in compute_sub_dasa(m)]
+        self.pratyantardasa = [
+            p for a in self.antardasa for p in compute_sub_dasa(a)
+        ]
+        self.sookshmaantardasa = [
+            s for p in self.pratyantardasa for s in compute_sub_dasa(p)
+        ]
         # Descriptive DataFrame containing info
         self.dasas = pd.DataFrame({
-            'Lord': [lord for lord in dasa_lengths],
-            'Period': dasa_intervals,
-            'Length (days)': [(dasa_lengths[lord] * yr_len) for lord in dasa_lengths]
+            'Lord': [di.lord for di in dasa_intervals],
+            'Period': [di.interval for di in dasa_intervals],
+            'Length': [di.interval.length for di in dasa_intervals]
         })
     
     def __str__(self):
         return f'Vimsottari dasha object for {self.chart.datetime}.'
+    
+    def dasa_to_df(self, level:int):
+        if level == 0:
+            di_list = self.mahadasa
+        if level == 1:
+            di_list = self.antardasa
+        if level == 2:
+            di_list = self.pratyantardasa
+        if level == 3:
+            di_list = self.sookshmaantardasa
+        # Descriptive DataFrame containing info
+        return pd.DataFrame({
+            'Parent lord(s)': [di.parent_lord for di in di_list],
+            'Lord': [di.lord for di in di_list],
+            'Period': [di.interval for di in di_list],
+            'Length': [di.interval.length for di in di_list]
+        })
+
+class dasa_interval:
+    '''
+    Store information about dasa intervals. This class does NOT check 
+    whether the input interval is a valid dasa
+    '''
+    def __init__(
+        self,
+        lord:str, 
+        interval:pd.Interval, 
+        level:int,
+        parent_lord:tuple = None,
+        yr_len:float = 365.25
+    ):
+        if (lord is None and level != 0):
+            raise ValueError(f'''
+                Level = {level} implies sub-dasa computation. So, a lord 
+                must be specified. If you wish to compute mahadasas 
+                (i.e. level = 0), then lord must be None.
+            ''')
+        if (lord is not None and level == 0):
+            raise ValueError(f'''
+                Level = 0 implies mahadasa computation. So, a lord must not 
+                be specified. If you wish to define sub-dasas for {lord},
+                then level must be > 0.
+            ''')
+        if (
+            lord is None 
+            and (interval.length/pd.Timedelta(days = 12 * yr_len) < 1)
+        ):
+            raise ValueError(f'''
+                A None value for dasa lord means lifespan interval of 120 
+                years. Please correct interval length.
+            ''')
+        self.lord = lord
+        self.interval = interval
+        self.level = level
+        self.parent_lord = parent_lord
+    
+    def __repr__(self):
+        if self.level == 0:
+            dasa_str = 'dasa'
+            pl = ()
+        else:
+            pl = (self.lord) if self.parent_lord is None else self.parent_lord + (self.lord)
+            dasa_str = 'sub-dasa'
+        pl = [x for x in pl]
+        return f'''{' '.join(pl)} {dasa_str}: {self.interval.left}-{self.interval.right}'''
+
+def compute_sub_dasa(
+    di:dasa_interval, 
+    first_mahadasa_lord:str = None,
+    yr_len:float = 365.25
+):
+    if di.level == 0 and first_mahadasa_lord is None:
+        raise ValueError(f'''
+            Mahadasa computation requires specifcation of the first mahadasa 
+            lord. Please specify a graha as the first_mahadasa_lord.
+        ''')
+    if di.level != 0 and first_mahadasa_lord is not None:
+        raise Warning(f'''
+            Ignoring first_dasa_lord = {first_dasa_lord}, as subsequent 
+            subdasas are inferred from the lordship of the input dasa.
+            The first sub-lord will therefore be {vi.lord}.
+        ''')
+    # Set first sub-dasa lord based on whether mahadasa or sub-dasa
+    if di.lord is None:
+        lord = first_mahadasa_lord # Maha
+        parent_lord = [None for i in range(9)]
+    else:
+        lord = di.lord        
+    scale = di.interval.length / dt.timedelta(days = 120 * yr_len)
+    # Create ordered list of sub-dasa lords and their lengths
+    sub_lords = [
+        'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 
+        'Saturn', 'Mercury'
+    ]    
+    sub_lengths = [scale * l for l in [7, 20, 6, 10, 7, 18, 16, 19, 17]]    
+    cyclic_shift_start_index = sub_lords.index(lord)
+    sub_lords = cyclic_shift(
+        x = sub_lords, start = cyclic_shift_start_index
+    )    
+    sub_lengths = cyclic_shift(
+        x = sub_lengths, start = cyclic_shift_start_index
+    )    
+    # Helper array of timedeltas to add to sub_dasa_start_datetime
+    sub_dasa_start_deltas = np.cumsum(np.array([
+        dt.timedelta(days = yr_len * sl) for sl in sub_lengths
+    ]))    
+    sub_dasa_start_datetime = di.interval.left
+    # Create list of sub-dasa start datetimes
+    sub_dasa_start_datetimes = [sub_dasa_start_datetime] + [
+        sub_dasa_start_datetime + delta for delta in sub_dasa_start_deltas
+    ]
+    # Identify dasa hierarchy by parent lord 
+    # Parent lords only exist for antardasa and below dasas
+    if di.parent_lord is None:
+        parent_lord = [(di.lord, ) for i in range(9)]
+    else:
+        parent_lord = [di.parent_lord + (di.lord, ) for i in range(9)]
+    # Create datetime intervals of start and end times.
+    # end of current dasa = start of next dasa
+    sub_dasa_intervals = [
+        dasa_interval(
+            lord = sub_lords[i],
+            interval = pd.Interval(
+                left = sub_dasa_start_datetimes[i], 
+                right = sub_dasa_start_datetimes[i + 1], 
+                closed = 'left'
+            ), 
+            level = di.level + 1,
+            parent_lord = None if parent_lord[i][0] is None else parent_lord[i]
+        )             
+        for i in range((len(sub_dasa_start_datetimes) - 1))
+    ]
+    return sub_dasa_intervals

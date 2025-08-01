@@ -76,3 +76,11 @@ def lunar_phases(sweedir, dt, tz):
         lambda x: x.astimezone(local_tz)
     )
     return phases
+
+def cyclic_shift(x, start: int):
+    len_x = len(x)
+    cyclic_idx = [
+        ((start + i) % len_x) 
+        for i in range(len_x)
+    ]
+    return [x[i] for i in cyclic_idx]
