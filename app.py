@@ -1,12 +1,20 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime
 from constants import rnp, ayanamsas
-import stdout_to_pd as std2pd, misc_functions as mf, chart as crt
+import stdout_to_pd as std2pd
+import misc_functions as mf
+import chart as crt
+import vimsottari_dasa as vd
 
 table_nav_panel=ui.nav_panel(
     'Table',
     ui.output_text(id='b_time_place'),
     ui.output_data_frame(id='get_chart_data')
+)
+
+dasa_nav_panel = ui.nav_panel(
+    'Vimsottari dasa',
+    ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
 
 moon_nav_panel=ui.nav_panel(
@@ -23,6 +31,7 @@ app_ui = ui.page_fillable(
         )),
         ui.nav_spacer(),
         table_nav_panel,
+        dasa_nav_panel,
         #moon_nav_panel,
         ui.nav_control(ui.input_dark_mode()),
         id='pill'
@@ -109,6 +118,13 @@ def server(input, output, session):
             'Nakshatra lord', 'Pada','Speed'
         ]]
         return render.DataGrid(p, height = '800px')
+    
+    @render.data_frame
+    def get_vimsottari_dasa():
+        dasas = vd.vimsottari_dasa(
+            chart = create_chart()
+        ).dasa_to_df(level = 2)
+        return dasas
     
     @render.text
     def b_time_place():
