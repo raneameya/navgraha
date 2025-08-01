@@ -135,9 +135,12 @@ p=p[[
     'Pada', 'Start', 'End', 'Degrees', 'Snippet'
 ]]
 
-nakshatra=p.groupby(by=['Nakshatra'], as_index=False, observed=True).agg({
-    'Nakshatra':'first','Nakshatra lord':'first',
-    'Vimshottari dasa (yrs)':'sum','Start':'min','End':'max'    
+nakshatra=p.groupby(by=['Nakshatra'], observed=True).agg({
+    #'Nakshatra':'first',
+    'Nakshatra lord':'first',
+    'Vimshottari dasa (yrs)':'sum',
+    'Start':'min',
+    'End':'max'    
 }).sort_values(by=['Nakshatra'])
 
 # Pickle file and save on disk
