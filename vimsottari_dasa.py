@@ -101,21 +101,28 @@ class vimsottari_dasa:
         return f'Vimsottari dasha object for {self.chart.datetime}.'
     
     def dasa_to_df(self, level:int):
+        cols = ['Mahadasa', 'Antardasa', 'Pratyantardasa', 'Sookshmaantardasa']
         if level == 0:
             di_list = self.mahadasa
         if level == 1:
-            di_list = self.antardasa
+            di_list = self.antardasa            
         if level == 2:
-            di_list = self.pratyantardasa
+            di_list = self.pratyantardasa            
         if level == 3:
             di_list = self.sookshmaantardasa
         # Descriptive DataFrame containing info
-        return pd.DataFrame({
+        df = pd.DataFrame({
             'Parent lord(s)': [di.parent_lord for di in di_list],
             'Lord': [di.lord for di in di_list],
             'Period': [di.interval for di in di_list],
             'Length': [di.interval.length for di in di_list]
         })
+        if level == 0:
+            return df[['Lord', 'Period', 'Length']].rename(columns = {'Lord': 'Mahadasa'})
+        df[cols[0:level]] = df['Parent lord(s)'].apply(pd.Series)
+        df.rename(columns = {'Lord': cols[level]}, inplace = True)
+        df = df[cols[0:(level + 1)] + ['Period', 'Length']]
+        return df
 
 class dasa_interval:
     '''
