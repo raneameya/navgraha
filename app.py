@@ -53,7 +53,7 @@ def server(input, output, session):
         ]
         # Providing column names makes it ignore column names present in file
         places=std2pd.read_stdout(
-            cmd=cmd, reader='csv', sep='\t', col_names=colnames            
+            cmd=cmd, reader='csv', sep='\t', col_names=colnames
         )
         places.sort_values(by=['population'], ascending=False, inplace=True)
         return render.DataGrid(places, selection_mode='rows')
@@ -80,7 +80,7 @@ def server(input, output, session):
         place = place_selected.name.iloc[0]
         tz = place_selected.timezone.iloc[0]
         ui.update_numeric('b_lon', value = lon)
-        ui.update_numeric('b_lat', value = lat)            
+        ui.update_numeric('b_lat', value = lat)
         ui.update_text('b_tz', value = tz)
         ui.update_text('b_place', value = place)
         # Close the place search modal on row being chosen
@@ -150,15 +150,15 @@ def server(input, output, session):
             ui.row(
                 ui.input_date(
                     id='b_date',
-                    label='Input date',                
-                    value=datetime.today().strftime('%Y-%m-%d'),        
+                    label='Input date',
+                    value=datetime.today().strftime('%Y-%m-%d'),
                     format='yyyy-mm-dd',            
-                    weekstart=0,            
-                    autoclose=True            
+                    weekstart=0,
+                    autoclose=True
                 ), 
                 ui.input_text(
                     id='b_time',
-                    label='Input time',        
+                    label='Input time',
                     value=datetime.now().strftime('%H:%M:%S')
                 ),
                 ui.input_select(
@@ -194,7 +194,7 @@ def server(input, output, session):
                     id='search_place',
                     label='Search places'
                 )
-            )            
+            )
         )
         return ui_out
 
