@@ -13,8 +13,16 @@ table_nav_panel = ui.nav_panel(
 )
 
 dasa_nav_panel = ui.nav_panel(
-    'Dasa',
-    ui.output_ui(id = 'vimsottari_dasa_sub_level'),
+    'Daśa',
+    ui.input_radio_buttons(
+        id = 'vimsottari_dasa_sub_level',
+        label = '', 
+        choices = {
+            '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
+            '3': 'Sookśmaantardaśā'#,'4':'Praanaantardaśā'
+        }, 
+        inline = True
+    ),
     ui.output_text(id = 'birth_info_dasa'),
     ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
@@ -41,8 +49,6 @@ app_ui = ui.page_fillable(
 )
 
 def server(input, output, session):
-
-    rvals = reactive.Value({'b_input_entered':False})
 
     @render.data_frame
     def filtered_places():
@@ -114,7 +120,7 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
-        p = create_chart().compute_placements()
+        p = create_chart().placements
         # Round some cols
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
@@ -123,12 +129,12 @@ def server(input, output, session):
             'Nakshatra lord', 'Pada','Speed'
         ]]
         return render.DataGrid(p, height = '800px')
-    
+
     @render.data_frame
     def get_vimsottari_dasa():
         dasas = vd.vimsottari_dasa(
             chart = create_chart(), 
-            sub_dasa_level = input.vd_sub_level(), 
+            sub_dasa_level = int(input.vimsottari_dasa_sub_level()), 
             trunc_intervals = True
         ).dasa_to_df()
         return dasas
@@ -206,16 +212,5 @@ def server(input, output, session):
             )
         )
         return ui_out
-    
-    @render.ui
-    def vimsottari_dasa_sub_level():
-        return ui.input_numeric(
-            id = 'vd_sub_level',
-            label = 'Vimsottari dasa sub level',
-            value = 0,
-            min = 0,
-            max = 3,
-            step = 1
-        )
 
 app = App(app_ui, server)
