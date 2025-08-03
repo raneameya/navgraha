@@ -6,14 +6,15 @@ import misc_functions as mf
 import chart as crt
 import vimsottari_dasa as vd
 
-table_nav_panel=ui.nav_panel(
+table_nav_panel = ui.nav_panel(
     'Table',
-    ui.output_text(id='b_time_place'),
-    ui.output_data_frame(id='get_chart_data')
+    ui.output_text(id = 'birth_info_chart'),
+    ui.output_data_frame(id = 'get_chart_data')
 )
 
 dasa_nav_panel = ui.nav_panel(
-    'Vimsottari dasa',
+    'Dasa',
+    ui.output_text(id = 'birth_info_dasa'),
     ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
 
@@ -94,16 +95,17 @@ def server(input, output, session):
         Return a chart object that can be reused across the app
         '''
         c = crt.chart(
-            input.b_date().year,
-            input.b_date().month,
-            input.b_date().day,
-            int(input.b_time()[0:2]),
-            int(input.b_time()[3:5]),
-            int(input.b_time()[6:8]),
-            input.b_lon(),
-            input.b_lat(),
-            input.b_tz(), 
-            input.b_ayanamsa()
+            b_yr = input.b_date().year,
+            b_mo = input.b_date().month,
+            b_da = input.b_date().day,
+            b_hr = int(input.b_time()[0:2]),
+            b_mi = int(input.b_time()[3:5]),
+            b_sc = int(input.b_time()[6:8]),
+            b_lon = input.b_lon(),
+            b_lat = input.b_lat(),
+            b_tz = input.b_tz(), 
+            ay = input.b_ayanamsa(),
+            place = input.b_place()
         )
         return c
 
@@ -127,12 +129,14 @@ def server(input, output, session):
         return dasas
     
     @render.text
-    def b_time_place():
-        # To give user feedback about birth place & time selection
-        bdt=create_chart().datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
-        location=input.b_place()
-        return location + ' ' + bdt
-    
+    def birth_info_chart():
+        # To give user feedback about birth place & time selection        
+        return create_chart().repr_str
+
+    @render.text
+    def birth_info_dasa():
+        return create_chart().repr_str
+
     ## Lunar phases tab
     # @render_widget
     # def moon_phases():

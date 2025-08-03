@@ -6,7 +6,20 @@ class chart:
     """
     A class to create birth charts from input datetime, lat, lon & ayanamsa
     """
-    def __init__(self, b_yr, b_mo, b_da, b_hr, b_mi, b_sc, b_lon, b_lat, b_tz, ay):
+    def __init__(
+        self, 
+        b_yr:int, 
+        b_mo:int, 
+        b_da:int, 
+        b_hr:int, 
+        b_mi:int, 
+        b_sc:int, 
+        b_lon:float, 
+        b_lat:float, 
+        b_tz:str, 
+        ay:str, 
+        place:str = None
+    ):
         self.lat = b_lat
         self.lon = b_lon        
         self.ayanamsa = ay
@@ -29,6 +42,13 @@ class chart:
         # Compute placements, hopefully only once per chart. 
         # TODO: Check whether this really compute only once?
         self.placements = self.compute_placements()
+        self.repr_str = self.datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
+        if place is not None:
+            self.place = place
+            self.repr_str = f'{place} {self.repr_str} ({b_lat}, {b_lon})'
+    
+    def __repr__(self):
+        return self.repr_str
     
     def compute_placements(self):
         # Avoid repititous compute if already computed once
@@ -65,7 +85,6 @@ class chart:
                 p2col_get = add_cols
             )
             return p
-
 
 def birth_datetime_args(dt:datetime):    
     # Return a list of UTC birth date & UTC birth time 
@@ -107,7 +126,7 @@ def swetest(sweedir, birth_args):
             binary + common_args + birth_args + config_args + 
             house_args + format_args
         ), 
-        reader = 'table', sep = '\s+', col_names = colnames
+        reader = 'table', sep = r'\s+', col_names = colnames
     )
     # Replace 'Node' with Rahu & Ascendant with Lagna
     p.loc[
