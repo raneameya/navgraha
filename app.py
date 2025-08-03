@@ -14,6 +14,7 @@ table_nav_panel = ui.nav_panel(
 
 dasa_nav_panel = ui.nav_panel(
     'Dasa',
+    ui.output_ui(id = 'vimsottari_dasa_sub_level'),
     ui.output_text(id = 'birth_info_dasa'),
     ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
@@ -126,7 +127,9 @@ def server(input, output, session):
     @render.data_frame
     def get_vimsottari_dasa():
         dasas = vd.vimsottari_dasa(
-            chart = create_chart(), sub_dasa_level = 0
+            chart = create_chart(), 
+            sub_dasa_level = input.vd_sub_level(), 
+            trunc_intervals = True
         ).dasa_to_df()
         return dasas
     
@@ -203,5 +206,16 @@ def server(input, output, session):
             )
         )
         return ui_out
+    
+    @render.ui
+    def vimsottari_dasa_sub_level():
+        return ui.input_numeric(
+            id = 'vd_sub_level',
+            label = 'Vimsottari dasa sub level',
+            value = 0,
+            min = 0,
+            max = 3,
+            step = 1
+        )
 
 app = App(app_ui, server)

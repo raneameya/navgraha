@@ -19,11 +19,13 @@ class vimsottari_dasa:
         rnp_lut: pd.DataFrame = rnp, # rasi, nakshatra, pada lookup
         seed_graha: str = 'Moon', # usually moon, can be modified
         sub_dasa_level:int = 0,
+        trunc_intervals:bool = False,
         yr_len:float = 365.25
     ):
         self.chart = chart
         self.seed = seed_graha
         self.sub_dasa_level = sub_dasa_level
+        self.trunc_intervals = trunc_intervals
         self.dasa_names = [
             'Mahadasa', 'Antardasa', 'Pratyantardasa', 'Sookshmaantardasa',
             'Praanaantardasa', 'Dehaantardasa'
@@ -86,27 +88,33 @@ class vimsottari_dasa:
         # Compute mahadasas    
         self.mahadasa = compute_sub_dasa(
             di = lifespan_di,
-            first_mahadasa_lord = self.nakshatra_lord
+            first_mahadasa_lord = self.nakshatra_lord, 
+            yr_len = yr_len
         )
         if sub_dasa_level > 0:
             self.antardasa = [
-                a for m in self.mahadasa for a in compute_sub_dasa(m)
+                a for m in self.mahadasa 
+                for a in compute_sub_dasa(m, yr_len = yr_len)
             ]
         if sub_dasa_level > 1:
             self.pratyantardasa = [
-                p for a in self.antardasa for p in compute_sub_dasa(a)
+                p for a in self.antardasa 
+                for p in compute_sub_dasa(a, yr_len = yr_len)
             ]
         if sub_dasa_level > 2:
             self.sookshmaantardasa = [
-                s for p in self.pratyantardasa for s in compute_sub_dasa(p)
+                s for p in self.pratyantardasa 
+                for s in compute_sub_dasa(p, yr_len = yr_len)
             ]
         if sub_dasa_level > 3:
             self.praanaantardasa = [
-                p for s in self.sookshmaantardasa for p in compute_sub_dasa(s)
+                p for s in self.sookshmaantardasa 
+                for p in compute_sub_dasa(s, yr_len = yr_len)
             ]
         if sub_dasa_level > 4:
             self.dehaantardasa = [
-                d for p in self.praanaantardasa for d in compute_sub_dasa(p)
+                d for p in self.praanaantardasa 
+                for d in compute_sub_dasa(p, yr_len = yr_len)
             ]
     
     def __str__(self):
@@ -127,18 +135,35 @@ class vimsottari_dasa:
             di_list = self.praanaantardasa
         elif level == 5:
             di_list = self.dehaantardasa
-        # Descriptive DataFrame containing info
-        df = pd.DataFrame({
-            'Parent lord(s)': [di.parent_lord for di in di_list],
-            'Lord': [di.lord for di in di_list],
-            'Period': [di.interval for di in di_list],
-            'Length': [di.interval.length for di in di_list]
-        })
+        # Create df from list of dasa_intervals
+        df = pd.DataFrame(
+            [
+                [di.parent_lord, di.lord, di.interval, di.interval.length] 
+                for di in di_list
+            ], columns = ['Parent lord(s)', 'Lord', 'Period', 'Length']
+        )
+        # TODO: Alternate approach, is there any performance difference?
+        # df = pd.DataFrame({
+        #     'Parent lord(s)': [di.parent_lord for di in di_list],
+        #     'Lord': [di.lord for di in di_list],
+        #     'Period': [di.interval for di in di_list],
+        #     'Length': [di.interval.length for di in di_list]
+        # })
+        # Truncate interval columns for better readability
+        if self.trunc_intervals:
+            df['Period'] = df['Period'].apply(func = lambda x: (
+                # 'closed' attribute of interval is ignored                
+                f'{x.left.round('h').strftime('%d-%m-%Y %HH')} - '
+                f'{x.right.round('h').strftime('%d-%m-%Y %HH')}'
+            ))
         if level == 0:
-            return df[['Lord', 'Period', 'Length']].rename(columns = {'Lord': 'Mahadasa'})
+            return df[
+                ['Lord', 'Period', 'Length']
+            ].rename(columns = {'Lord': 'Mahadasa'})
         # Split tuple of parent lords to their own columns
         df[cols[0:level]] = df['Parent lord(s)'].apply(pd.Series)
         df.rename(columns = {'Lord': cols[level]}, inplace = True)
+        # Reorder columns
         df = df[cols[0:(level + 1)] + ['Period', 'Length']]
         return df
 
@@ -192,8 +217,8 @@ class dasa_interval:
 
 def compute_sub_dasa(
     di:dasa_interval, 
-    first_mahadasa_lord:str = None,
-    yr_len:float = 365.25
+    yr_len:float,
+    first_mahadasa_lord:str = None    
 ):
     if di.level == 0 and first_mahadasa_lord is None:
         raise ValueError(f'''
