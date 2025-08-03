@@ -154,8 +154,8 @@ class vimsottari_dasa:
             df['Period'] = df['Period'].apply(func = lambda x: (
                 # 'closed' attribute of interval is ignored
                 # Use "" because '' are used inside fstring
-                f"{x.left.round('h').strftime('%d-%m-%Y %HH')} - "
-                f"{x.right.round('h').strftime('%d-%m-%Y %HH')}"
+                f"{x.left.strftime('%d-%m-%Y %HH')} - "
+                f"{x.right.strftime('%d-%m-%Y %HH')}"
             ))
         if level == 0:
             return df[
