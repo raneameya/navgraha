@@ -27,8 +27,8 @@ class vimsottari_dasa:
         self.sub_dasa_level = sub_dasa_level
         self.trunc_intervals = trunc_intervals
         self.dasa_names = [
-            'Mahadasa', 'Antardasa', 'Pratyantardasa', 'Sookshmaantardasa',
-            'Praanaantardasa', 'Dehaantardasa'
+            'Mahadaśā', 'Antardaśā', 'Pratyantardaśā', 'Sookshmaantardaśā',
+            'Praanaantardaśā', 'Dehaantardaśā'
         ]
         chart_df = chart.placements
         # Longitude of the seed graha
@@ -54,8 +54,6 @@ class vimsottari_dasa:
             Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
             Length = ('Vimshottari dasa (yrs)', 'sum')
         )
-        # Only for test, delete next line
-        self.rnp_gb = rnp_gb        
         # Which nakshatra does the seed graha lie in, 
         # and who is that nakshatra's lord?
         self.nakshatra, self.nakshatra_lord = rnp_gb[
@@ -85,7 +83,7 @@ class vimsottari_dasa:
         lifespan_di = dasa_interval(
             lord = None, interval = lifespan, level = 0
         )
-        # Compute mahadasas    
+        # Compute mahadasas
         self.mahadasa = compute_sub_dasa(
             di = lifespan_di,
             first_mahadasa_lord = self.nakshatra_lord, 
@@ -116,19 +114,19 @@ class vimsottari_dasa:
                 d for p in self.praanaantardasa 
                 for d in compute_sub_dasa(p, yr_len = yr_len)
             ]
-    
+
     def __str__(self):
         return f'Vimsottari dasha object for {self.chart.datetime}.'
-    
+
     def dasa_to_df(self):
         level = self.sub_dasa_level
         cols = self.dasa_names
         if level == 0:
             di_list = self.mahadasa
         elif level == 1:
-            di_list = self.antardasa            
+            di_list = self.antardasa
         elif level == 2:
-            di_list = self.pratyantardasa            
+            di_list = self.pratyantardasa
         elif level == 3:
             di_list = self.sookshmaantardasa
         elif level == 4:
@@ -219,7 +217,7 @@ class dasa_interval:
 def compute_sub_dasa(
     di:dasa_interval, 
     yr_len:float,
-    first_mahadasa_lord:str = None    
+    first_mahadasa_lord:str = None
 ):
     if di.level == 0 and first_mahadasa_lord is None:
         raise ValueError(f'''
@@ -237,25 +235,25 @@ def compute_sub_dasa(
         lord = first_mahadasa_lord # Maha
         parent_lord = [None for i in range(9)]
     else:
-        lord = di.lord        
+        lord = di.lord
     scale = di.interval.length / dt.timedelta(days = 120 * yr_len)
     # Create ordered list of sub-dasa lords and their lengths
     sub_lords = [
         'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 
         'Saturn', 'Mercury'
-    ]    
-    sub_lengths = [scale * l for l in [7, 20, 6, 10, 7, 18, 16, 19, 17]]    
+    ]
+    sub_lengths = [scale * l for l in [7, 20, 6, 10, 7, 18, 16, 19, 17]]
     cyclic_shift_start_index = sub_lords.index(lord)
     sub_lords = cyclic_shift(
         x = sub_lords, start = cyclic_shift_start_index
-    )    
+    )
     sub_lengths = cyclic_shift(
         x = sub_lengths, start = cyclic_shift_start_index
-    )    
+    )
     # Helper array of timedeltas to add to sub_dasa_start_datetime
     sub_dasa_start_deltas = np.cumsum(np.array([
         dt.timedelta(days = yr_len * sl) for sl in sub_lengths
-    ]))    
+    ]))
     sub_dasa_start_datetime = di.interval.left
     # Create list of sub-dasa start datetimes
     sub_dasa_start_datetimes = [sub_dasa_start_datetime] + [
@@ -279,7 +277,7 @@ def compute_sub_dasa(
             ), 
             level = di.level + 1,
             parent_lord = None if parent_lord[i][0] is None else parent_lord[i]
-        )             
+        )
         for i in range((len(sub_dasa_start_datetimes) - 1))
     ]
     return sub_dasa_intervals
