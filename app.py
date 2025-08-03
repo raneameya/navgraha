@@ -122,8 +122,8 @@ def server(input, output, session):
     @render.data_frame
     def get_vimsottari_dasa():
         dasas = vd.vimsottari_dasa(
-            chart = create_chart()
-        ).dasa_to_df(level = 2)
+            chart = create_chart(), sub_dasa_level = 0
+        ).dasa_to_df()
         return dasas
     
     @render.text

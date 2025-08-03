@@ -9,7 +9,9 @@ import datetime as dt # timedeltas used
 class vimsottari_dasa:
     '''
     A class that computes and stores information about the vimsottari dasa 
-    for a given chart
+    for a given chart.
+    This is built on top of dasa_intervals and outputs a list of 
+    dasa_intervals depending on the depth of the sub-dasa.
     '''
     def __init__(
         self, 
@@ -21,7 +23,11 @@ class vimsottari_dasa:
     ):
         self.chart = chart
         self.seed = seed_graha
-        self.dasa_level = sub_dasa_level
+        self.sub_dasa_level = sub_dasa_level
+        self.dasa_names = [
+            'Mahadasa', 'Antardasa', 'Pratyantardasa', 'Sookshmaantardasa',
+            'Praanaantardasa', 'Dehaantardasa'
+        ]
         chart_df = chart.placements
         # Longitude of the seed graha
         seed_deg = chart_df.loc[
@@ -77,39 +83,50 @@ class vimsottari_dasa:
         lifespan_di = dasa_interval(
             lord = None, interval = lifespan, level = 0
         )
-        # Compute mahadasas
-        dasa_intervals = compute_sub_dasa(
+        # Compute mahadasas    
+        self.mahadasa = compute_sub_dasa(
             di = lifespan_di,
             first_mahadasa_lord = self.nakshatra_lord
         )
-        self.mahadasa = dasa_intervals
-        self.antardasa = [a for m in self.mahadasa for a in compute_sub_dasa(m)]
-        self.pratyantardasa = [
-            p for a in self.antardasa for p in compute_sub_dasa(a)
-        ]
-        self.sookshmaantardasa = [
-            s for p in self.pratyantardasa for s in compute_sub_dasa(p)
-        ]
-        # Descriptive DataFrame containing info
-        self.dasas = pd.DataFrame({
-            'Lord': [di.lord for di in dasa_intervals],
-            'Period': [di.interval for di in dasa_intervals],
-            'Length': [di.interval.length for di in dasa_intervals]
-        })
+        if sub_dasa_level > 0:
+            self.antardasa = [
+                a for m in self.mahadasa for a in compute_sub_dasa(m)
+            ]
+        if sub_dasa_level > 1:
+            self.pratyantardasa = [
+                p for a in self.antardasa for p in compute_sub_dasa(a)
+            ]
+        if sub_dasa_level > 2:
+            self.sookshmaantardasa = [
+                s for p in self.pratyantardasa for s in compute_sub_dasa(p)
+            ]
+        if sub_dasa_level > 3:
+            self.praanaantardasa = [
+                p for s in self.sookshmaantardasa for p in compute_sub_dasa(s)
+            ]
+        if sub_dasa_level > 4:
+            self.dehaantardasa = [
+                d for p in self.praanaantardasa for d in compute_sub_dasa(p)
+            ]
     
     def __str__(self):
         return f'Vimsottari dasha object for {self.chart.datetime}.'
     
-    def dasa_to_df(self, level:int):
-        cols = ['Mahadasa', 'Antardasa', 'Pratyantardasa', 'Sookshmaantardasa']
+    def dasa_to_df(self):
+        level = self.sub_dasa_level
+        cols = self.dasa_names
         if level == 0:
             di_list = self.mahadasa
-        if level == 1:
+        elif level == 1:
             di_list = self.antardasa            
-        if level == 2:
+        elif level == 2:
             di_list = self.pratyantardasa            
-        if level == 3:
+        elif level == 3:
             di_list = self.sookshmaantardasa
+        elif level == 4:
+            di_list = self.praanaantardasa
+        elif level == 5:
+            di_list = self.dehaantardasa
         # Descriptive DataFrame containing info
         df = pd.DataFrame({
             'Parent lord(s)': [di.parent_lord for di in di_list],
@@ -119,6 +136,7 @@ class vimsottari_dasa:
         })
         if level == 0:
             return df[['Lord', 'Period', 'Length']].rename(columns = {'Lord': 'Mahadasa'})
+        # Split tuple of parent lords to their own columns
         df[cols[0:level]] = df['Parent lord(s)'].apply(pd.Series)
         df.rename(columns = {'Lord': cols[level]}, inplace = True)
         df = df[cols[0:(level + 1)] + ['Period', 'Length']]
