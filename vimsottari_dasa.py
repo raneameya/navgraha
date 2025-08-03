@@ -152,9 +152,10 @@ class vimsottari_dasa:
         # Truncate interval columns for better readability
         if self.trunc_intervals:
             df['Period'] = df['Period'].apply(func = lambda x: (
-                # 'closed' attribute of interval is ignored                
-                f'{x.left.round('h').strftime('%d-%m-%Y %HH')} - '
-                f'{x.right.round('h').strftime('%d-%m-%Y %HH')}'
+                # 'closed' attribute of interval is ignored
+                # Use "" because '' are used inside fstring
+                f"{x.left.round('h').strftime('%d-%m-%Y %HH')} - "
+                f"{x.right.round('h').strftime('%d-%m-%Y %HH')}"
             ))
         if level == 0:
             return df[
