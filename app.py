@@ -8,6 +8,7 @@ import vimsottari_dasa as vd
 
 table_nav_panel = ui.nav_panel(
     'Table',
+    ui.include_js(path = 'js/viewport.js'),
     ui.output_text(id = 'birth_info_chart'),
     ui.output_data_frame(id = 'get_chart_data')
 )
@@ -126,9 +127,9 @@ def server(input, output, session):
         # Keep subset
         p = p[[
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
-            'Nakshatra lord', 'Pada','Speed'
+            'Nakshatra lord', 'Pada', 'Speed'
         ]]
-        return render.DataGrid(p, height = '800px')
+        return p
 
     @render.data_frame
     def get_vimsottari_dasa():
@@ -137,7 +138,10 @@ def server(input, output, session):
             sub_dasa_level = int(input.vimsottari_dasa_sub_level()), 
             trunc_intervals = True
         ).dasa_to_df()
-        return dasas
+        # Currently, about 280px are used by other pills, radio buttons, 
+        # headers, etc. This value may need to be changed in the future if 
+        # more ui elements are added above this table.
+        return render.DataGrid(dasas, height = f'{input.height() - 280}px')
     
     @render.text
     def birth_info_chart():
@@ -167,7 +171,7 @@ def server(input, output, session):
                     id = 'b_date',
                     label = 'Input date',
                     value = datetime.today().strftime('%Y-%m-%d'),
-                    format = 'yyyy-mm-dd',            
+                    format = 'yyyy-mm-dd',
                     weekstart = 0,
                     autoclose = True
                 ), 
