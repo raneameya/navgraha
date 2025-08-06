@@ -10,3 +10,5 @@ allCountries.txt
 pyvenv.cfg
 setup
 example_chart.pickle
+*.conf
+*.jhd
