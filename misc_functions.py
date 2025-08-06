@@ -1,5 +1,6 @@
 import pytz, re, stdout_to_pd as sp, pandas as pd
 from datetime import datetime
+from chart import chart as crt
 
 def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
     '''
@@ -25,27 +26,27 @@ def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
 def add_non_equi_col_old(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
     # Create column of p2's indices in p1 
     # that correspond to value between high and low
-    matched_idx=p1[p1col].apply(
+    matched_idx = p1[p1col].apply(
         lambda x: p2[(p2[p2col_low]<=x) & (x<p2[p2col_high])].index.item()
     )
     # Append columns from p2 corresponding to the indices
     # These columns may contain repeated rows, so reset index
-    p1[p2col_get]=p2.iloc[
+    p1[p2col_get] = p2.iloc[
         matched_idx, p2.columns.get_indexer(p2col_get)
-    ].reset_index(drop=True)
+    ].reset_index(drop = True)
     return p1
 
 def round_cols(p, cols, round):
     for col, rd in zip(cols, round):
         if pd.api.types.is_numeric_dtype(p[col]):
-            p[col]=p[col].round(rd)
+            p[col] = p[col].round(rd)
         elif pd.api.types.is_object_dtype(p[col]):
-            p[col]=p[col].str.replace(
+            p[col] = p[col].str.replace(
                 r'(?<=\.).*', 
                 # The commented lambda works in terminal, but not in function
                 # lambda m: str(round(float(m.group(0)),rd)), 
                 lambda m: m.group(0)[0:rd], 
-                regex=True
+                regex = True
             )
     return p
 
@@ -84,3 +85,24 @@ def cyclic_shift(x, start: int):
         for i in range(len_x)
     ]
     return [x[i] for i in cyclic_idx]
+
+def chart_kwargs(chart:crt, dt:datetime):
+    '''
+    Returns a dictionary mapping the arguments to create a new chart with 
+    the specified datetime, at the same place as the input chart. This is 
+    useful to calculate a tajaka based on the original chart
+    '''
+    kwarg_dict = {
+        'b_yr': dt.year,
+        'b_mo': dt.month,
+        'b_da': dt.day,
+        'b_hr': dt.hour,
+        'b_mi': dt.minute,
+        'b_sc': dt.second,
+        'b_lon': chart.lon,
+        'b_lat': chart.lat,
+        'b_tz': chart.tz, 
+        'ay': chart.ayanamsa,
+        'place': chart.place
+    }
+    return kwarg_dict

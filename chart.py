@@ -23,6 +23,7 @@ class chart:
         self.lat = b_lat
         self.lon = b_lon        
         self.ayanamsa = ay
+        self.tz = b_tz
         # Create a datetime object in local timezone, from the individual 
         # inputs of year, month, date, hour, minute, second & timezone
         # Need to specify initial datetime without timezone

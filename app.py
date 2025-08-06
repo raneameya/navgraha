@@ -1,6 +1,6 @@
 from shiny import App, ui, render, req, reactive
-from datetime import datetime
-from constants import rnp, ayanamsas
+from datetime import datetime, timedelta
+from constants import rnp, ayanamsas, yr_len
 import stdout_to_pd as std2pd
 import misc_functions as mf
 import chart as crt
@@ -28,6 +28,12 @@ dasa_nav_panel = ui.nav_panel(
     ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
 
+tajaka_nav_panel = ui.nav_panel(
+    'Tājaka',
+    ui.output_ui(id = 'tajaka_year_choices'),
+    ui.output_data_frame(id = 'tajaka_chart')
+)
+
 moon_nav_panel = ui.nav_panel(
     'Lunar phase',
     #ui.output_data_frame(id='moon_phases')
@@ -43,6 +49,7 @@ app_ui = ui.page_fillable(
         ui.nav_spacer(),
         table_nav_panel,
         dasa_nav_panel,
+        tajaka_nav_panel,
         #moon_nav_panel,
         ui.nav_control(ui.input_dark_mode()),
         id = 'pill'
@@ -151,6 +158,23 @@ def server(input, output, session):
     @render.text
     def birth_info_dasa():
         return create_chart().repr_str
+    
+    @render.data_frame
+    def tajaka_chart():
+        args = mf.chart_kwargs(
+            chart = create_chart(), 
+            dt = create_chart().datetime + timedelta(days = (
+                int(input.tajaka_year()) - create_chart().datetime.year
+            ) * yr_len)
+        )
+        out = mf.round_cols(
+            crt.chart(**args).placements, ['Lon°', 'Speed'], [1, 3]
+        )[[
+            'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
+            'Nakshatra lord', 'Pada', 'Speed'
+        ]]
+        return out
+
 
     ## Lunar phases tab
     # @render_widget
@@ -216,5 +240,14 @@ def server(input, output, session):
             )
         )
         return ui_out
+    
+    @render.ui
+    def tajaka_year_choices():
+        return ui.input_select(
+            id = 'tajaka_year',
+            label = 'Tajaka year',
+            choices = list(range(1900, 3000, 1)), 
+            selected = input.b_date().year
+        )
 
 app = App(app_ui, server)

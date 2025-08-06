@@ -12,3 +12,5 @@ nakshatra=lut['Nakshatra']
 # Read in list of ayanamsas and their swetest arguments. Used to expose 
 # list of available ayanmsas to user
 ayanamsas=pd.read_csv('ayanamsa_list.csv', index_col='Argument')
+
+yr_len = 365.24219
