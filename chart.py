@@ -7,21 +7,21 @@ class chart:
     A class to create birth charts from input datetime, lat, lon & ayanamsa
     """
     def __init__(
-        self, 
-        b_yr:int, 
-        b_mo:int, 
-        b_da:int, 
-        b_hr:int, 
-        b_mi:int, 
-        b_sc:int, 
-        b_lon:float, 
-        b_lat:float, 
-        b_tz:str, 
-        ay:str, 
+        self,
+        b_yr:int,
+        b_mo:int,
+        b_da:int,
+        b_hr:int,
+        b_mi:int,
+        b_sc:int,
+        b_lon:float,
+        b_lat:float,
+        b_tz:str,
+        ay:str,
         place:str = None
     ):
         self.lat = b_lat
-        self.lon = b_lon        
+        self.lon = b_lon
         self.ayanamsa = ay
         self.tz = b_tz
         # Create a datetime object in local timezone, from the individual 
@@ -47,10 +47,10 @@ class chart:
         if place is not None:
             self.place = place
             self.repr_str = f'{place} {self.repr_str} ({b_lat}, {b_lon})'
-    
+
     def __repr__(self):
         return self.repr_str
-    
+
     def compute_placements(self):
         # Avoid repititous compute if already computed once
         if hasattr(self, 'placements'):
@@ -68,10 +68,10 @@ class chart:
             p = p.head(10)
             # Add other details
             add_cols = [
-                'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada'                
+                'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada'
             ]
             # p = mf.add_non_equi_col(
-            #     p1 = p, 
+            #     p1 = p,
             #     p2 = rnp,
             #     p1col = 'Lon',
             #     p2col_low = 'Start',
@@ -79,7 +79,7 @@ class chart:
             #     p2col_get = add_cols
             # )
             p = mf.add_non_equi_col(
-                p1 = p, 
+                p1 = p,
                 p2 = rnp,
                 p1col = 'Lon',
                 p2col_range = 'Degrees',
@@ -87,8 +87,8 @@ class chart:
             )
             return p
 
-def birth_datetime_args(dt:datetime):    
-    # Return a list of UTC birth date & UTC birth time 
+def birth_datetime_args(dt:datetime):
+    # Return a list of UTC birth date & UTC birth time
     # from local birth datetime
     # Convert to UTC
     birth_datetime_utc = dt.astimezone(pytz.utc)
@@ -105,7 +105,7 @@ def swetest(sweedir, birth_args):
     binary = [sweedir + 'swetest']
     # These arguments won't be exposed to the user 
     # (with the possible exception of planets)
-    common_args = ['-pp', '-head', '-edir' + edir]    
+    common_args = ['-pp', '-head', '-edir' + edir]
     # Ayanamsa and output columns
     config_args = [birth_args[3], '-fTPlLsBj']
     # To get ascendant, we need to specify house system to swetest
@@ -115,7 +115,7 @@ def swetest(sweedir, birth_args):
     ]
     # Format output of swetest so that it is space delimited
     format_args = [
-        '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'', 
+        '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
         '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
     ]
     colnames = [
@@ -124,7 +124,7 @@ def swetest(sweedir, birth_args):
     ]
     p = sp.read_stdout(
         cmd = ' '.join(
-            binary + common_args + birth_args + config_args + 
+            binary + common_args + birth_args + config_args +
             house_args + format_args
         ), 
         reader = 'table', sep = r'\s+', col_names = colnames
@@ -140,7 +140,7 @@ def swetest(sweedir, birth_args):
     # Reorder rows sensibly
     p = reorder_swetest_rows(p)
     # Replace total degrees by degrees in house/sign
-    p['Lon°']=p['Lon°'].str.replace(
+    p['Lon°'] = p['Lon°'].str.replace(
         pat = r'^\d+',
         repl = lambda m: str(int(m.group(0))%30),
         regex = True
@@ -168,13 +168,13 @@ def add_ketu(p):
     # Convenience function to add 180° to dms
     def add_180_deg(x):
         x_deg = str((int(re.search(r'^\d+', x).group(0))+180)%360)
-        x_min_sec = '°'+re.search(r'(?<=°).*', x).group(0)        
+        x_min_sec = '°'+re.search(r'(?<=°).*', x).group(0)
         return x_deg + x_min_sec
     # Replace 'Rahu' with 'Ketu' and add 180°
     # House calculation not done here as can be done in one fell swoop
     ketu.loc[:, ['Graha', 'Lon', 'Lon°']] = pd.DataFrame({
-        'Graha':ketu['Graha'].str.replace('Rahu', 'Ketu'), 
-        'Lon':ketu['Lon'].apply(lambda x: (x+180)%360), 
+        'Graha':ketu['Graha'].str.replace('Rahu', 'Ketu'),
+        'Lon':ketu['Lon'].apply(lambda x: (x+180)%360),
         'Lon°':ketu['Lon°'].apply(add_180_deg)
     })
     p_out = pd.concat([p, ketu])

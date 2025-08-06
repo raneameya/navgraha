@@ -8,14 +8,14 @@ import datetime as dt # timedeltas used
 
 class vimsottari_dasa:
     '''
-    A class that computes and stores information about the vimsottari dasa 
+    A class that computes and stores information about the vimsottari dasa
     for a given chart.
-    This is built on top of dasa_intervals and outputs a list of 
+    This is built on top of dasa_intervals and outputs a list of
     dasa_intervals depending on the depth of the sub-dasa.
     '''
     def __init__(
-        self, 
-        chart: crt.chart, 
+        self,
+        chart: crt.chart,
         rnp_lut: pd.DataFrame = rnp, # rasi, nakshatra, pada lookup
         seed_graha: str = 'Moon', # usually moon, can be modified
         sub_dasa_level:int = 0,
@@ -35,7 +35,7 @@ class vimsottari_dasa:
         seed_deg = chart_df.loc[
             chart_df['Graha'] == seed_graha, 'Lon'
         ].squeeze()
-        # At the longitude of the seed graha, how much of an interval 
+        # At the longitude of the seed graha, how much of an interval
         # (in this case pada, i.e. a 3° 20' interval) has the graha covered?
         rnp_lut['Dasa covered'] = rnp_lut['Degrees'].apply(
             lambda fi: fi.point_in_range_coverage(seed_deg)
@@ -44,7 +44,7 @@ class vimsottari_dasa:
         rnp_lut['Is in'] = rnp_lut['Degrees'].apply(
             lambda fi: fi.isin(seed_deg)
         )
-        # Sorting by categorical nakshatra is important because this 
+        # Sorting by categorical nakshatra is important because this
         # allows meaningful sequential subsets
         rnp_gb = rnp_lut.groupby(
             ['Nakshatra', 'Nakshatra lord'], observed = True, sort = True
@@ -54,7 +54,7 @@ class vimsottari_dasa:
             Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
             Length = ('Vimshottari dasa (yrs)', 'sum')
         )
-        # Which nakshatra does the seed graha lie in, 
+        # Which nakshatra does the seed graha lie in,
         # and who is that nakshatra's lord?
         self.nakshatra, self.nakshatra_lord = rnp_gb[
             rnp_gb['IsIn'] > 0
@@ -68,7 +68,7 @@ class vimsottari_dasa:
             'Dasa_covered'
         ].squeeze()        
         # Start datetime of 120 year lifespan
-        first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered * 
+        first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered *
             dt.timedelta(
                 days = nakshatra_lord_mahadasa_len * yr_len
             )
@@ -86,32 +86,32 @@ class vimsottari_dasa:
         # Compute mahadasas
         self.mahadasa = compute_sub_dasa(
             di = lifespan_di,
-            first_mahadasa_lord = self.nakshatra_lord, 
+            first_mahadasa_lord = self.nakshatra_lord,
             yr_len = yr_len
         )
         if sub_dasa_level > 0:
             self.antardasa = [
-                a for m in self.mahadasa 
+                a for m in self.mahadasa
                 for a in compute_sub_dasa(m, yr_len = yr_len)
             ]
         if sub_dasa_level > 1:
             self.pratyantardasa = [
-                p for a in self.antardasa 
+                p for a in self.antardasa
                 for p in compute_sub_dasa(a, yr_len = yr_len)
             ]
         if sub_dasa_level > 2:
             self.sookshmaantardasa = [
-                s for p in self.pratyantardasa 
+                s for p in self.pratyantardasa
                 for s in compute_sub_dasa(p, yr_len = yr_len)
             ]
         if sub_dasa_level > 3:
             self.praanaantardasa = [
-                p for s in self.sookshmaantardasa 
+                p for s in self.sookshmaantardasa
                 for p in compute_sub_dasa(s, yr_len = yr_len)
             ]
         if sub_dasa_level > 4:
             self.dehaantardasa = [
-                d for p in self.praanaantardasa 
+                d for p in self.praanaantardasa
                 for d in compute_sub_dasa(p, yr_len = yr_len)
             ]
 
@@ -203,7 +203,7 @@ class dasa_interval:
         self.interval = interval
         self.level = level
         self.parent_lord = parent_lord
-    
+
     def __repr__(self):
         if self.level == 0:
             dasa_str = 'dasa'
@@ -226,9 +226,9 @@ def compute_sub_dasa(
         ''')
     if di.level != 0 and first_mahadasa_lord is not None:
         raise Warning(f'''
-            Ignoring first_dasa_lord = {first_dasa_lord}, as subsequent 
+            Ignoring first_mahadasa_lord = {first_mahadasa_lord}, as subsequent 
             subdasas are inferred from the lordship of the input dasa.
-            The first sub-lord will therefore be {vi.lord}.
+            The first sub-lord will therefore be {di.lord}.
         ''')
     # Set first sub-dasa lord based on whether mahadasa or sub-dasa
     if di.lord is None:

@@ -16,7 +16,7 @@ class fractional_interval:
         self.left = left
         self.right = right
         self.closed = closed
-    
+
     def __str__(self):
         if self.closed == 'left':
             li = '['
@@ -47,7 +47,7 @@ class fractional_interval:
         else:
             out = (point - self.left)/(self.right - self.left)
             return float(out)
-    
+
     def isin(self, point: float):
         '''
         Does a point lie within an interval
