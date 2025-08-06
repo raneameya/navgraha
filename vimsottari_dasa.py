@@ -152,13 +152,13 @@ class vimsottari_dasa:
             df['Period'] = df['Period'].apply(func = lambda x: (
                 # 'closed' attribute of interval is ignored
                 # Use "" because '' are used inside fstring
-                f"{x.left.strftime('%d-%m-%Y %HH')} - "
-                f"{x.right.strftime('%d-%m-%Y %HH')}"
+                f"{x.left.strftime('%d-%m-%Y')} - "
+                f"{x.right.strftime('%d-%m-%Y')}"
             ))
         if level == 0:
             return df[
                 ['Lord', 'Period', 'Length']
-            ].rename(columns = {'Lord': 'Mahadasa'})
+            ].rename(columns = {'Lord': 'Mahadaśā'})
         # Split tuple of parent lords to their own columns
         df[cols[0:level]] = df['Parent lord(s)'].apply(pd.Series)
         df.rename(columns = {'Lord': cols[level]}, inplace = True)

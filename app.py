@@ -17,11 +17,11 @@ dasa_nav_panel = ui.nav_panel(
     'Daśa',
     ui.input_radio_buttons(
         id = 'vimsottari_dasa_sub_level',
-        label = '', 
+        label = '',
         choices = {
             '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
             '3': 'Sookśmaantardaśā'#,'4':'Praanaantardaśā'
-        }, 
+        },
         inline = True
     ),
     ui.output_text(id = 'birth_info_dasa'),
@@ -75,7 +75,7 @@ def server(input, output, session):
             by = ['population'], ascending = False, inplace = True
         )
         return render.DataGrid(places, selection_mode = 'rows')
-    
+
     @reactive.effect
     @reactive.event(input.search_place)
     def input_modal():
@@ -105,7 +105,7 @@ def server(input, output, session):
         ui.modal_remove()
         # Update the show input switch to close the input panel
         ui.update_switch(id = 'input_done', value = False)
-    
+
     @reactive.calc
     def create_chart():
         '''
@@ -120,7 +120,7 @@ def server(input, output, session):
             b_sc = int(input.b_time()[6:8]),
             b_lon = input.b_lon(),
             b_lat = input.b_lat(),
-            b_tz = input.b_tz(), 
+            b_tz = input.b_tz(),
             ay = input.b_ayanamsa(),
             place = input.b_place()
         )
@@ -152,7 +152,7 @@ def server(input, output, session):
     
     @render.text
     def birth_info_chart():
-        # To give user feedback about birth place & time selection        
+        # To give user feedback about birth place & time selection
         return create_chart().repr_str
 
     @render.text
@@ -198,7 +198,7 @@ def server(input, output, session):
                     format = 'yyyy-mm-dd',
                     weekstart = 0,
                     autoclose = True
-                ), 
+                ),
                 ui.input_text(
                     id = 'b_time',
                     label = 'Input time',
@@ -207,7 +207,7 @@ def server(input, output, session):
                 ui.input_select(
                     id = 'b_ayanamsa',
                     label = 'Choose Ayanamsa',
-                    choices = ayanamsas.to_dict(), 
+                    choices = ayanamsas.to_dict(),
                 ),
                 ui.input_text(
                     id = 'b_place',
@@ -245,7 +245,7 @@ def server(input, output, session):
     def tajaka_year_choices():
         return ui.input_select(
             id = 'tajaka_year',
-            label = 'Tajaka year',
+            label = 'Tājaka year',
             choices = list(range(1900, 3000, 1)), 
             selected = input.b_date().year
         )
