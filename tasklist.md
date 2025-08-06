@@ -3,6 +3,9 @@
 ### Add features
 - Ability to read from .jhd files (Jagannatha Hora savefiles)
 - Tajaka annual charts
+    - Use tropical ayanamsa to find out birth Sun longitude
+    - In tropical ayanamsa, find time in that year when Sun reached same longitude
+    - Cast chart at that time in sideral ayanamsa
 - Clean up chart class
     - clean functions
 - Clean stdout_to_pd
