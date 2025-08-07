@@ -1,6 +1,5 @@
 import pytz, re, stdout_to_pd as sp, pandas as pd
 from datetime import datetime
-from chart import chart as crt
 
 def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
     '''
@@ -86,12 +85,14 @@ def cyclic_shift(x, start: int):
     ]
     return [x[i] for i in cyclic_idx]
 
-def chart_kwargs(chart:crt, dt:datetime):
+def chart_kwargs(chart, dt:datetime, ay = None):
     '''
     Returns a dictionary mapping the arguments to create a new chart with 
     the specified datetime, at the same place as the input chart. This is 
     useful to calculate a tajaka based on the original chart
     '''
+    if ay is None:
+        ay = chart.ayanamsa
     kwarg_dict = {
         'b_yr': dt.year,
         'b_mo': dt.month,
@@ -102,7 +103,7 @@ def chart_kwargs(chart:crt, dt:datetime):
         'b_lon': chart.lon,
         'b_lat': chart.lat,
         'b_tz': chart.tz, 
-        'ay': chart.ayanamsa,
+        'ay': ay,
         'place': chart.place
     }
     return kwarg_dict

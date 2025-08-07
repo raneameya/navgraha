@@ -5,6 +5,7 @@ import stdout_to_pd as std2pd
 import misc_functions as mf
 import chart as crt
 import vimsottari_dasa as vd
+import sol_cross as sc
 
 table_nav_panel = ui.nav_panel(
     'Table',
@@ -31,7 +32,8 @@ dasa_nav_panel = ui.nav_panel(
 tajaka_nav_panel = ui.nav_panel(
     'Tājaka',
     ui.output_ui(id = 'tajaka_year_choices'),
-    ui.output_data_frame(id = 'tajaka_chart')
+    ui.output_text(id = 'tajaka_info'),
+    ui.output_data_frame(id = 'tajaka_chart_df')
 )
 
 moon_nav_panel = ui.nav_panel(
@@ -107,7 +109,7 @@ def server(input, output, session):
         ui.update_switch(id = 'input_done', value = False)
 
     @reactive.calc
-    def create_chart():
+    def birth_chart():
         '''
         Return a chart object that can be reused across the app
         '''
@@ -128,7 +130,7 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
-        p = create_chart().placements
+        p = birth_chart().placements
         # Round some cols
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
@@ -141,7 +143,7 @@ def server(input, output, session):
     @render.data_frame
     def get_vimsottari_dasa():
         dasas = vd.vimsottari_dasa(
-            chart = create_chart(), 
+            chart = birth_chart(), 
             sub_dasa_level = int(input.vimsottari_dasa_sub_level()), 
             trunc_intervals = True
         ).dasa_to_df()
@@ -153,27 +155,37 @@ def server(input, output, session):
     @render.text
     def birth_info_chart():
         # To give user feedback about birth place & time selection
-        return create_chart().repr_str
+        return birth_chart().repr_str
 
     @render.text
     def birth_info_dasa():
-        return create_chart().repr_str
+        return birth_chart().repr_str
     
-    @render.data_frame
+    @reactive.calc
     def tajaka_chart():
         args = mf.chart_kwargs(
-            chart = create_chart(), 
-            dt = create_chart().datetime + timedelta(days = (
-                int(input.tajaka_year()) - create_chart().datetime.year
-            ) * yr_len)
+            chart = birth_chart(), 
+            dt = sc.sol_cross(
+                yr = int(input.tajaka_year()), 
+                birth_crt = birth_chart(), 
+                tropical = True
+            )
         )
+        return crt.chart(**args)
+
+    @render.data_frame
+    def tajaka_chart_df():
         out = mf.round_cols(
-            crt.chart(**args).placements, ['Lon°', 'Speed'], [1, 3]
+            tajaka_chart().placements, ['Lon°', 'Speed'], [1, 3]
         )[[
             'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra', 
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return out
+    
+    @render.text
+    def tajaka_info():
+        return tajaka_chart().repr_str
 
 
     ## Lunar phases tab
