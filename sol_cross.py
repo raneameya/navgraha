@@ -41,16 +41,19 @@ def sol_cross(
     loop_dt = init_datetime + td    
     deg_delta = 10000
     loop_num = 0
-    while deg_delta > 0.000001:
+    loop_lon = 0
+    print(f'target_lon:{target_lon%360}')
+    while abs(deg_delta) > 0.000001:
         if tropical:
             chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt, ay = '')        
         else:
             chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt)
-        loop_lon = get_sun_lon(crt.chart(**chart_args))
-        
+        loop_lon = get_sun_lon(crt.chart(**chart_args))        
         deg_delta = (target_lon%360) - loop_lon
-        # 365 for "slow" approach
         loop_td = dt.timedelta(days = deg_delta/(360/365))
         loop_dt = loop_dt + loop_td
         loop_num = loop_num + 1
+        # Generally good enough estimate 10 loops in
+        if loop_num > 10:
+            break
     return loop_dt
