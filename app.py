@@ -16,16 +16,21 @@ table_nav_panel = ui.nav_panel(
 
 dasa_nav_panel = ui.nav_panel(
     'Daśa',
-    ui.input_radio_buttons(
+    ui.input_numeric(
+        id = 'dasa_offset_days', 
+        label = 'Offset daśa dates', 
+        value = 0, step = 1
+    ), 
+    ui.input_select(
         id = 'vimsottari_dasa_sub_level',
         label = '',
         choices = {
             '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
             '3': 'Sookśmaantardaśā'#,'4':'Praanaantardaśā'
-        },
-        inline = True
+        }
     ),
     ui.output_text(id = 'birth_info_dasa'),
+    ui.output_text(id = 'offset_info_dasa'),
     ui.output_data_frame(id = 'get_vimsottari_dasa')
 )
 
@@ -139,23 +144,49 @@ def server(input, output, session):
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return p
+    
+    @reactive.calc
+    def natal_vimsottari_dasa():
+        return vd.vimsottari_dasa(
+            chart = birth_chart(), 
+            sub_dasa_level = int(input.vimsottari_dasa_sub_level()), 
+            dasa_offset_days = input.dasa_offset_days(),
+            trunc_intervals = True
+        )
 
     @render.data_frame
     def get_vimsottari_dasa():
-        dasas = vd.vimsottari_dasa(
-            chart = birth_chart(), 
-            sub_dasa_level = int(input.vimsottari_dasa_sub_level()), 
-            trunc_intervals = True
-        ).dasa_to_df()
+        dasas = natal_vimsottari_dasa()
         # Currently, about 280px are used by other pills, radio buttons, 
         # headers, etc. This value may need to be changed in the future if 
         # more ui elements are added above this table.
-        return render.DataGrid(dasas, height = f'{input.height() - 280}px')
+        return render.DataGrid(
+            data = dasas.dasa_to_df(), height = f'{input.height() - 280}px', 
+            filters = int(input.vimsottari_dasa_sub_level()) > 0
+        )
     
     @render.text
     def birth_info_chart():
         # To give user feedback about birth place & time selection
         return birth_chart().repr_str
+
+    @render.text
+    def offset_info_dasa():
+        dasa_offset_days = natal_vimsottari_dasa().dasa_offset_days
+        if dasa_offset_days > 0:
+            direction = 'future'
+        elif dasa_offset_days < 0:
+            direction = 'past'
+        else:
+            direction = ''
+        if abs(dasa_offset_days) > 0:
+            dasa_shift_text = (
+                f'Daśās shifted in the {direction} by '
+                f'{abs(dasa_offset_days)} days'
+            )
+        else:
+            dasa_shift_text = ''
+        return dasa_shift_text
 
     @render.text
     def birth_info_dasa():

@@ -15,6 +15,7 @@ class vimsottari_dasa:
         chart (chart): The natal chart for which the daśās need to be computed.
         seed_graha (str): This is usually Moon, unless some other graha is extremely powerful in the chart or the Moon is exceptionally weak.
         sub_dasa_level (int): One of the following 0:'Mahadaśā', 1:'Antardaśā', 2:'Pratyantardaśā', 3:'Sookshmaantardaśā', 4:'Praanaantardaśā', 5:'Dehaantardaśā'
+        dasa_offset_days (int): By how many days should all the daśā periods be shifted in the future?
         trunc_intervals (bool): Should the dasa (or sub-dasa) periods be truncated to days? Set False to see more precise daśā intervals.
         yr_len (float): How long should a year be?
         rnp_lut (DataFrame): rasi, nakshatra, pada lookup table. Leave unchanged.
@@ -31,21 +32,21 @@ class vimsottari_dasa:
         sookshmaantardasa (list[dasa_interval]): If sub_dasa_level > 2, a list of 6561 dasa_intervals, one for each quadruple of grahas.
         praanaantardasa (list[dasa_interval]): If sub_dasa_level > 3, a list of 59049 dasa_intervals, one for each quintuple of grahas.
         dehaantardasa (list[dasa_interval]): If sub_dasa_level > 4, a list of 531441 dasa_intervals, one for each sextuple of grahas.
-    Raises:
-        ValueError: If length or width are negative.
     '''
     def __init__(
         self,
         chart: crt.chart,
         seed_graha: str = 'Moon',
         sub_dasa_level:int = 0,
+        dasa_offset_days:int = 0,
         trunc_intervals:bool = False,
         yr_len:float = 365.25,
         rnp_lut: pd.DataFrame = rnp
-    ) -> vimsottari_dasa:
+    ):
         self.chart = chart
         self.seed = seed_graha
         self.sub_dasa_level = sub_dasa_level
+        self.dasa_offset_days = dasa_offset_days
         self.trunc_intervals = trunc_intervals
         self.dasa_names = [
             'Mahadaśā', 'Antardaśā', 'Pratyantardaśā', 'Sookshmaantardaśā',
@@ -88,12 +89,10 @@ class vimsottari_dasa:
         self.dasa_covered = rnp_gb[rnp_gb['IsIn'] > 0][
             'Dasa_covered'
         ].squeeze()
-        # Start datetime of 120 year lifespan
+        # Start datetime of 120 year lifespan, accounting for offset days
         first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered *
-            dt.timedelta(
-                days = nakshatra_lord_mahadasa_len * yr_len
-            )
-        )
+            dt.timedelta(days = nakshatra_lord_mahadasa_len * yr_len)
+        ) + dt.timedelta(days = dasa_offset_days)
         # Create pandas.Interval corresponding to the 120 year lifespan
         lifespan = pd.Interval(
             left = first_dasa_start,
