@@ -61,16 +61,3 @@ class fractional_interval:
         if self.closed in ['left', 'none']:
             right_in = self.right > point
         return (left_in & right_in)
-
-def get_endpoints_from_point_coverage(
-    point: float, coverage: float, interval_length
-):
-    '''
-    Compute a fractional interval given a point, the %age covered by the 
-    point in the desired interval and the length of the interval. If the 
-    length of the interval is a timedelta, the interval is returned as a 
-    tuple of start and end times.
-    '''
-    left = point - (coverage * interval_length)
-    right = left + interval_length
-    return (left, right)
