@@ -8,20 +8,41 @@ import datetime as dt # timedeltas used
 
 class vimsottari_dasa:
     '''
-    A class that computes and stores information about the vimsottari dasa
+    A class that computes and stores information about the vimsottari daśā
     for a given chart.
-    This is built on top of dasa_intervals and outputs a list of
-    dasa_intervals depending on the depth of the sub-dasa.
+    The sub_dasa attributes are a list of dasa_intervals depending on sub_dasa_level
+    Args:
+        chart (chart): The natal chart for which the daśās need to be computed.
+        seed_graha (str): This is usually Moon, unless some other graha is extremely powerful in the chart or the Moon is exceptionally weak.
+        sub_dasa_level (int): One of the following 0:'Mahadaśā', 1:'Antardaśā', 2:'Pratyantardaśā', 3:'Sookshmaantardaśā', 4:'Praanaantardaśā', 5:'Dehaantardaśā'
+        trunc_intervals (bool): Should the dasa (or sub-dasa) periods be truncated to days? Set False to see more precise daśā intervals.
+        yr_len (float): How long should a year be?
+        rnp_lut (DataFrame): rasi, nakshatra, pada lookup table. Leave unchanged.
+    Returns:
+        vimsottari_dasa: A vimsottari_dasa object with various attributes
+    Attributes:
+        dasa_names (list[str]): A list of the names of the 6 sub-dasa levels. Provided for convenience and reuse
+        nakshatra (str): The nakshatra in which the seed graha lies
+        nakshatra_lord (str): The graha lord of the nakshatra in which the seed graha lies
+        dasa_covered (float): A fraction in [0, 1) indicating how much of the nakshatra has the seed graha covered. This determines when the daśā starts. A larger fraction means that the daśā of nakshatra lord began more in the past relative to the natal birth.
+        mahadasa (list[dasa_interval]): A list of 9 dasa_intervals, one for each graha.
+        antardasa (list[dasa_interval]): If sub_dasa_level > 0, a list of 81 dasa_intervals, one for each pair of grahas.
+        pratyantardasa (list[dasa_interval]): If sub_dasa_level > 1, a list of 729 dasa_intervals, one for each triple of grahas.
+        sookshmaantardasa (list[dasa_interval]): If sub_dasa_level > 2, a list of 6561 dasa_intervals, one for each quadruple of grahas.
+        praanaantardasa (list[dasa_interval]): If sub_dasa_level > 3, a list of 59049 dasa_intervals, one for each quintuple of grahas.
+        dehaantardasa (list[dasa_interval]): If sub_dasa_level > 4, a list of 531441 dasa_intervals, one for each sextuple of grahas.
+    Raises:
+        ValueError: If length or width are negative.
     '''
     def __init__(
         self,
         chart: crt.chart,
-        rnp_lut: pd.DataFrame = rnp, # rasi, nakshatra, pada lookup
-        seed_graha: str = 'Moon', # usually moon, can be modified
+        seed_graha: str = 'Moon',
         sub_dasa_level:int = 0,
         trunc_intervals:bool = False,
-        yr_len:float = 365.25
-    ):
+        yr_len:float = 365.25,
+        rnp_lut: pd.DataFrame = rnp
+    ) -> vimsottari_dasa:
         self.chart = chart
         self.seed = seed_graha
         self.sub_dasa_level = sub_dasa_level
@@ -50,7 +71,7 @@ class vimsottari_dasa:
             ['Nakshatra', 'Nakshatra lord'], observed = True, sort = True
         ).agg(
             Dasa_covered = ('Dasa covered', 'mean'),
-            IsIn = ('Is in', 'mean'), 
+            IsIn = ('Is in', 'mean'),
             Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
             Length = ('Vimshottari dasa (yrs)', 'sum')
         )
@@ -66,7 +87,7 @@ class vimsottari_dasa:
         # How much of the dasa is completed at the time of birth?
         self.dasa_covered = rnp_gb[rnp_gb['IsIn'] > 0][
             'Dasa_covered'
-        ].squeeze()        
+        ].squeeze()
         # Start datetime of 120 year lifespan
         first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered *
             dt.timedelta(
@@ -136,7 +157,7 @@ class vimsottari_dasa:
         # Create df from list of dasa_intervals
         df = pd.DataFrame(
             [
-                [di.parent_lord, di.lord, di.interval, di.interval.length] 
+                [di.parent_lord, di.lord, di.interval, di.interval.length]
                 for di in di_list
             ], columns = ['Parent lord(s)', 'Lord', 'Period', 'Length']
         )
@@ -173,8 +194,8 @@ class dasa_interval:
     '''
     def __init__(
         self,
-        lord:str, 
-        interval:pd.Interval, 
+        lord:str,
+        interval:pd.Interval,
         level:int,
         parent_lord:tuple = None,
         yr_len:float = 365.25
@@ -215,7 +236,7 @@ class dasa_interval:
         return f'''{' '.join(pl)} {dasa_str}: {self.interval.left}-{self.interval.right}'''
 
 def compute_sub_dasa(
-    di:dasa_interval, 
+    di:dasa_interval,
     yr_len:float,
     first_mahadasa_lord:str = None
 ):
@@ -271,10 +292,10 @@ def compute_sub_dasa(
         dasa_interval(
             lord = sub_lords[i],
             interval = pd.Interval(
-                left = sub_dasa_start_datetimes[i], 
-                right = sub_dasa_start_datetimes[i + 1], 
+                left = sub_dasa_start_datetimes[i],
+                right = sub_dasa_start_datetimes[i + 1],
                 closed = 'left'
-            ), 
+            ),
             level = di.level + 1,
             parent_lord = None if parent_lord[i][0] is None else parent_lord[i]
         )
