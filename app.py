@@ -259,7 +259,7 @@ def server(input, output, session):
             id = 'tajaka_year',
             label = 'Tājaka year',
             choices = list(range(1900, 3000, 1)), 
-            selected = input.b_date().year
+            selected = datetime.now().year
         )
 
 app = App(app_ui, server)
