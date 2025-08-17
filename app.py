@@ -144,7 +144,7 @@ def server(input, output, session):
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return p
-    
+
     @reactive.calc
     def natal_vimsottari_dasa():
         return vd.vimsottari_dasa(
@@ -164,7 +164,7 @@ def server(input, output, session):
             data = dasas.dasa_to_df(), height = f'{input.height() - 280}px', 
             filters = int(input.vimsottari_dasa_sub_level()) > 0
         )
-    
+
     @render.text
     def birth_info_chart():
         # To give user feedback about birth place & time selection
@@ -191,7 +191,7 @@ def server(input, output, session):
     @render.text
     def birth_info_dasa():
         return birth_chart().repr_str
-    
+
     @reactive.calc
     def tajaka_chart():
         args = mf.chart_kwargs(
@@ -213,11 +213,10 @@ def server(input, output, session):
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return out
-    
+
     @render.text
     def tajaka_info():
         return tajaka_chart().repr_str
-
 
     ## Lunar phases tab
     # @render_widget
@@ -283,7 +282,7 @@ def server(input, output, session):
             )
         )
         return ui_out
-    
+
     @render.ui
     def tajaka_year_choices():
         return ui.input_select(

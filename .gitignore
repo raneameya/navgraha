@@ -12,3 +12,4 @@ setup
 example_chart.pickle
 *.conf
 *.jhd
+experiments/*
