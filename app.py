@@ -7,49 +7,59 @@ import chart as crt
 import vimsottari_dasa as vd
 import sol_cross as sc
 
-table_nav_panel = ui.nav_panel(
-    'Table',
-    ui.include_js(path = 'js/viewport.js'),
+natal_chart_ui = ui.accordion_panel(
+    'Positions',    
     ui.output_text(id = 'birth_info_chart'),
-    ui.output_data_frame(id = 'get_chart_data')
+    ui.output_data_frame(id = 'get_chart_data')    
 )
 
-dasa_nav_panel = ui.nav_panel(
+natal_dasa_ui = ui.accordion_panel(
     'Daśa',
-    ui.input_numeric(
-        id = 'dasa_offset_days',
-        label = 'Offset daśa dates',
-        value = 0, step = 1
-    ),
-    ui.input_select(
-        id = 'vimsottari_dasa_sub_level',
-        label = '',
-        choices = {
-            '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
-            '3': 'Sookśmaantardaśā'
-        }
+    ui.row(
+        ui.input_numeric(
+            id = 'dasa_offset_days',
+            label = '# days to offset daśa (+ve/-ve)',
+            value = 0, step = 1
+        ),
+        ui.input_select(
+            id = 'vimsottari_dasa_sub_level',
+            label = 'Daśā level',
+            choices = {
+                '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
+                '3': 'Sookśmaantardaśā'
+            }
+        )
     ),
     ui.output_text(id = 'birth_info_dasa'),
     ui.output_text(id = 'offset_info_dasa'),
-    ui.output_data_frame(id = 'get_vimsottari_dasa')
+    ui.output_data_frame(id = 'get_vimsottari_dasa')    
 )
 
-tajaka_nav_panel = ui.nav_panel(
+natal_ui = ui.nav_panel(
+    'Natal', 
+    ui.accordion(        
+        natal_chart_ui,
+        natal_dasa_ui, 
+        open = True
+    )    
+)
+
+tajaka_ui = ui.nav_panel(
     'Tājaka',
     ui.output_ui(id = 'tajaka_year_choices'),
     ui.output_text(id = 'tajaka_info'),
     ui.output_data_frame(id = 'tajaka_chart_df')
 )
 
-app_ui = ui.page_sidebar(
+app_ui = ui.page_sidebar(    
     ui.sidebar(
         ui.output_ui(id = 'birth_input'), 
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
+    ui.include_js(path = 'js/viewport.js'),
     ui.navset_card_tab(
-        table_nav_panel,
-        dasa_nav_panel,
-        tajaka_nav_panel,
+        natal_ui,        
+        tajaka_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
         id = 'pill'
     )
@@ -154,7 +164,7 @@ def server(input, output, session):
         # headers, etc. This value may need to be changed in the future if
         # more ui elements are added above this table.
         return render.DataGrid(
-            data = dasas.dasa_to_df(), height = f'{input.height() - 280}px',
+            data = dasas.dasa_to_df(), height = f'{input.height() - 300}px',
             filters = int(input.vimsottari_dasa_sub_level()) > 0
         )
 
