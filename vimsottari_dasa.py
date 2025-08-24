@@ -18,6 +18,7 @@ class vimsottari_dasa:
         dasa_offset_days (int): By how many days should all the daśā periods be shifted in the future?
         trunc_intervals (bool): Should the dasa (or sub-dasa) periods be truncated to days? Set False to see more precise daśā intervals.
         yr_len (float): How long should a year be?
+        lifespan (int): How long should the entire dasa period be? Default is 120 years for a natal chart, but can be changed for other use cases like tājaka.
         rnp_lut (DataFrame): rasi, nakshatra, pada lookup table. Leave unchanged.
     Returns:
         vimsottari_dasa: A vimsottari_dasa object with various attributes
@@ -86,15 +87,17 @@ class vimsottari_dasa:
         nakshatra_lord_mahadasa_len = rnp_gb.at[
             (self.nakshatra, self.nakshatra_lord), 'Length'
         ].squeeze()
+        # Scale mahadasa length as per lifespan
+        nakshatra_lord_mahadasa_len *= lifespan/120
         # How much of the dasa is completed at the time of birth?
         self.dasa_covered = rnp_gb[rnp_gb['IsIn'] > 0][
             'Dasa_covered'
         ].squeeze()
-        # Start datetime of 120 year lifespan, accounting for offset days
+        # Start datetime of lifespan, accounting for offset days
         first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered *
             dt.timedelta(days = nakshatra_lord_mahadasa_len * yr_len)
         ) + dt.timedelta(days = dasa_offset_days)
-        # Create pandas.Interval corresponding to the 120 year lifespan
+        # Create pandas.Interval corresponding to the lifespan
         lifespan_interval = pd.Interval(
             left = first_dasa_start,
             right = first_dasa_start + dt.timedelta(days = lifespan * yr_len),
