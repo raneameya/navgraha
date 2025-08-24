@@ -1,6 +1,6 @@
 ## Running list of features to add, bloat to clean, etc.
 
-### Add features
+### Feature list
 - Ability to read from .jhd files (Jagannatha Hora savefiles)
 - Tajaka annual charts
     - ~~Use tropical ayanamsa to find out birth Sun longitude~~
@@ -10,8 +10,12 @@
     - Add annual dasas
 - Chart class
     - Clean functions
-    - Add visuals, South Indian > Western > North Indian > East Indian
-- Clean stdout_to_pd
+    - Add visuals
+        - South Indian
+        - Western
+        - North Indian
+        - East Indian
+- Read stdout
     - ~~Is there need to write file out and read back in? Unnecessary disk IO?~~
 - Vimsottari dasa
     - Recursive function produces dasa shares faster than loop. ~~Verify timings~~
