@@ -7,7 +7,7 @@
     - ~~In tropical ayanamsa, find time in that year when Sun reached same longitude~~
     - ~~Cast chart at that time in sideral ayanamsa~~
     - Explore otions to speed up tropical longitude search. e.g. `scipy.fsolve`?
-    - Add annual dasas
+    - ~~Add annual dasas~~
 - Chart class
     - Clean functions
     - Add visuals
@@ -21,8 +21,8 @@
     - Recursive function produces dasa shares faster than loop. ~~Verify timings~~
     - ~~Add ability to shift dasa dates~~
 - UI
-    - Move inputs to sidebar
-    - Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)
+    - ~~Move inputs to sidebar~~
+    - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
     - Clean dasa UI
 - Yogas
