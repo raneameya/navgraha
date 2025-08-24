@@ -8,8 +8,7 @@ import vimsottari_dasa as vd
 import sol_cross as sc
 
 natal_chart_ui = ui.accordion_panel(
-    'Positions',    
-    ui.output_text(id = 'natal_info_chart'),
+    'Positions',
     ui.output_data_frame(id = 'get_chart_data')
 )
 
@@ -30,35 +29,65 @@ natal_dasa_ui = ui.accordion_panel(
             }
         )
     ),
-    ui.output_text(id = 'natal_info_dasa'),
     ui.output_text(id = 'natal_dasa_offset_info'),
-    ui.output_data_frame(id = 'natal_vimsottari_dasa_df')    
+    ui.output_data_frame(id = 'natal_vimsottari_dasa_df')
 )
 
 natal_ui = ui.nav_panel(
-    'Natal', 
-    ui.accordion(        
+    'Natal',
+    ui.output_text(id = 'natal_info'),
+    ui.accordion(
         natal_chart_ui,
-        natal_dasa_ui, 
+        natal_dasa_ui,
         open = True
-    )    
+    )
+)
+
+tajaka_chart_ui = ui.accordion_panel(
+    'Positions',
+    ui.output_data_frame(id = 'tajaka_chart_df')
+)
+
+tajaka_dasa_ui = ui.accordion_panel(
+    'Daśa',
+    ui.row(
+        ui.input_numeric(
+            id = 'tajaka_dasa_offset_days',
+            label = '# days to offset daśa (+ve/-ve)',
+            value = 0, step = 1
+        ),
+        ui.input_select(
+            id = 'tajaka_vimsottari_dasa_sub_level',
+            label = 'Daśā level',
+            choices = {
+                '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
+                '3': 'Sookśmaantardaśā'
+            }
+        )
+    ),
+    ui.output_text(id = 'tajaka_dasa_offset_info'),
+    ui.output_data_frame(id = 'tajaka_vimsottari_dasa_df')
 )
 
 tajaka_ui = ui.nav_panel(
     'Tājaka',
     ui.output_ui(id = 'tajaka_year_choices'),
     ui.output_text(id = 'tajaka_info'),
-    ui.output_data_frame(id = 'tajaka_chart_df')
+    ui.accordion(
+        tajaka_chart_ui,
+        tajaka_dasa_ui, 
+        open = True
+    )
 )
 
-app_ui = ui.page_sidebar(    
+app_ui = ui.page_sidebar(
     ui.sidebar(
         ui.output_ui(id = 'birth_input'), 
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
     ui.include_js(path = 'js/viewport.js'),
     ui.navset_card_tab(
-        natal_ui,        
+        natal_ui,
         tajaka_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
         id = 'pill'
@@ -110,9 +139,9 @@ def server(input, output, session):
         ui.update_numeric('b_lat', value = lat)
         ui.update_text('b_tz', value = tz)
         ui.update_text('b_place', value = place)
-        # Close the place search modal on row being chosen
+        # Close the place search modal user clicks on row
         ui.modal_remove()
-        # Close sidebar on place selection
+        # Close sidebar when user selects place
         ui.update_switch(id = 'sidebar', value = 'closed')
 
     @reactive.calc
@@ -160,16 +189,14 @@ def server(input, output, session):
     @render.data_frame
     def natal_vimsottari_dasa_df():
         dasas = natal_vimsottari_dasa()
-        # Currently, about 280px are used by other pills, radio buttons,
-        # headers, etc. This value may need to be changed in the future if
-        # more ui elements are added above this table.
+        # Adjust number below to increase/decrease table height
         return render.DataGrid(
             data = dasas.dasa_to_df(), height = f'{input.height() - 300}px',
             filters = int(input.vimsottari_dasa_sub_level()) > 0
         )
 
     @render.text
-    def natal_info_chart():
+    def natal_info():
         # To give user feedback about birth place & time selection
         return natal_chart().repr_str
 
@@ -190,10 +217,6 @@ def server(input, output, session):
         else:
             dasa_shift_text = ''
         return dasa_shift_text
-
-    @render.text
-    def natal_info_dasa():
-        return natal_chart().repr_str
 
     @reactive.calc
     def tajaka_chart():
@@ -220,6 +243,44 @@ def server(input, output, session):
     @render.text
     def tajaka_info():
         return tajaka_chart().repr_str
+
+    @reactive.calc
+    def tajaka_vimsottari_dasa():
+        return vd.vimsottari_dasa(
+            chart = tajaka_chart(),
+            sub_dasa_level = int(input.tajaka_vimsottari_dasa_sub_level()),
+            dasa_offset_days = input.tajaka_dasa_offset_days(),
+            trunc_intervals = True,
+            lifespan = 1
+        )
+
+    @render.text
+    def tajaka_dasa_offset_info():
+        dasa_offset_days = tajaka_vimsottari_dasa().dasa_offset_days
+        if dasa_offset_days > 0:
+            direction = 'future'
+        elif dasa_offset_days < 0:
+            direction = 'past'
+        else:
+            direction = ''
+        if abs(dasa_offset_days) > 0:
+            dasa_shift_text = (
+                f'Daśās shifted in the {direction} by '
+                f'{abs(dasa_offset_days)} days'
+            )
+        else:
+            dasa_shift_text = ''
+        return dasa_shift_text
+
+    @render.data_frame
+    def tajaka_vimsottari_dasa_df():
+        dasas = tajaka_vimsottari_dasa()
+        return render.DataGrid(
+            data = dasas.dasa_to_df(),
+            # Adjust number below to increase/decrease table height
+            height = f'{input.height() - 300}px',
+            filters = False
+        )
 
     @render.ui
     def birth_input():
@@ -277,7 +338,7 @@ def server(input, output, session):
     def tajaka_year_choices():
         return ui.input_select(
             id = 'tajaka_year',
-            label = 'Tājaka year',
+            label = '',
             choices = list(range(1900, 2200, 1)),
             selected = datetime.now().year
         )
