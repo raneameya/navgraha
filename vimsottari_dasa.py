@@ -41,6 +41,7 @@ class vimsottari_dasa:
         dasa_offset_days:int = 0,
         trunc_intervals:bool = False,
         yr_len:float = 365.25,
+        lifespan:int = 120,
         rnp_lut: pd.DataFrame = rnp
     ):
         self.chart = chart
@@ -94,14 +95,14 @@ class vimsottari_dasa:
             dt.timedelta(days = nakshatra_lord_mahadasa_len * yr_len)
         ) + dt.timedelta(days = dasa_offset_days)
         # Create pandas.Interval corresponding to the 120 year lifespan
-        lifespan = pd.Interval(
+        lifespan_interval = pd.Interval(
             left = first_dasa_start,
-            right = first_dasa_start + dt.timedelta(days = 120 * yr_len),
+            right = first_dasa_start + dt.timedelta(days = lifespan * yr_len),
             closed = 'left'
         )
         # Create dasa_interval object corresponding to the lifespan
         lifespan_di = dasa_interval(
-            lord = None, interval = lifespan, level = 0
+            lord = None, interval = lifespan_interval, level = 0
         )
         # Compute mahadasas
         self.mahadasa = compute_sub_dasa(
@@ -210,14 +211,6 @@ class dasa_interval:
                 Level = 0 implies mahadasa computation. So, a lord must not 
                 be specified. If you wish to define sub-dasas for {lord},
                 then level must be > 0.
-            ''')
-        if (
-            lord is None 
-            and (interval.length/pd.Timedelta(days = 12 * yr_len) < 1)
-        ):
-            raise ValueError(f'''
-                A None value for dasa lord means lifespan interval of 120 
-                years. Please correct interval length.
             ''')
         self.lord = lord
         self.interval = interval
