@@ -1,10 +1,9 @@
-import subprocess as sp
+from subprocess import run
 import pandas as pd
-import os
 from io import StringIO
 
 def read_stdout(cmd, reader, sep, col_names):
-    tt = sp.run(
+    tt = run(
         args = cmd, capture_output = True, text = True, shell = True
     )
     match reader:
