@@ -1,11 +1,14 @@
 import pytz, re, stdout_to_pd as sp, pandas as pd, misc_functions as mf
 from datetime import datetime
 from constants import rnp
+import matplotlib.pyplot as plt
+import math
+from matplotlib.patches import Rectangle
 
 class chart:
-    """
+    '''
     A class to create birth charts from input datetime, lat, lon & ayanamsa
-    """
+    '''
     def __init__(
         self,
         b_yr:int,
@@ -70,14 +73,6 @@ class chart:
             add_cols = [
                 'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada'
             ]
-            # p = mf.add_non_equi_col(
-            #     p1 = p,
-            #     p2 = rnp,
-            #     p1col = 'Lon',
-            #     p2col_low = 'Start',
-            #     p2col_high = 'End',
-            #     p2col_get = add_cols
-            # )
             p = mf.add_non_equi_col(
                 p1 = p,
                 p2 = rnp,
@@ -86,6 +81,31 @@ class chart:
                 p2col_get = add_cols
             )
             return p
+
+    def chart_plot(self, style:str = 'South Indian'):
+        fig, ax = plt.subplots(dpi = 140)
+        p = self.placements.sort_values(by = 'Lon')
+        if style == 'South Indian':
+            positions = dict(zip(p['Graha'], p['Sign']))
+        for h in list(range(1, 13, 1)):
+            house_obj = house_patch(
+                house_num = h, style = style, grahas = positions
+            )
+            house_shape = house_obj.shape
+            ax.add_patch(house_shape)
+            if house_obj.graha_coords is not None:
+                for g, c in zip(house_obj.grahas, house_obj.graha_coords):
+                    ax.annotate(
+                        text = g[0:2], xy = c, horizontalalignment = 'center', 
+                        verticalalignment = 'center'
+                    )
+        # ax.add_patch
+        ax.set_xlim(0, 4)
+        ax.set_ylim(0, 4)
+        ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
+        plt.axis('off')
+        plt.title('D-1')
+        return fig
 
 def birth_datetime_args(dt:datetime):
     # Return a list of UTC birth date & UTC birth time
@@ -187,3 +207,43 @@ def add_house(p):
     lagna_rashi = p.loc[p['Graha']=='Lagna', 'Sign']
     p['Bhava'] = p['Sign'].apply(lambda x: ((x+(12-lagna_rashi))%12)+1)
     return p
+
+class house_patch:
+    def __init__(self, house_num:int, style:str, grahas:list[str]):
+        if house_num in list(range(1, 13, 1)):
+            self.house_num = house_num
+        else:
+            raise ValueError('')
+        south_indian_house_start_coords = {
+            '1': (1, 3), '2': (2, 3), '3': (3, 3), '4': (3, 2), '5': (3, 1), 
+            '6': (3, 0), '7': (2, 0), '8': (1, 0), '9': (0, 0), '10': (0, 1), 
+            '11': (0, 2), '12': (0, 3)
+        }        
+        match style:
+            case 'South Indian':
+                self.xy = south_indian_house_start_coords[str(house_num)]
+                shape = Rectangle(
+                    xy = self.xy, width = 1, height = 1, facecolor = 'None', 
+                    edgecolor = 'black'
+                )
+        self.shape = shape
+        self.graha_coords, self.grahas = self.coord_offsets_for_grahas(
+            grahas = grahas
+        )
+    
+    def coord_offsets_for_grahas(self, grahas):
+        if grahas == [] or grahas is None:
+            return (None, None)
+        else:
+            grahas = [g for g in grahas if grahas[g] == self.house_num]
+            xy = self.xy
+            sqrt_num_grahas_plus_one = math.ceil(math.sqrt(len(grahas))) + 1
+            coords = [
+                (
+                    xy[0] + x/sqrt_num_grahas_plus_one, 
+                    xy[1] + y/sqrt_num_grahas_plus_one
+                )
+                for y in reversed(range(1, sqrt_num_grahas_plus_one, 1))
+                for x in range(1, sqrt_num_grahas_plus_one, 1)
+            ]
+            return (coords, grahas)
