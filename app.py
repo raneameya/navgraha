@@ -7,6 +7,11 @@ import chart as crt
 import vimsottari_dasa as vd
 import sol_cross as sc
 
+dasa_sub_levels = {
+    '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
+    '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
+}
+
 natal_chart_ui = ui.accordion_panel(
     'Positions',
     ui.output_data_frame(id = 'get_chart_data')
@@ -23,10 +28,7 @@ natal_dasa_ui = ui.accordion_panel(
         ui.input_select(
             id = 'vimsottari_dasa_sub_level',
             label = 'Daśā level',
-            choices = {
-                '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
-                '3': 'Sookśmaantardaśā'
-            }
+            choices = dasa_sub_levels
         )
     ),
     ui.output_text(id = 'natal_dasa_offset_info'),
@@ -38,8 +40,7 @@ natal_ui = ui.nav_panel(
     ui.output_text(id = 'natal_info'),
     ui.accordion(
         natal_chart_ui,
-        natal_dasa_ui,
-        open = True
+        natal_dasa_ui
     )
 )
 
@@ -59,10 +60,7 @@ tajaka_dasa_ui = ui.accordion_panel(
         ui.input_select(
             id = 'tajaka_vimsottari_dasa_sub_level',
             label = 'Daśā level',
-            choices = {
-                '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
-                '3': 'Sookśmaantardaśā'
-            }
+            choices = dasa_sub_levels
         )
     ),
     ui.output_text(id = 'tajaka_dasa_offset_info'),
@@ -75,8 +73,7 @@ tajaka_ui = ui.nav_panel(
     ui.output_text(id = 'tajaka_info'),
     ui.accordion(
         tajaka_chart_ui,
-        tajaka_dasa_ui, 
-        open = True
+        tajaka_dasa_ui
     )
 )
 
@@ -142,7 +139,7 @@ def server(input, output, session):
         # Close the place search modal user clicks on row
         ui.modal_remove()
         # Close sidebar when user selects place
-        ui.update_switch(id = 'sidebar', value = 'closed')
+        ui.update_sidebar(id = 'sidebar', show = False)
 
     @reactive.calc
     def natal_chart():
@@ -279,7 +276,7 @@ def server(input, output, session):
             data = dasas.dasa_to_df(),
             # Adjust number below to increase/decrease table height
             height = f'{input.height() - 300}px',
-            filters = False
+            filters = int(input.tajaka_vimsottari_dasa_sub_level()) > 0
         )
 
     @render.ui
@@ -331,7 +328,7 @@ def server(input, output, session):
                 id = 'search_place',
                 label = 'Search places'
             )
-        )        
+        )
         return ui_out
 
     @render.ui
