@@ -44,3 +44,8 @@
     - D-40 varga table
     - D-45 varga table
     - D-60 varga table
+
+### Bugs
+- In the place selector, if "West Bengal" is selected, we get
+> Object of type int64 is not JSON serializable
+- In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.
