@@ -78,8 +78,10 @@ tajaka_ui = ui.nav_panel(
 )
 
 app_ui = ui.page_sidebar(
+    # Sidebar needs to be open so that the birth inputs (e.g. date, time, 
+    # ayanamsa) are initialised.
     ui.sidebar(
-        ui.output_ui(id = 'birth_input'), 
+        ui.output_ui(id = 'birth_input'),
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
     ui.include_js(path = 'js/viewport.js'),
@@ -92,6 +94,11 @@ app_ui = ui.page_sidebar(
 )
 
 def server(input, output, session):
+
+    @reactive.effect
+    def close_sidebar():
+        # Close sidebar when app initially loads.
+        ui.update_sidebar(id = 'sidebar', show = False)
 
     @render.data_frame
     def filtered_places():
