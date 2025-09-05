@@ -6,6 +6,7 @@ import misc_functions as mf
 import chart as crt
 import vimsottari_dasa as vd
 import sol_cross as sc
+import matplotlib.pyplot as plt
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -13,6 +14,11 @@ dasa_sub_levels = {
 }
 
 natal_chart_ui = ui.accordion_panel(
+    'Chart',
+    ui.output_plot(id = 'natal_plot')
+)
+
+natal_table_ui = ui.accordion_panel(
     'Positions',
     ui.output_data_frame(id = 'get_chart_data')
 )
@@ -40,11 +46,17 @@ natal_ui = ui.nav_panel(
     ui.output_text(id = 'natal_info'),
     ui.accordion(
         natal_chart_ui,
+        natal_table_ui,
         natal_dasa_ui
     )
 )
 
 tajaka_chart_ui = ui.accordion_panel(
+    'Chart',
+    ui.output_plot(id = 'tajaka_plot')
+)
+
+tajaka_table_ui = ui.accordion_panel(
     'Positions',
     ui.output_data_frame(id = 'tajaka_chart_df')
 )
@@ -73,6 +85,7 @@ tajaka_ui = ui.nav_panel(
     ui.output_text(id = 'tajaka_info'),
     ui.accordion(
         tajaka_chart_ui,
+        tajaka_table_ui,
         tajaka_dasa_ui
     )
 )
@@ -168,6 +181,10 @@ def server(input, output, session):
         }
         c = crt.chart(**inputs)
         return c
+    
+    @render.plot
+    def natal_plot():
+        return natal_chart().chart_plot(dark = (input.dark_mode() == 'dark'))
 
     @render.data_frame
     def get_chart_data():
@@ -233,6 +250,10 @@ def server(input, output, session):
             )
         )
         return crt.chart(**args)
+
+    @render.plot
+    def tajaka_plot():
+        return tajaka_chart().chart_plot(dark = (input.dark_mode() == 'dark'))
 
     @render.data_frame
     def tajaka_chart_df():

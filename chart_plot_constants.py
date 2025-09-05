@@ -1,0 +1,173 @@
+from fractions import Fraction as fr
+
+rasis = {
+    'Aries': '\u2648', 'Taurus': '\u2649', 'Gemini': '\u264A',
+    'Cancer': '\u264B', 'Leo': '\u264C', 'Virgo': '\u264D',
+    'Libra': '\u264E', 'Scorpio': '\u264F', 'Sagittarius': '\u2650',
+    'Capricorn': '\u2651', 'Aquarius': '\u2652', 'Pisces': '\u2653'
+}
+rasis = {str(i + 1):(k, v) for i, (k, v) in enumerate(rasis.items())}
+house_shapes = {
+    # For South Indian, houses are assumed to be for a 
+    # kalapurusha, because lagna is not known in advance
+    'South Indian': {
+        '1': [[1, 3], [1, 4], [2, 4], [2, 3]],
+        '2': [[2, 3], [2, 4], [3, 4], [3, 3]],
+        '3': [[3, 3], [3, 4], [4, 4], [4, 3]],
+        '4': [[3, 2], [3, 3], [4, 3], [4, 2]],
+        '5': [[3, 1], [3, 2], [4, 2], [4, 1]],
+        '6': [[3, 0], [3, 1], [4, 1], [4, 0]],
+        '7': [[2, 0], [2, 1], [3, 1], [3, 0]],
+        '8': [[1, 0], [1, 1], [2, 1], [2, 0]],
+        '9': [[0, 0], [0, 1], [1, 1], [1, 0]],
+        '10': [[0, 1], [0, 2], [1, 2], [1, 1]],
+        '11': [[0, 2], [0, 3], [1, 3], [1, 2]],
+        '12': [[0, 3], [0, 4], [1, 4], [1, 3]]
+    }, 
+    'North Indian': {
+        '1': [[2, 2], [3, 3], [2, 4], [1, 3]],
+        '2': [[1, 3], [2, 4], [0, 4]],
+        '3': [[0, 2], [1, 3], [0, 4]],
+        '4': [[1, 1], [2, 2], [1, 3], [0, 2]],
+        '5': [[0, 0], [1, 1], [0, 2]],
+        '6': [[0, 0], [2, 0], [1, 1]],
+        '7': [[2, 0], [3, 1], [2, 2], [1, 1]],
+        '8': [[2, 0], [4, 0], [3, 1]],
+        '9': [[4, 0], [3, 1], [4, 2]],
+        '10': [[3, 1], [4, 2], [3, 3], [2, 2]],
+        '11': [[4, 2], [4, 4], [3, 3]],
+        '12': [[3, 3], [4, 4], [2, 4]]
+    }
+}
+house_start_coords = {
+    s:{
+        h_num:house_shapes[s][h_num][0] for h_num in house_shapes[s]
+    } for s in house_shapes
+}
+rasi_icon_offset = {
+    'South Indian': {str(i): (0.1, 0.9) for i in list(range(1, 13, 1))}, 
+    'North Indian': {
+        # Same offsets for houses 2, 12
+        **{str(i): (0, 0.9) for i in [2, 12]}, 
+        # Same offsets for houses 3, 5
+        **{str(i): (0.1, 1) for i in [3, 5]}, 
+        # Same offsets for houses 6, 8
+        **{str(i): (1, 0.1) for i in [6, 8]}, 
+        # Same offsets for houses 9, 11
+        **{str(i): (-0.1, 1) for i in [9, 11]}
+    } | {
+        '1': (0, 1.85), '4': (-0.85, 1), '7': (0, 0.15), '10': (0.85, 1)
+    }
+}
+chart_frame = {
+    'South Indian': [
+        # Outer box
+        [(0, 0), (0, 4)], [(0, 4), (4, 4)], [(4, 4), (4, 0)], [(4, 0), (0, 0)],
+        # Inner box + Ju-Me houses
+        [(1, 0), (1, 4)], [(0, 3), (4, 3)], [(3, 4), (3, 0)], [(4, 1), (0, 1)],
+        # small segments differentiating Ma-Ve & Sa-Luminaries houses
+        [(0, 2), (1, 2)], [(2, 4), (2, 3)], [(4, 2), (3, 2)], [(2, 0), (2, 1)]
+    ],
+    'North Indian': [
+        # Outer box
+        [(0, 0), (0, 4)], [(0, 4), (4, 4)], [(4, 4), (4, 0)], [(4, 0), (0, 0)],
+        # Inner rhombus
+        [(0, 2), (2, 4)], [(2, 4), (4, 2)], [(4, 2), (2, 0)], [(2, 0), (0, 2)],
+        # Inner X
+        [(0, 0), (4, 4)], [(0, 4), (4, 0)]
+    ]
+}
+graha_coords_offset = {
+    'South Indian': {
+        '1': [(fr(1, 2), fr(1, 2))],
+        '2': [(fr(1, 3), fr(1, 2)), (fr(2, 3), fr(1, 2))],
+        '3': [
+            (fr(1, 2), fr(2, 3)), (fr(1, 3), fr(1, 3)), (fr(2, 3), fr(1, 3))
+        ],
+        '4': [
+            (fr(1, 3), fr(2, 3)), (fr(2, 3), fr(2, 3)), (fr(1, 3), fr(1, 3)), 
+            (fr(2, 3), fr(1, 3))
+        ],
+        '5': [
+            (fr(1, 4), fr(2, 3)), (fr(1, 2), fr(2, 3)), (fr(3, 4), fr(2, 3)),
+            (fr(1, 3), fr(1, 3)), (fr(2, 3), fr(1, 3))
+        ],
+        '6': [
+            (fr(1, 4), fr(2, 3)), (fr(1, 2), fr(2, 3)), (fr(3, 4), fr(2, 3)),
+            (fr(1, 4), fr(1, 3)), (fr(1, 2), fr(1, 3)), (fr(3, 4), fr(1, 3))
+        ],
+        '7': [
+            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
+            (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
+            (fr(1, 2), fr(1, 4))
+        ],
+        '8': [
+            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
+            (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
+            (fr(1, 3), fr(1, 4)), (fr(2, 3), fr(1, 4))
+        ],
+        '9': [
+            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
+            (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
+            (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
+        ],
+        '10': [],
+        '11': [],
+        '12': []
+    }
+}
+
+def coord_plus(t1, t2):
+    return (t1[0] + t2[0], t1[1] + t2[1])
+'''
+def chart_plot(chart, style:str):
+    p = chart.placements.sort_values(by = 'Lon')
+    if style == 'South Indian':        
+        grahas = dict(zip(p['Graha'], p['Sign']))
+    fig, ax = plt.subplots(dpi = 140)
+    # Plot rectangles. Not necessary unless some bhavas need to highlighted
+    for h_num, h_shp in house_shapes[style].items():
+        ax.add_patch(plt.Polygon(
+            h_shp, edgecolor = 'None', facecolor = 'None'
+        ))
+    # Plot wireframe of chart
+    ax.add_collection(
+        mc.LineCollection(chart_frame[style], 
+        colors = 'black', linewidths = 0.5)
+    )
+    # Plot grahas in bhavas
+    for i in list(range(1, 13, 1)):    
+        graha_house = [g for g in grahas if grahas[g] == i]
+        # Add sign to bhava
+        ax.annotate(
+            text = rasis[str(i - 1)][1], xy = coord_plus(
+                t1 = house_start_coords[style][str(i)], 
+                t2 = (0.05, 0.85)
+            )
+        )
+        i = str(i)
+        # Add grahas to bhavas
+        if graha_house is not []:
+            num_grahas_in_house = len(graha_house)
+            for g_num, g in enumerate(graha_house):
+                print(f'Sign{i}: Graha {g} & graha_num {g_num}')
+                ax.annotate(
+                    text = g[0:2], xy = coord_plus(
+                        t1 = house_start_coords[style][i], 
+                        t2 = graha_coords_offset[style][
+                            str(num_grahas_in_house)
+                        ][g_num]
+                    ),
+                    horizontalalignment = 'center', 
+                    verticalalignment = 'center'
+                )
+    ax.set_xlim(0, 4.01)
+    ax.set_ylim(-0.01, 4)
+    ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
+    plt.axis('off')
+    plt.title('D-1')
+    return fig
+
+chart_plot(example_chart, 'South Indian')
+plt.show()
+'''

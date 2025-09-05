@@ -3,7 +3,8 @@ from datetime import datetime
 from constants import rnp
 import matplotlib.pyplot as plt
 import math
-from matplotlib.patches import Rectangle
+from matplotlib import collections as mc
+from chart_plot_constants import *
 
 class chart:
     '''
@@ -82,29 +83,64 @@ class chart:
             )
             return p
 
-    def chart_plot(self, style:str = 'South Indian'):
+    def chart_plot(self, dark:bool, style:str = 'South Indian'):
+        writecolour = 'white' if dark else 'black'
+        house_or_sign = {'South Indian': 'Sign', 'North Indian': 'Bhava'}[style]
+        p = self.placements[[
+            'Graha', 'Bhava', 'Rashi', 'Sign', 'Lon°', 'Nakshatra',
+            'Nakshatra lord', 'Pada', 'Speed', 'Lon'
+        ]].sort_values(by = 'Lon')
+        p.set_index('Graha', inplace = True)
+        grahas = p.to_dict(orient = 'index')
+        rasi_symbol_start = {
+            'South Indian': 1, 'North Indian': grahas['Lagna']['Sign']
+        }[style]
+        #rasis = {r_num: rasis[r_num] for r in rasis}
         fig, ax = plt.subplots(dpi = 140)
-        p = self.placements.sort_values(by = 'Lon')
-        if style == 'South Indian':
-            positions = dict(zip(p['Graha'], p['Sign']))
-        for h in list(range(1, 13, 1)):
-            house_obj = house_patch(
-                house_num = h, style = style, grahas = positions
-            )
-            house_shape = house_obj.shape
-            ax.add_patch(house_shape)
-            if house_obj.graha_coords is not None:
-                for g, c in zip(house_obj.grahas, house_obj.graha_coords):
+        # Plot rectangles. Not necessary unless some bhavas need to highlighted
+        for h_num, h_shp in house_shapes[style].items():
+            ax.add_patch(plt.Polygon(
+                h_shp, edgecolor = 'None', facecolor = 'None'
+            ))
+        # Plot wireframe of chart
+        ax.add_collection(
+            mc.LineCollection(chart_frame[style], 
+            colors = writecolour, linewidths = 0.5)
+        )
+        # Plot grahas in bhavas
+        for i in list(range(1, 13, 1)):
+            str_i = str(i)
+            graha_house = [g for g in grahas if grahas[g][house_or_sign] == i]
+            # Add sign to bhava
+            ax.annotate(
+                text = rasis[str(i)][1], xy = coord_plus(
+                    t1 = house_start_coords[style][str_i],
+                    t2 = rasi_icon_offset[style][str_i]
+                ), alpha = 0.5, fontsize = 8, color = writecolour,
+                horizontalalignment = 'center', 
+                verticalalignment = 'center'
+            )            
+            # Add grahas to bhavas
+            if graha_house is not []:
+                num_grahas_in_house = len(graha_house)
+                for g_num, g in enumerate(graha_house):
                     ax.annotate(
-                        text = g[0:2], xy = c, horizontalalignment = 'center', 
+                        text = g[0:2], xy = coord_plus(
+                            t1 = house_start_coords[style][str_i],
+                            t2 = graha_coords_offset[style][
+                                str(num_grahas_in_house)
+                            ][g_num]
+                        ), color = writecolour,
+                        horizontalalignment = 'center', 
                         verticalalignment = 'center'
                     )
-        # ax.add_patch
+                    
         ax.set_xlim(0, 4)
         ax.set_ylim(0, 4)
-        ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
+        #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
+        fig.set_facecolor('#1D1F21' if dark else 'white')
         plt.axis('off')
-        plt.title('D-1')
+        plt.title('D-1', color = writecolour)
         return fig
 
 def birth_datetime_args(dt:datetime):
@@ -207,43 +243,3 @@ def add_house(p):
     lagna_rashi = p.loc[p['Graha']=='Lagna', 'Sign']
     p['Bhava'] = p['Sign'].apply(lambda x: ((x+(12-lagna_rashi))%12)+1)
     return p
-
-class house_patch:
-    def __init__(self, house_num:int, style:str, grahas:list[str]):
-        if house_num in list(range(1, 13, 1)):
-            self.house_num = house_num
-        else:
-            raise ValueError('')
-        south_indian_house_start_coords = {
-            '1': (1, 3), '2': (2, 3), '3': (3, 3), '4': (3, 2), '5': (3, 1), 
-            '6': (3, 0), '7': (2, 0), '8': (1, 0), '9': (0, 0), '10': (0, 1), 
-            '11': (0, 2), '12': (0, 3)
-        }        
-        match style:
-            case 'South Indian':
-                self.xy = south_indian_house_start_coords[str(house_num)]
-                shape = Rectangle(
-                    xy = self.xy, width = 1, height = 1, facecolor = 'None', 
-                    edgecolor = 'black'
-                )
-        self.shape = shape
-        self.graha_coords, self.grahas = self.coord_offsets_for_grahas(
-            grahas = grahas
-        )
-    
-    def coord_offsets_for_grahas(self, grahas):
-        if grahas == [] or grahas is None:
-            return (None, None)
-        else:
-            grahas = [g for g in grahas if grahas[g] == self.house_num]
-            xy = self.xy
-            sqrt_num_grahas_plus_one = math.ceil(math.sqrt(len(grahas))) + 1
-            coords = [
-                (
-                    xy[0] + x/sqrt_num_grahas_plus_one, 
-                    xy[1] + y/sqrt_num_grahas_plus_one
-                )
-                for y in reversed(range(1, sqrt_num_grahas_plus_one, 1))
-                for x in range(1, sqrt_num_grahas_plus_one, 1)
-            ]
-            return (coords, grahas)
