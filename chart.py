@@ -141,6 +141,7 @@ class chart:
         fig.set_facecolor('#1D1F21' if dark else 'white')
         plt.axis('off')
         plt.title('D-1', color = writecolour)
+        fig.tight_layout()
         return fig
 
 def birth_datetime_args(dt:datetime):
