@@ -89,85 +89,62 @@ graha_coords_offset = {
             (fr(2, 3), fr(1, 3))
         ],
         '5': [
-            (fr(1, 4), fr(2, 3)), (fr(1, 2), fr(2, 3)), (fr(3, 4), fr(2, 3)),
-            (fr(1, 3), fr(1, 3)), (fr(2, 3), fr(1, 3))
+            (fr(1, 3), fr(2, 3)), (fr(2, 3), fr(2, 3)), 
+            (fr(1, 4), fr(1, 3)), (fr(1, 2), fr(1, 3)), (fr(3, 4), fr(1, 3))
         ],
         '6': [
             (fr(1, 4), fr(2, 3)), (fr(1, 2), fr(2, 3)), (fr(3, 4), fr(2, 3)),
             (fr(1, 4), fr(1, 3)), (fr(1, 2), fr(1, 3)), (fr(3, 4), fr(1, 3))
         ],
         '7': [
-            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
-            (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
-            (fr(1, 2), fr(1, 4))
+            (fr(1, 3), fr(3, 4)), (fr(2, 3), fr(3, 4)), 
+            (fr(1, 3), fr(1, 2)), (fr(2, 3), fr(1, 2)), 
+            (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
         ],
         '8': [
-            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
+            (fr(1, 3), fr(3, 4)), (fr(2, 3), fr(3, 4)), 
             (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
-            (fr(1, 3), fr(1, 4)), (fr(2, 3), fr(1, 4))
+            (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
         ],
         '9': [
             (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
             (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
             (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
+        ]
+    },
+    # 'North Indian' kendras
+    'North Indian': {
+        '1': [(0, 1)],
+        '2': [(fr(-1, 3), 1), (fr(1, 3), 1)],
+        '3': [
+            (fr(-1, 2), 1), (0, 1), (fr(1, 2), 1)
         ],
-        '10': [],
-        '11': [],
-        '12': []
+        '4': [
+            (fr(-1, 4), fr(5, 4)), (fr(1, 4), fr(5, 4)), 
+            (fr(-1, 4), fr(3, 4)), (fr(1, 4), fr(3, 4))
+        ],
+        '5': [
+            (fr(-1, 3), fr(4, 3)), (fr(1, 3), fr(4, 3)),
+            (0, 1),
+            (fr(-1, 3), fr(2, 3)), (fr(1, 3), fr(2, 3))
+        ],
+        '6': [
+            (fr(-1, 4), fr(17, 12)), (fr(1, 4), fr(17, 12)),
+            (fr(-5, 12), 1), (fr(5, 12), 1),
+            (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
+        ],
+        '7': [
+            (fr(-1, 4), fr(17, 12)), (fr(1, 4), fr(17, 12)),
+            (fr(-1, 2), 1), (0, 1), (fr(1, 2), 1),
+            (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
+        ],
+        '8': [
+            (fr(-1, 4), fr(17, 12)), (fr(1, 4), fr(17, 12)),
+            (fr(-3, 5), 1), (fr(-1, 5), 1), (fr(1, 5), 1), (fr(3, 5), 1),
+            (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
+        ]
     }
 }
 
 def coord_plus(t1, t2):
     return (t1[0] + t2[0], t1[1] + t2[1])
-'''
-def chart_plot(chart, style:str):
-    p = chart.placements.sort_values(by = 'Lon')
-    if style == 'South Indian':        
-        grahas = dict(zip(p['Graha'], p['Sign']))
-    fig, ax = plt.subplots(dpi = 140)
-    # Plot rectangles. Not necessary unless some bhavas need to highlighted
-    for h_num, h_shp in house_shapes[style].items():
-        ax.add_patch(plt.Polygon(
-            h_shp, edgecolor = 'None', facecolor = 'None'
-        ))
-    # Plot wireframe of chart
-    ax.add_collection(
-        mc.LineCollection(chart_frame[style], 
-        colors = 'black', linewidths = 0.5)
-    )
-    # Plot grahas in bhavas
-    for i in list(range(1, 13, 1)):    
-        graha_house = [g for g in grahas if grahas[g] == i]
-        # Add sign to bhava
-        ax.annotate(
-            text = rasis[str(i - 1)][1], xy = coord_plus(
-                t1 = house_start_coords[style][str(i)], 
-                t2 = (0.05, 0.85)
-            )
-        )
-        i = str(i)
-        # Add grahas to bhavas
-        if graha_house is not []:
-            num_grahas_in_house = len(graha_house)
-            for g_num, g in enumerate(graha_house):
-                print(f'Sign{i}: Graha {g} & graha_num {g_num}')
-                ax.annotate(
-                    text = g[0:2], xy = coord_plus(
-                        t1 = house_start_coords[style][i], 
-                        t2 = graha_coords_offset[style][
-                            str(num_grahas_in_house)
-                        ][g_num]
-                    ),
-                    horizontalalignment = 'center', 
-                    verticalalignment = 'center'
-                )
-    ax.set_xlim(0, 4.01)
-    ax.set_ylim(-0.01, 4)
-    ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
-    plt.axis('off')
-    plt.title('D-1')
-    return fig
-
-chart_plot(example_chart, 'South Indian')
-plt.show()
-'''
