@@ -83,21 +83,39 @@ class chart:
             )
             return p
 
-    def chart_plot(self, dark:bool, style:str = 'South Indian'):
+    def chart_plot(
+        self, 
+        dark:bool, 
+        style:str = 'South Indian', 
+        rasis:dict = rasis # dict mapping house/sign number to unicode of that rasi
+    ):
+        # Colour to draw lines, grahas, signs 
+        # Almost anything drawn is in this colour.
         writecolour = 'white' if dark else 'black'
+        # Background colour, to match bootstrap colour when dark
+        bgcolour = '#1D1F21' if dark else 'white'
+        # South Indian charts are anchored by sign, 
+        # and North Indian are anchored charts by house
         house_or_sign = {'South Indian': 'Sign', 'North Indian': 'Bhava'}[style]
+        # Get the placements of grahas
         p = self.placements[[
             'Graha', 'Bhava', 'Rashi', 'Sign', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed', 'Lon'
         ]].sort_values(by = 'Lon')
+        # Convert to dictionary for easy subsetting
         p.set_index('Graha', inplace = True)
         grahas = p.to_dict(orient = 'index')
+        # Need to find offset for signs for North Indian chart
         rasi_symbol_start = {
             'South Indian': 1, 'North Indian': grahas['Lagna']['Sign']
         }[style]
-        #rasis = {r_num: rasis[r_num] for r in rasis}
+        # Cyclically shift rasis so that Lagna is in first house
+        rasis = mf.cyclic_shift(x = rasis, start = rasi_symbol_start - 1)
+        rasis = {str(i + 1): rasis[k] for i, k in enumerate(rasis)}
         fig, ax = plt.subplots(dpi = 140)
-        # Plot rectangles. Not necessary unless some bhavas need to highlighted
+        # Plot polygons for each house. 
+        # Useful in future if need to highlight some houses
+        # Currently does nothing with colours set as 'None'
         for h_num, h_shp in house_shapes[style].items():
             ax.add_patch(plt.Polygon(
                 h_shp, edgecolor = 'None', facecolor = 'None'
@@ -107,27 +125,34 @@ class chart:
             mc.LineCollection(chart_frame[style], 
             colors = writecolour, linewidths = 0.5)
         )
+        # Don't plot Lagna in North Indian charts
+        if style == 'North Indian':
+            del grahas['Lagna']
         # Plot grahas in bhavas
         for i in list(range(1, 13, 1)):
             str_i = str(i)
             graha_house = [g for g in grahas if grahas[g][house_or_sign] == i]
             # Add sign to bhava
             ax.annotate(
-                text = rasis[str(i)][1], xy = coord_plus(
+                text = rasis[str_i][1], # Unicode rasi symbol
+                # Offset rasi unicode symbol by for each house
+                xy = coord_plus(
                     t1 = house_start_coords[style][str_i],
                     t2 = rasi_icon_offset[style][str_i]
-                ), alpha = 0.5, fontsize = 8, color = writecolour,
+                ), 
                 horizontalalignment = 'center', 
-                verticalalignment = 'center'
+                verticalalignment = 'center',
+                alpha = 0.5, fontsize = 8, color = writecolour
             )            
             # Add grahas to bhavas
             if graha_house is not []:
                 num_grahas_in_house = len(graha_house)
                 for g_num, g in enumerate(graha_house):
                     ax.annotate(
-                        text = g[0:2], xy = coord_plus(
+                        text = g[0:2], 
+                        xy = coord_plus(
                             t1 = house_start_coords[style][str_i],
-                            t2 = graha_coords_offset[style][
+                            t2 = graha_coords_offset[style][str_i][
                                 str(num_grahas_in_house)
                             ][g_num]
                         ), color = writecolour,
@@ -138,7 +163,7 @@ class chart:
         ax.set_xlim(0, 4)
         ax.set_ylim(0, 4)
         #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
-        fig.set_facecolor('#1D1F21' if dark else 'white')
+        fig.set_facecolor(bgcolour)
         plt.axis('off')
         plt.title('D-1', color = writecolour)
         fig.tight_layout()
