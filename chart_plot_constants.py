@@ -26,7 +26,7 @@ house_shapes = {
     }, 
     'North Indian': {
         '1': [[2, 2], [3, 3], [2, 4], [1, 3]],
-        '2': [[1, 3], [2, 4], [0, 4]],
+        '2': [[0, 4], [1, 3], [2, 4]],
         '3': [[0, 2], [1, 3], [0, 4]],
         '4': [[1, 1], [2, 2], [1, 3], [0, 2]],
         '5': [[0, 0], [1, 1], [0, 2]],
@@ -36,7 +36,7 @@ house_shapes = {
         '9': [[4, 0], [3, 1], [4, 2]],
         '10': [[3, 1], [4, 2], [3, 3], [2, 2]],
         '11': [[4, 2], [4, 4], [3, 3]],
-        '12': [[3, 3], [4, 4], [2, 4]]
+        '12': [[2, 4], [3, 3], [4, 4]]
     }
 }
 house_start_coords = {
@@ -48,7 +48,7 @@ rasi_icon_offset = {
     'South Indian': {str(i): (0.1, 0.9) for i in list(range(1, 13, 1))}, 
     'North Indian': {
         # Same offsets for houses 2, 12
-        **{str(i): (0, 0.9) for i in [2, 12]}, 
+        **{str(i): (1, -0.1) for i in [2, 12]}, 
         # Same offsets for houses 3, 5
         **{str(i): (0.1, 1) for i in [3, 5]}, 
         # Same offsets for houses 6, 8
@@ -77,7 +77,7 @@ chart_frame = {
         [(0, 0), (4, 4)], [(0, 4), (4, 0)]
     ]
 }
-graha_coords_offset = {
+graha_coord_offsets_raw = {
     'South Indian': {
         '1': [(fr(1, 2), fr(1, 2))],
         '2': [(fr(1, 3), fr(1, 2)), (fr(2, 3), fr(1, 2))],
@@ -111,9 +111,8 @@ graha_coords_offset = {
             (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
             (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
         ]
-    },
-    # 'North Indian' kendras
-    'North Indian': {
+    }, 
+    'North Indian kendras': {
         '1': [(0, 1)],
         '2': [(fr(-1, 3), 1), (fr(1, 3), 1)],
         '3': [
@@ -143,6 +142,94 @@ graha_coords_offset = {
             (fr(-3, 5), 1), (fr(-1, 5), 1), (fr(1, 5), 1), (fr(3, 5), 1),
             (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
         ]
+    }, 
+    'North Indian 3-5': {
+        '1': [(fr(5, 12), 1)],
+        '2': [(fr(1, 3), fr(2, 3)), (fr(1, 3), fr(4, 3))],
+        '3': [
+            (fr(1, 3), fr(2, 3)), (fr(2, 3), 1), (fr(1, 3), fr(4, 3))
+        ],
+        '4': [
+            (fr(1, 3), fr(4, 3)), 
+            (fr(1, 3), 1), (fr(2, 3), 1),
+            (fr(1, 3), fr(2, 3))
+        ],
+        '5': [
+            (fr(1, 4), fr(3, 2)), 
+            (fr(1, 4), 1), (fr(1, 2), 1), (fr(3, 4), 1),
+            (fr(1, 4), fr(1, 2))
+        ],
+        '6': [
+            (fr(1, 4), fr(3, 2)), 
+            (fr(1, 2), fr(5, 4)),
+            (fr(1, 4), 1),
+            (fr(3, 4), 1),
+            (fr(1, 2), fr(3, 4)),
+            (fr(1, 4), fr(1, 2))
+        ],
+        '7': [
+            (fr(1, 4), fr(8, 5)), 
+            (fr(1, 2), fr(5, 4)),
+            (fr(1, 4), fr(6, 5)),
+            (fr(3, 4), 1),
+            (fr(1, 4), fr(4, 5)),
+            (fr(1, 2), fr(3, 4)),
+            (fr(1, 4), fr(2, 5))
+        ],
+        '8': [
+            (fr(1, 4), fr(8, 5)), 
+            (fr(1, 2), fr(5, 4)),
+            (fr(1, 4), fr(6, 5)),
+            (fr(1, 2), 1),
+            (fr(3, 4), 1),
+            (fr(1, 4), fr(4, 5)),
+            (fr(1, 2), fr(3, 4)),
+            (fr(1, 4), fr(2, 5))
+        ]
+    }
+}
+graha_coord_offsets_raw = graha_coord_offsets_raw | {
+    'North Indian 9-11': {
+        k: [(-x[0], x[1]) for x in v]
+        for k, v in graha_coord_offsets_raw['North Indian 3-5'].items()
+    },
+    'North Indian 2-12': {
+        k: [(x[1], -x[0]) for x in v]
+        for k, v in graha_coord_offsets_raw['North Indian 3-5'].items()
+    },
+    'North Indian 6-8': {
+        k: [(x[1], x[0]) for x in v]
+        for k, v in graha_coord_offsets_raw['North Indian 3-5'].items()
+    }
+}
+graha_coords_offset = {
+    'South Indian': {
+        **{
+            str(i): graha_coord_offsets_raw['South Indian'] 
+            for i in list(range(1, 13, 1))
+        }
+    }, 
+    'North Indian': {
+        **{
+            str(i): graha_coord_offsets_raw['North Indian kendras'] 
+            for i in [1, 4, 7, 10]
+        }, 
+        **{
+            str(i): graha_coord_offsets_raw['North Indian 3-5']
+            for i in [3, 5]
+        },
+        **{
+            str(i): graha_coord_offsets_raw['North Indian 6-8']
+            for i in [6, 8]
+        },
+        **{
+            str(i): graha_coord_offsets_raw['North Indian 9-11']
+            for i in [9, 11]
+        },
+        **{
+            str(i): graha_coord_offsets_raw['North Indian 2-12']
+            for i in [2, 12]
+        }
     }
 }
 
