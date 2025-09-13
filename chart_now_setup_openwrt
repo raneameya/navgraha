@@ -6,7 +6,7 @@ python -m venv /etc/chart_now
 source /etc/chart_now/bin/activate
 pip install --upgrade pip
 # Install the shiny module
-pip install shiny pandas
+pip install shiny pandas matplotlib
 
 # Download the swiss ephemeris code and data files from GitHub, unzip them 
 # in a folder and delete the zip file.
@@ -59,6 +59,7 @@ wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/sol_cross.py htt
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/fractional_interval.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/fractional_interval.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/vimsottari_dasa.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/vimsottari_dasa.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/chart.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/chart.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/chart_plot_constants.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/chart_plot_constants.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/js/viewport.js https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/js/viewport.js
 
 # In case wget does not support header option
