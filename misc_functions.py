@@ -78,12 +78,17 @@ def lunar_phases(sweedir, dt, tz):
     return phases
 
 def cyclic_shift(x, start: int):
-    len_x = len(x)
-    cyclic_idx = [
-        ((start + i) % len_x) 
-        for i in range(len_x)
-    ]
-    return [x[i] for i in cyclic_idx]
+    if isinstance(x, list):
+        len_x = len(x)
+        cyclic_idx = [
+            ((start + i) % len_x) 
+            for i in range(len_x)
+        ]
+        return [x[i] for i in cyclic_idx]
+    elif isinstance(x, dict):
+        keylist = list(x.keys())
+        cyclic_idx = cyclic_shift(x = keylist, start = start)
+        return {k:x[k] for k in cyclic_idx}
 
 def chart_kwargs(chart, dt:datetime, ay = None):
     '''
@@ -107,3 +112,8 @@ def chart_kwargs(chart, dt:datetime, ay = None):
         'place': chart.place
     }
     return kwarg_dict
+
+def read_txt_file(path):
+    with open(path, 'r') as file:
+        txt = file.read()
+    return txt
