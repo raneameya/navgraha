@@ -32,7 +32,7 @@ def sol_cross(
         chart_args = mf.chart_kwargs(chart = birth_crt, dt = init_datetime)
         target_lon = get_sun_lon(birth_crt)
     init_lon = get_sun_lon(crt.chart(**chart_args))
-    # Account for targets being "behind" init lon as per 0 point
+    # Account for targets being "behind" init lon as per 0 point (i.e. 0° Aries)
     if target_lon < init_lon:
         target_lon = target_lon + 360
     # Degrees/avg. solar speed in deg/day
@@ -42,7 +42,6 @@ def sol_cross(
     deg_delta = 10000
     loop_num = 0
     loop_lon = 0
-    print(f'target_lon:{target_lon%360}')
     while abs(deg_delta) > 0.000001:
         if tropical:
             chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt, ay = '')        
