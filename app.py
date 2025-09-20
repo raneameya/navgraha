@@ -184,7 +184,10 @@ def server(input, output, session):
     
     @render.plot
     def natal_plot():
-        return natal_chart().chart_plot(dark = (input.dark_mode() == 'dark'))
+        return natal_chart().chart_plot(
+            dark = input.dark_mode() == 'dark',
+            style = input.chart_style()
+        )
 
     @render.data_frame
     def get_chart_data():
@@ -253,7 +256,10 @@ def server(input, output, session):
 
     @render.plot
     def tajaka_plot():
-        return tajaka_chart().chart_plot(dark = (input.dark_mode() == 'dark'))
+        return tajaka_chart().chart_plot(
+            dark = (input.dark_mode() == 'dark'),
+            style = input.chart_style()
+        )
 
     @render.data_frame
     def tajaka_chart_df():
@@ -327,6 +333,11 @@ def server(input, output, session):
                 id = 'b_ayanamsa',
                 label = 'Choose Ayanamsa',
                 choices = ayanamsas.to_dict(),
+            ),
+            ui.input_select(
+                id = 'chart_style',
+                label = 'Chart style',
+                choices = ['South Indian', 'North Indian']
             ),
             ui.input_text(
                 id = 'b_place',
