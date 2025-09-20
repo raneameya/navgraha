@@ -11,20 +11,20 @@
 - Chart class
     - Clean functions
     - Add visuals
-        - South Indian
+        - ~~South Indian~~
         - Western
-        - North Indian
+        - ~~North Indian~~
         - East Indian
 - Read stdout
     - ~~Is there need to write file out and read back in? Unnecessary disk IO?~~
 - Vimsottari dasa
-    - Recursive function produces dasa shares faster than loop. ~~Verify timings~~
+    - ~~Recursive function produces dasa shares faster than loop. Verify timings~~
     - ~~Add ability to shift dasa dates~~
 - UI
     - ~~Move inputs to sidebar~~
     - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
-    - Clean dasa UI
+    - ~~Clean dasa UI~~
 - Yogas
     - Use BV Raman's 300 yogas as a reference
 - Divisional charts
