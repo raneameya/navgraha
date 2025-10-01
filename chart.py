@@ -86,13 +86,13 @@ class chart:
     def chart_plot(
         self, 
         dark:bool, 
-        style:str = 'South Indian', 
+        style:str, 
         rasis:dict = rasis # dict mapping house/sign number to unicode of that rasi
     ):
         # Colour to draw lines, grahas, signs 
         # Almost anything drawn is in this colour.
         writecolour = 'white' if dark else 'black'
-        # Background colour, to match bootstrap colour when dark
+        # Background colour, to match bootstrap background colour based on theme
         bgcolour = '#1D1F21' if dark else 'white'
         # South Indian charts are anchored by sign, 
         # and North Indian are anchored charts by house
@@ -102,7 +102,8 @@ class chart:
             'Graha', 'Bhava', 'Rashi', 'Sign', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed', 'Lon'
         ]].sort_values(by = 'Lon')
-        # Convert to dictionary for easy subsetting
+        # Convert to dictionary for easy subsetting. Setting graha as index 
+        # allows graha to be the keys of the resulting dict
         p.set_index('Graha', inplace = True)
         grahas = p.to_dict(orient = 'index')
         # Need to find offset for signs for North Indian chart
@@ -121,21 +122,19 @@ class chart:
                 h_shp, edgecolor = 'None', facecolor = 'None'
             ))
         # Plot wireframe of chart
-        ax.add_collection(
-            mc.LineCollection(chart_frame[style], 
-            colors = writecolour, linewidths = 0.5)
-        )
+        ax.add_collection(mc.LineCollection(
+            chart_frame[style], colors = writecolour, linewidths = 0.5
+        ))
         # Don't plot Lagna in North Indian charts
         if style == 'North Indian':
             del grahas['Lagna']
-        # Plot grahas in bhavas
+        # Plot grahas in bhavas, loop over 12 bhavas
         for i in list(range(1, 13, 1)):
             str_i = str(i)
-            graha_house = [g for g in grahas if grahas[g][house_or_sign] == i]
-            # Add sign to bhava
+            # Add Unicode symbol of rasi to bhava
             ax.annotate(
-                text = rasis[str_i][1], # Unicode rasi symbol
-                # Offset rasi unicode symbol by for each house
+                text = rasis[str_i][1],
+                # Offset rasi symbol by for each house
                 xy = coord_plus(
                     t1 = house_start_coords[style][str_i],
                     t2 = rasi_icon_offset[style][str_i]
@@ -143,11 +142,13 @@ class chart:
                 horizontalalignment = 'center', 
                 verticalalignment = 'center',
                 alpha = 0.5, fontsize = 8, color = writecolour
-            )            
-            # Add grahas to bhavas
-            if graha_house is not []:
-                num_grahas_in_house = len(graha_house)
-                for g_num, g in enumerate(graha_house):
+            )
+            # List of grahas in bhava_i
+            grahas_i = [g for g in grahas if grahas[g][house_or_sign] == i]
+            # Add grahas to bhava_i
+            if grahas_i is not []:
+                num_grahas_in_house = len(grahas_i)
+                for g_num, g in enumerate(grahas_i):
                     ax.annotate(
                         text = g[0:2], 
                         xy = coord_plus(
@@ -159,7 +160,6 @@ class chart:
                         horizontalalignment = 'center', 
                         verticalalignment = 'center'
                     )
-                    
         ax.set_xlim(0, 4)
         ax.set_ylim(0, 4)
         #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
