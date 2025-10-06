@@ -113,7 +113,7 @@ class chart:
         # Cyclically shift rasis so that Lagna is in first house
         rasis = mf.cyclic_shift(x = rasis, start = rasi_symbol_start - 1)
         rasis = {str(i + 1): rasis[k] for i, k in enumerate(rasis)}
-        fig, ax = plt.subplots(dpi = 140)
+        fig, ax = plt.subplots(dpi = 120)
         # Plot polygons for each house. 
         # Useful in future if need to highlight some houses
         # Currently does nothing with colours set as 'None'
