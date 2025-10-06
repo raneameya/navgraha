@@ -10,11 +10,18 @@
     - ~~Add annual dasas~~
 - Chart class
     - Clean functions
-    - Add visuals
-        - ~~South Indian~~
-        - Western
-        - ~~North Indian~~
-        - East Indian
+    - Plotting
+        - ~~Add South Indian style~~
+        - Add Western style
+        - ~~Add North Indian style~~
+        - Add East Indian style
+        - Indicate retrograde planets (e.g. an overbar?)
+        - Indicate degrees in chart (super/sub script)
+- Chart extras to add
+    - Pushkara
+    - Combustion
+    - Chara karakas
+    - Planetary state (mudita, etc)
 - Read stdout
     - ~~Is there need to write file out and read back in? Unnecessary disk IO?~~
 - Vimsottari dasa
@@ -25,6 +32,9 @@
     - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
     - ~~Clean dasa UI~~
+    - Move some selectables from input to a new config tab. e.g. ayanamsa, chart style
+- Timeline
+    - Visualisation - annual timeline of retrogression, direct & stationary motion for all planets
 - Yogas
     - Use BV Raman's 300 yogas as a reference
 - Divisional charts
