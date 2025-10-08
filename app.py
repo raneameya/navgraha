@@ -196,7 +196,7 @@ def server(input, output, session):
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
         p = p[[
-            'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra',
+            'Graha', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return p
@@ -266,7 +266,7 @@ def server(input, output, session):
         out = mf.round_cols(
             tajaka_chart().placements, ['Lon°', 'Speed'], [1, 3]
         )[[
-            'Graha', 'Bhava', 'Rashi', 'Lon°', 'Nakshatra',
+            'Graha', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed'
         ]]
         return out
