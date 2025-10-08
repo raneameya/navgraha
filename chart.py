@@ -149,8 +149,18 @@ class chart:
             if grahas_i is not []:
                 num_grahas_in_house = len(grahas_i)
                 for g_num, g in enumerate(grahas_i):
+                    # Style text for graha
+                    g_txt = g[0:2]
+                    # Degrees graha has progressed in sign
+                    deg_txt = f'{round(grahas[g]['Lon'] % 30, 1):.1f}'
+                    if grahas[g]['Speed'] >= 0:
+                        # Doubly subscripted text indicating degrees
+                        txt = r'$\mathrm{' + g_txt + r'_{_{' + deg_txt + r'}}}$'
+                    else:
+                        # Overbar for retro graha
+                        txt = r'$\overline{\mathrm{' + g_txt + r'}}_{_{' + deg_txt + r'}}$'
                     ax.annotate(
-                        text = g[0:2], 
+                        text = txt, 
                         xy = coord_plus(
                             t1 = house_start_coords[style][str_i],
                             t2 = graha_coords_offset[style][str_i][
