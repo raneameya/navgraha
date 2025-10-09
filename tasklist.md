@@ -15,8 +15,8 @@
         - Add Western style
         - ~~Add North Indian style~~
         - Add East Indian style
-        - Indicate retrograde planets (e.g. an overbar?)
-        - Indicate degrees in chart (super/sub script)
+        - ~~Indicate retrograde planets (e.g. an overbar?)~~
+        - ~~Indicate degrees in chart (super/sub script)~~
 - Chart extras to add
     - Pushkara
     - Combustion
