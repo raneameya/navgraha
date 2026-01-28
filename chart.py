@@ -79,6 +79,12 @@ class chart:
                 p2col_range = 'Degrees',
                 p2col_get = add_cols
             )
+            # Reorder columns
+            p = p[[
+                'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 
+                'Speed', 'Lat°', 'House', 'Sign', 'Bhava', 'Rashi', 
+                'Nakshatra', 'Nakshatra lord', 'Pada'
+            ]]
             return p
 
     def chart_plot(
@@ -160,6 +166,8 @@ def swetest(sweedir, birth_args):
     )
     # House calculation
     p = add_house(p)
+    # Add degrees in house as a numeric
+    p['Lon30'] = p['Lon'].apply(lambda x: x%30)
     return p
 
 def reorder_swetest_rows(p):
