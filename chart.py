@@ -1,10 +1,8 @@
 import pytz, re, stdout_to_pd as sp, pandas as pd, misc_functions as mf
 from datetime import datetime
 from constants import rnp
-import matplotlib.pyplot as plt
-import math
-from matplotlib import collections as mc
-from chart_plot_constants import *
+from chart_minimal import chart_minimal
+from chart_plot_constants import rasis
 
 class chart:
     '''
@@ -89,94 +87,17 @@ class chart:
         style:str, 
         rasis:dict = rasis # dict mapping house/sign number to unicode of that rasi
     ):
-        # Colour to draw lines, grahas, signs 
-        # Almost anything drawn is in this colour.
-        writecolour = 'white' if dark else 'black'
-        # Background colour, to match bootstrap background colour based on theme
-        bgcolour = '#1D1F21' if dark else 'white'
-        # South Indian charts are anchored by sign, 
-        # and North Indian are anchored charts by house
-        house_or_sign = {'South Indian': 'Sign', 'North Indian': 'Bhava'}[style]
-        # Get the placements of grahas
-        p = self.placements[[
-            'Graha', 'Bhava', 'Rashi', 'Sign', 'Lon°', 'Nakshatra',
-            'Nakshatra lord', 'Pada', 'Speed', 'Lon'
-        ]].sort_values(by = 'Lon')
-        # Convert to dictionary for easy subsetting. Setting graha as index 
-        # allows graha to be the keys of the resulting dict
-        p.set_index('Graha', inplace = True)
-        grahas = p.to_dict(orient = 'index')
-        # Need to find offset for signs for North Indian chart
-        rasi_symbol_start = {
-            'South Indian': 1, 'North Indian': grahas['Lagna']['Sign']
-        }[style]
-        # Cyclically shift rasis so that Lagna is in first house
-        rasis = mf.cyclic_shift(x = rasis, start = rasi_symbol_start - 1)
-        rasis = {str(i + 1): rasis[k] for i, k in enumerate(rasis)}
-        fig, ax = plt.subplots(dpi = 120)
-        # Plot polygons for each house. 
-        # Useful in future if need to highlight some houses
-        # Currently does nothing with colours set as 'None'
-        for h_num, h_shp in house_shapes[style].items():
-            ax.add_patch(plt.Polygon(
-                h_shp, edgecolor = 'None', facecolor = 'None'
-            ))
-        # Plot wireframe of chart
-        ax.add_collection(mc.LineCollection(
-            chart_frame[style], colors = writecolour, linewidths = 0.5
-        ))
-        # Don't plot Lagna in North Indian charts
-        if style == 'North Indian':
-            del grahas['Lagna']
-        # Plot grahas in bhavas, loop over 12 bhavas
-        for i in list(range(1, 13, 1)):
-            str_i = str(i)
-            # Add Unicode symbol of rasi to bhava
-            ax.annotate(
-                text = rasis[str_i][1],
-                # Offset rasi symbol by for each house
-                xy = coord_plus(
-                    t1 = house_start_coords[style][str_i],
-                    t2 = rasi_icon_offset[style][str_i]
-                ), 
-                horizontalalignment = 'center', 
-                verticalalignment = 'center',
-                alpha = 0.5, fontsize = 8, color = writecolour
-            )
-            # List of grahas in bhava_i
-            grahas_i = [g for g in grahas if grahas[g][house_or_sign] == i]
-            # Add grahas to bhava_i
-            if grahas_i is not []:
-                num_grahas_in_house = len(grahas_i)
-                for g_num, g in enumerate(grahas_i):
-                    # Style text for graha
-                    g_txt = g[0:2]
-                    # Degrees graha has progressed in sign
-                    deg_txt = f'{round(grahas[g]['Lon'] % 30, 1):.1f}'
-                    if grahas[g]['Speed'] >= 0:
-                        # Doubly subscripted text indicating degrees
-                        txt = r'$\mathrm{' + g_txt + r'_{_{' + deg_txt + r'}}}$'
-                    else:
-                        # Overbar for retro graha
-                        txt = r'$\overline{\mathrm{' + g_txt + r'}}_{_{' + deg_txt + r'}}$'
-                    ax.annotate(
-                        text = txt, 
-                        xy = coord_plus(
-                            t1 = house_start_coords[style][str_i],
-                            t2 = graha_coords_offset[style][str_i][
-                                str(num_grahas_in_house)
-                            ][g_num]
-                        ), color = writecolour,
-                        horizontalalignment = 'center', 
-                        verticalalignment = 'center'
-                    )
-        ax.set_xlim(0, 4)
-        ax.set_ylim(0, 4)
-        #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
-        fig.set_facecolor(bgcolour)
-        plt.axis('off')
-        plt.title('D-1', color = writecolour)
-        fig.tight_layout()
+        '''
+        Plots the chart. Strips the chart down to chart_minimal and plots it.
+        Args:
+            dark (bool): Set to true for dark mode friendly plotting
+            style (str): Can be one of 'North Indian' or 'South Indian'
+            rasis (dict): Leave unchanged. By default imports a dictionary mapping rasi to unicode glyph of that rasi
+        Returns:
+            A matplot figure
+        '''
+        crt = chart_minimal(placements = self.placements)
+        fig = crt.chart_plot(dark = dark, style = style, rasis = rasis)
         return fig
 
 def birth_datetime_args(dt:datetime):
