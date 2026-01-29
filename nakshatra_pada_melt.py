@@ -143,10 +143,32 @@ nakshatra=p.groupby(by=['Nakshatra'], observed=True).agg({
     'End':'max'    
 }).sort_values(by=['Nakshatra'])
 
+# Rasis. TODO: Add colour and rising type
+r = pd.DataFrame(data = {
+    'Rasi': [
+        'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 
+        'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+    ], 
+    'Ruler': [
+        'Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 
+        'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'
+    ], 
+    'Element': ['Fire', 'Earth', 'Air', 'Water'] * 3, 
+    'Modality': ['Chara', 'Sthira', 'Dvisvabhāva'] * 4, 
+    'Gender': ['Male', 'Female'] * 6, 
+    'Nature': [
+        'Krūra', 'Saumya', 'Miśra', 'Saumya', 'Krūra', 'Miśra', 
+        'Saumya', 'Krūra', 'Saumya', 'Krūra', 'Krūra', 'Saumya'
+    ], 
+    'Direction': ['East', 'South', 'West', 'North'] * 3,
+    'Varṇa': ['Kṣatriya', 'Vaiśya', 'Śūdra', 'Brahmin'] * 3
+})
+
 # Pickle file and save on disk
 out={
-    'Nakshatra':nakshatra,
-    'Navamsa':p
+    'Nakshatra': nakshatra,
+    'Navamsa': p,
+    'Rasi': r
 }
 with open('lut.pickle', 'wb') as handle:
     pl.dump(out, handle, protocol=0)

@@ -9,6 +9,9 @@ rnp=lut['Navamsa']
 # Create aggregated table for only nakshatras
 nakshatra=lut['Nakshatra']
 
+# Table of rasis with attributes
+rasis = lut['Rasi']
+
 # Read in list of ayanamsas and their swetest arguments. Used to expose 
 # list of available ayanmsas to user
 ayanamsas=pd.read_csv('ayanamsa_list.csv', index_col='Argument', keep_default_na = False)
