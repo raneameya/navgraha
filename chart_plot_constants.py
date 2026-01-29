@@ -1,12 +1,12 @@
 from fractions import Fraction as fr
 
-rasis = {
+rasi_dict = {
     'Aries': '\u2648', 'Taurus': '\u2649', 'Gemini': '\u264A',
     'Cancer': '\u264B', 'Leo': '\u264C', 'Virgo': '\u264D',
     'Libra': '\u264E', 'Scorpio': '\u264F', 'Sagittarius': '\u2650',
     'Capricorn': '\u2651', 'Aquarius': '\u2652', 'Pisces': '\u2653'
 }
-rasis = {str(i + 1):(k, v) for i, (k, v) in enumerate(rasis.items())}
+rasi_dict = {str(i + 1):(k, v) for i, (k, v) in enumerate(rasi_dict.items())}
 house_shapes = {
     # For South Indian, houses are assumed to be for a 
     # kalapurusha, because lagna is not known in advance

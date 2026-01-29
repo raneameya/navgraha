@@ -2,7 +2,7 @@ import pytz, re, stdout_to_pd as sp, pandas as pd, misc_functions as mf
 from datetime import datetime
 from constants import rnp
 from chart_minimal import chart_minimal
-from chart_plot_constants import rasis
+from chart_plot_constants import rasi_dict
 
 class chart:
     '''
@@ -91,7 +91,7 @@ class chart:
         self, 
         dark:bool, 
         style:str, 
-        rasis:dict = rasis # dict mapping house/sign number to unicode of that rasi
+        rasis:dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
     ):
         '''
         Plots the chart. Strips the chart down to chart_minimal and plots it.

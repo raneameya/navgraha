@@ -21,7 +21,7 @@ class chart_minimal:
             self, 
             dark:bool, 
             style:str, 
-            rasis:dict = rasis # dict mapping house/sign number to unicode of that rasi
+            rasis:dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
         ):
             # Colour to draw lines, grahas, signs 
             # Almost anything drawn is in this colour.
