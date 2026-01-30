@@ -117,3 +117,11 @@ def read_txt_file(path):
     with open(path, 'r') as file:
         txt = file.read()
     return txt
+
+def dms(degrees: float):
+    degrees = degrees % 360
+    deg = int((degrees % 30) // 1)
+    min = int((60 * (degrees % 1)) // 1)
+    sec = 60 * ((60 * (degrees % 1)) % 1)
+    out = f'{deg}°{min}\'{sec:.1f}'
+    return out
