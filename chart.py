@@ -5,7 +5,7 @@ from constants import rnp
 from chart_minimal import chart_minimal
 from chart_plot_constants import rasi_dict
 from functools import cached_property
-from divisionals import Rasi
+from divisionals import Rasi, Navamsa
 
 class chart:
     '''
@@ -85,6 +85,10 @@ class _divisionals:
     def rasi(self):
         out = Rasi.d1(self.parent)
         return out
+    
+    @cached_property
+    def navamsa(self):
+        return Navamsa.d9(self.parent)
 
 def add_house(p):
     p['Sign'] = p['Lon'].apply(lambda x: int(divmod(x, 30)[0]+1))
