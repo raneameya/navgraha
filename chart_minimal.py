@@ -16,6 +16,9 @@ class chart_minimal:
     ):
         # Assumed that placements contains the necessary info about grahas, degrees, speed, etc.
         self.placements = placements
+    
+    def __repr__(self):
+        return self.placements.__repr__()
 
     def chart_plot(
             self, 
