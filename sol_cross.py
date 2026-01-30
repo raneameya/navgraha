@@ -3,7 +3,7 @@ import misc_functions as mf
 import chart as crt
 
 def get_sun_lon(chart:crt.chart):
-    df = chart.placements
+    df = chart.rasi.placements
     return df['Lon'][df['Graha'] == 'Sun'].squeeze()
 
 def sol_cross(

@@ -23,7 +23,8 @@ class chart_minimal:
     def chart_plot(
             self, 
             dark:bool, 
-            style:str, 
+            style:str,
+            title:str = 'D-1', 
             rasis:dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
         ):
             # Colour to draw lines, grahas, signs 
@@ -113,6 +114,6 @@ class chart_minimal:
             #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
             fig.set_facecolor(bgcolour)
             plt.axis('off')
-            plt.title('D-1', color = writecolour)
+            plt.title(title, color = writecolour)
             fig.tight_layout()
             return fig

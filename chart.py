@@ -70,8 +70,7 @@ class chart:
         Returns:
             A matplot figure
         '''
-        crt = chart_minimal(placements = self.rasi)
-        fig = crt.chart_plot(dark = dark, style = style, rasis = rasis)
+        fig = self.rasi.chart_plot(dark = dark, style = style, rasis = rasis)
         return fig
 
 class _divisionals:

@@ -54,7 +54,9 @@ class vimsottari_dasa:
             'Praanaantardaśā', 'Dehaantardaśā'
         ]
         if divisional == 'rasi':
-            chart_df = chart.rasi
+            chart_df = chart.rasi.placements
+        if divisional == 'navamsa':
+            chart_df = chart.divisionals.navamsa.placements
         # Longitude of the seed graha
         seed_deg = chart_df.loc[
             chart_df['Graha'] == seed_graha, 'Lon'

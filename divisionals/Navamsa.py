@@ -13,7 +13,7 @@ def d9(
     Returns:
         A chart_minimal object with the navamsa placements including degrees
     '''
-    p = birth_crt.rasi
+    p = birth_crt.rasi.placements
     # Ninth divisional
     p['Div progression'] = p['Lon30'].apply(lambda x: x // (30/9))
     p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x/(30/9))%1))

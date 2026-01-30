@@ -1,13 +1,13 @@
 import misc_functions as mf
 import chart as crt
-import chart_minimal
+from chart_minimal import chart_minimal
 import pytz
 import stdout_to_pd as sp
 import pandas as pd
 import re
 from constants import rasis, rnp
 
-def d1(birth_crt: crt) -> DataFrame:
+def d1(birth_crt: crt) -> chart_minimal:
     # Get birthdate arguments in UTC for swetest
     birth_datetime_utc_args = birth_datetime_args(birth_crt.datetime)
     # location argument, assumed 0 z-height at birth
@@ -33,7 +33,7 @@ def d1(birth_crt: crt) -> DataFrame:
         'Speed', 'Lat°', 'House', 'Sign', 'Bhava', 'Rashi', 
         'Nakshatra', 'Nakshatra lord', 'Pada'
     ]]
-    return p
+    return chart_minimal(placements = p)
 
 def birth_datetime_args(dt:datetime):
     # Return a list of UTC birth date & UTC birth time

@@ -12,6 +12,7 @@ dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
     '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
 }
+divisional_choices = {'rasi': 'Rāśi', 'navamsa': 'Navāmśā'}
 
 natal_chart_ui = ui.accordion_panel(
     'Chart',
@@ -44,6 +45,11 @@ natal_dasa_ui = ui.accordion_panel(
 natal_ui = ui.nav_panel(
     'Natal',
     ui.output_text(id = 'natal_info'),
+    ui.input_select(
+            id = 'natal_divisional',
+            label = '',
+            choices = divisional_choices
+    ),
     ui.accordion(
         natal_chart_ui,
         natal_table_ui,
@@ -81,8 +87,11 @@ tajaka_dasa_ui = ui.accordion_panel(
 
 tajaka_ui = ui.nav_panel(
     'Tājaka',
-    ui.output_ui(id = 'tajaka_year_choices'),
     ui.output_text(id = 'tajaka_info'),
+    ui.row(
+        ui.output_ui(id = 'tajaka_year_choices'),
+        ui.output_ui(id = 'tajaka_divisional_choices')
+    ),
     ui.accordion(
         tajaka_chart_ui,
         tajaka_table_ui,
@@ -166,6 +175,7 @@ def server(input, output, session):
         '''
         Return a chart object that can be reused across the app
         '''
+        divisional = input.natal_divisional()
         inputs = {
             'b_yr': input.b_date().year,
             'b_mo': input.b_date().month,
@@ -179,19 +189,26 @@ def server(input, output, session):
             'ay': input.b_ayanamsa(),
             'place': input.b_place()
         }
-        c = crt.chart(**inputs)
-        return c
+        return crt.chart(**inputs)
     
+    @reactive.calc
+    def natal_divisional():
+        if input.natal_divisional() == 'rasi':
+            return natal_chart().divisionals.rasi
+        elif input.natal_divisional() == 'navamsa':
+            return natal_chart().divisionals.navamsa
+
     @render.plot
     def natal_plot():
-        return natal_chart().chart_plot(
+        return natal_divisional().chart_plot(
             dark = input.dark_mode() == 'dark',
-            style = input.chart_style()
+            style = input.chart_style(),
+            title = divisional_choices[input.natal_divisional()]
         )
 
     @render.data_frame
     def get_chart_data():
-        p = natal_chart().rasi
+        p = natal_chart().rasi.placements
         # Round some cols
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
@@ -205,6 +222,7 @@ def server(input, output, session):
     def natal_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = natal_chart(),
+            divisional = input.natal_divisional(),
             sub_dasa_level = int(input.vimsottari_dasa_sub_level()),
             dasa_offset_days = input.dasa_offset_days(),
             trunc_intervals = True
@@ -244,6 +262,7 @@ def server(input, output, session):
 
     @reactive.calc
     def tajaka_chart():
+        divisional = input.tajaka_divisional()
         args = mf.chart_kwargs(
             chart = natal_chart(),
             dt = sc.sol_cross(
@@ -253,18 +272,26 @@ def server(input, output, session):
             )
         )
         return crt.chart(**args)
+    
+    @reactive.calc
+    def tajaka_divisional():
+        if input.tajaka_divisional() == 'rasi':
+            return tajaka_chart().divisionals.rasi
+        elif input.tajaka_divisional() == 'navamsa':
+            return tajaka_chart().divisionals.navamsa
 
     @render.plot
-    def tajaka_plot():
-        return tajaka_chart().chart_plot(
+    def tajaka_plot():        
+        return tajaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
-            style = input.chart_style()
+            style = input.chart_style(),
+            title = divisional_choices[input.tajaka_divisional()]
         )
 
     @render.data_frame
     def tajaka_chart_df():
         out = mf.round_cols(
-            tajaka_chart().rasi, ['Lon°', 'Speed'], [1, 3]
+            tajaka_divisional().placements, ['Lon°', 'Speed'], [1, 3]
         )[[
             'Graha', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed'
@@ -279,6 +306,7 @@ def server(input, output, session):
     def tajaka_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = tajaka_chart(),
+            divisional = input.tajaka_divisional(),
             sub_dasa_level = int(input.tajaka_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.tajaka_dasa_offset_days(),
             trunc_intervals = True,
@@ -377,6 +405,14 @@ def server(input, output, session):
             label = '',
             choices = list(range(1900, 2200, 1)),
             selected = datetime.now().year
+        )
+    
+    @render.ui
+    def tajaka_divisional_choices():
+        return ui.input_select(
+            id = 'tajaka_divisional',
+            label = '',
+            choices = divisional_choices
         )
 
 app = App(app_ui, server)
