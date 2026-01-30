@@ -47,6 +47,7 @@ class chart:
         self.datetime = local_tz.localize(dt)
         self.repr_str = self.datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
         self.divisionals = _divisionals(parent_chart = self)
+        self.rasi = self.divisionals.rasi
         if place is not None:
             self.place = place
             self.repr_str = f'{self.repr_str} {place}({b_lat}, {b_lon})'
@@ -54,10 +55,6 @@ class chart:
     def __repr__(self):
         return self.repr_str
     
-    def rasi(self):
-        out = self.divisionals.rasi
-        return out
-
     def chart_plot(
         self, 
         dark:bool, 
