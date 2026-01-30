@@ -118,10 +118,15 @@ def read_txt_file(path):
         txt = file.read()
     return txt
 
-def dms(degrees: float):
+def dms(degrees: float) -> str:
+    '''
+    Convert an absolute degree value into degrees–minutes–seconds
+    within a 30° astrological house/sign.
+    '''
     degrees = degrees % 360
-    deg = int((degrees % 30) // 1)
-    min = int((60 * (degrees % 1)) // 1)
-    sec = 60 * ((60 * (degrees % 1)) % 1)
-    out = f'{deg}°{min}\'{sec:.1f}'
+    degree_int = int(degrees % 30)
+    degree_mantissa = degrees % 1
+    minutes = int(60 * degree_mantissa)
+    seconds = 60 * ((60 * degree_mantissa) % 1)
+    out = f'{degree_int}°{minutes}\'{seconds:.1f}'
     return out
