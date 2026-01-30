@@ -191,7 +191,7 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
-        p = natal_chart().placements
+        p = natal_chart().rasi
         # Round some cols
         p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
         # Keep subset
@@ -264,7 +264,7 @@ def server(input, output, session):
     @render.data_frame
     def tajaka_chart_df():
         out = mf.round_cols(
-            tajaka_chart().placements, ['Lon°', 'Speed'], [1, 3]
+            tajaka_chart().rasi, ['Lon°', 'Speed'], [1, 3]
         )[[
             'Graha', 'Lon°', 'Nakshatra',
             'Nakshatra lord', 'Pada', 'Speed'

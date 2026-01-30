@@ -38,6 +38,7 @@ class vimsottari_dasa:
         seed_graha:str = 'Moon',
         sub_dasa_level:int = 0,
         dasa_offset_days:int = 0,
+        divisional = 'rasi', 
         trunc_intervals:bool = False,
         yr_len:float = 365.25,
         lifespan:int = 120,
@@ -52,7 +53,8 @@ class vimsottari_dasa:
             'Mahadaśā', 'Antardaśā', 'Pratyantardaśā', 'Sookshmaantardaśā',
             'Praanaantardaśā', 'Dehaantardaśā'
         ]
-        chart_df = chart.placements
+        if divisional == 'rasi':
+            chart_df = chart.rasi
         # Longitude of the seed graha
         seed_deg = chart_df.loc[
             chart_df['Graha'] == seed_graha, 'Lon'
