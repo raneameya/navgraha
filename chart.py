@@ -46,16 +46,16 @@ class chart:
         # Then localise the initial timezoneless datetime object
         self.datetime = local_tz.localize(dt)
         self.repr_str = self.datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
+        self.divisionals = _divisionals(parent_chart = self)
         if place is not None:
             self.place = place
             self.repr_str = f'{self.repr_str} {place}({b_lat}, {b_lon})'
 
     def __repr__(self):
         return self.repr_str
-
-    @cached_property
+    
     def rasi(self):
-        out = Rasi.d1(birth_crt = self)
+        out = self.divisionals.rasi
         return out
 
     def chart_plot(
@@ -76,6 +76,18 @@ class chart:
         crt = chart_minimal(placements = self.rasi)
         fig = crt.chart_plot(dark = dark, style = style, rasis = rasis)
         return fig
+
+class _divisionals:
+    '''
+    A class (in this instance, used as a namespace) to hold all divisional charts
+    '''
+    def __init__(self, parent_chart:chart):
+        self.parent = parent_chart
+    
+    @cached_property
+    def rasi(self):
+        out = Rasi.d1(self.parent)
+        return out
 
 def add_house(p):
     p['Sign'] = p['Lon'].apply(lambda x: int(divmod(x, 30)[0]+1))
