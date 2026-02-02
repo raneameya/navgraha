@@ -1,11 +1,15 @@
 import misc_functions as mf
 import chart as crt
-import chart_minimal
+from chart_minimal import chart_minimal
 from constants import rasis, rnp
 
-def d9(
-    birth_crt:crt.chart
-):
+amsa_devata_mapping = {
+    1: 'Deva', 2: 'Nara', 3: 'Rākṣasa', 
+    4: 'Deva', 5: 'Nara', 6: 'Rākṣasa', 
+    7: 'Deva', 8: 'Nara', 9: 'Rākṣasa'
+}
+
+def d9(birth_crt:crt.chart) -> chart_minimal:
     '''
     Compute the navamsa (D-9) of a birth chart
     Args:
@@ -14,9 +18,12 @@ def d9(
         A chart_minimal object with the navamsa placements including degrees
     '''
     p = birth_crt.rasi.placements
-    # Ninth divisional
-    p['Div progression'] = p['Lon30'].apply(lambda x: x // (30/9))
+    # Which amsa is a planet in? (i.e. 0-8)
+    p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30/9)))
+    # How much has the planet progressed in the amsā?
     p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x/(30/9))%1))
+    # Pull in info about amsā devata
+    p['Amsā Devatā'] = p['Amsā'].apply(lambda x: amsa_devata_mapping[x + 1])
     # Find navamsa starting house
     def element_mapping(natal_rasi, rasis_df = rasis):
         '''
@@ -44,11 +51,10 @@ def d9(
         start_rasi = element_mapping(natal_rasi = natal_rasi)
         navamsa_rasi = int((start_rasi + progression) % 12 + 1)
         return navamsa_rasi
-    p['Sign'] = p.apply(lambda x: d9_progression(x.Rashi, x['Div progression']), axis = 1)
+    p['Sign'] = p.apply(lambda x: d9_progression(x.Rashi, x['Amsā']), axis = 1)
     p['Rashi'] = p['Sign'].apply(lambda x: list(rasis['Rasi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: mf.dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
-    p.drop(['Lat°', 'House', 'Div progression'], axis = 1)
     p = crt.add_house(p = p)
     add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
     p = mf.add_non_equi_col(
@@ -59,8 +65,15 @@ def d9(
         p2col_get = add_cols
     )
     p = p[[
-        'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Speed', 
-        'Sign', 'Bhava', 'Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada'
+        'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 
+        'Amsā Devatā', 'Sign', 'Bhava', 'Rashi', 'Nakshatra', 
+        'Nakshatra lord', 'Pada', 'Speed'
     ]]
-    out = chart_minimal.chart_minimal(placements = p)
+    out = chart_minimal(
+        placements = p, 
+        display_cols = [
+            'Graha', 'Lon°', 'Amsā Devatā', 'Nakshatra', 
+            'Nakshatra lord', 'Pada'
+        ]
+    )
     return out
