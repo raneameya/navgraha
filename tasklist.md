@@ -8,6 +8,7 @@
     - ~~Cast chart at that time in sideral ayanamsa~~
     - Explore otions to speed up tropical longitude search. e.g. `scipy.fsolve`?
     - ~~Add annual dasas~~
+    - Add Muntha. Does a subclass need to be created for this? i.e. a tajaka year aware class that can compute Muntha?
 - Chart class
     - Clean functions
     - Plotting
@@ -18,7 +19,7 @@
         - ~~Indicate retrograde planets (e.g. an overbar?)~~
         - ~~Indicate degrees in chart (super/sub script)~~
 - Chart extras to add
-    - Pushkara
+    - [Pushkara] (https://komilla.com/lib-pushkara-part-two.html)
     - Combustion
     - Chara karakas
     - Planetary state (mudita, etc)
@@ -32,9 +33,10 @@
     - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
     - ~~Clean dasa UI~~
-    - Move some selectables from input to a new config tab. e.g. ayanamsa, chart style
+    - Separate input (e.g. birth date, time, place) from settings (e.g. ayanamsa, chart style) and env vars (e.g. dasa length 144, 120yrs, etc)
 - Timeline
     - Visualisation - annual timeline of retrogression, direct & stationary motion for all planets
+    - Annual timeline of planets in signs (& houses?)
 - Yogas
     - Use BV Raman's 300 yogas as a reference
 - Divisional charts
@@ -56,6 +58,6 @@
     - D-60 varga table
 
 ### Bugs
-- In the place selector, if "West Bengal" is selected, we get
+- In the place selector, if "West Bengal" is selected, we get:
 > Object of type int64 is not JSON serializable
 - In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.
