@@ -208,14 +208,7 @@ def server(input, output, session):
 
     @render.data_frame
     def get_chart_data():
-        p = natal_chart().rasi.placements
-        # Round some cols
-        p = mf.round_cols(p, ['Lon°', 'Speed'], [1, 3])
-        # Keep subset
-        p = p[[
-            'Graha', 'Lon°', 'Nakshatra',
-            'Nakshatra lord', 'Pada', 'Speed'
-        ]]
+        p = natal_divisional().display_table
         return p
 
     @reactive.calc

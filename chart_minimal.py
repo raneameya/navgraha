@@ -4,18 +4,40 @@ import matplotlib.pyplot as plt
 import math
 from matplotlib import collections as mc
 from chart_plot_constants import *
+import warnings
 
 class chart_minimal:
     '''
-    A minimal chart class, that strips away any requirement that a chart was a celestial configuration. 
-    Mostly useful for plotting divisional charts (e.g. Rahu & Ketu can be in the same house)
+    A minimal chart class, that strips away any requirement that a chart 
+    is a valid celestial configuration for a given time. 
+    Mostly useful for plotting divisional charts 
+    (e.g. Rahu & Ketu can be in the same house)
     '''
     def __init__(
         self,
-        placements:pd.DataFrame
+        placements:pd.DataFrame, 
+        display_cols: list[str]
     ):
-        # Assumed that placements contains the necessary info about grahas, degrees, speed, etc.
+        # Assumed that placements contains the necessary info 
+        # about grahas, degrees, speed, etc.
         self.placements = placements
+        cols = placements.columns.tolist()
+        # display_cols should be a subset of cols. if not, choose only 
+        # intersection. display_cols can potentially be exposed to the 
+        # user in the form of a multiselect dropdown
+        set_display_cols = set(display_cols)
+        set_cols = set(cols)
+        if set_display_cols > set_cols:
+            diff_cols = set_display_cols.difference(set_cols)
+            warnings.warn(f'''
+            {diff_cols} not present in this chart. 
+            Table will exclude these column(s)
+            ''')
+            display_cols = list(set_cols.intersection(set_display_cols))
+        display_table = placements[display_cols]
+        if 'Speed' in display_cols:
+            display_table = mf.round_cols(display_table, ['Speed'], [3])
+        self.display_table = display_table
     
     def __repr__(self):
         return self.placements.__repr__()
@@ -25,18 +47,20 @@ class chart_minimal:
             dark:bool, 
             style:str,
             title:str = 'D-1', 
-            rasis:dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
+            rasis:dict = rasi_dict # mapping sign to unicode glyph
         ):
             # Colour to draw lines, grahas, signs 
             # Almost anything drawn is in this colour.
             writecolour = 'white' if dark else 'black'
-            # Background colour, to match bootstrap background colour based on theme
+            # Background colour, matches theme bootstrap background colour
             bgcolour = '#1D1F21' if dark else 'white'
             # South Indian charts are anchored by sign, 
             # and North Indian are anchored charts by house
-            house_or_sign = {'South Indian': 'Sign', 'North Indian': 'Bhava'}[style]
-            # Get the placements of grahas. Sorting allows for the planets to be 
-            # shown in the order of progession in a sign
+            house_or_sign = {
+                'South Indian': 'Sign', 'North Indian': 'Bhava'
+            }[style]
+            # Get the placements of grahas. Sorting allows for the planets 
+            # to be shown in the order of progession in a sign
             p = self.placements[[
                 'Graha', 'Bhava', 'Rashi', 'Sign', 'Speed', 'Lon'
             ]].sort_values(by = 'Lon')
@@ -94,10 +118,12 @@ class chart_minimal:
                         deg_txt = f'{round(grahas[g]['Lon'] % 30, 1):.1f}'
                         if grahas[g]['Speed'] >= 0:
                             # Doubly subscripted text indicating degrees
-                            txt = r'$\mathrm{' + g_txt + r'_{_{' + deg_txt + r'}}}$'
+                            txt = (r'$\mathrm{' + g_txt 
+                            + r'_{_{' + deg_txt + r'}}}$')
                         else:
                             # Overbar for retro graha
-                            txt = r'$\overline{\mathrm{' + g_txt + r'}}_{_{' + deg_txt + r'}}$'
+                            txt = (r'$\overline{\mathrm{' 
+                            + g_txt + r'}}_{_{' + deg_txt + r'}}$')
                         ax.annotate(
                             text = txt, 
                             xy = coord_plus(
@@ -111,7 +137,6 @@ class chart_minimal:
                         )
             ax.set_xlim(0, 4)
             ax.set_ylim(0, 4)
-            #ax.set_aspect('equal', adjustable = 'box') # Ensure squares are visually square
             fig.set_facecolor(bgcolour)
             plt.axis('off')
             plt.title(title, color = writecolour)
