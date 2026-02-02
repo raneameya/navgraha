@@ -5,6 +5,7 @@ import pytz
 import stdout_to_pd as sp
 import pandas as pd
 import re
+from datetime import datetime
 from constants import rasis, rnp
 
 def d1(birth_crt: crt) -> chart_minimal:
@@ -33,7 +34,13 @@ def d1(birth_crt: crt) -> chart_minimal:
         'Speed', 'Lat°', 'House', 'Sign', 'Bhava', 'Rashi', 
         'Nakshatra', 'Nakshatra lord', 'Pada'
     ]]
-    return chart_minimal(placements = p)
+    return chart_minimal(
+        placements = p, 
+        display_cols = [
+            'Graha', 'Lon°', 'Nakshatra', 
+            'Nakshatra lord', 'Pada', 'Speed'
+        ]
+    )
 
 def birth_datetime_args(dt:datetime):
     # Return a list of UTC birth date & UTC birth time
