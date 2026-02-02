@@ -32,6 +32,9 @@ class fractional_interval:
             ri = ')'
         return f'{li}{self.left}, {self.right}{ri}'
 
+    def __eq__(self, other):
+        return (self.left, self.right) == (other.left, other.right)
+
     def point_in_range_coverage(self, point):
         '''
         Computes how "far" a point is, in an interval, with defaults of 100% 

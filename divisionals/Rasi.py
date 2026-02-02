@@ -20,7 +20,7 @@ def d1(birth_crt: crt) -> chart_minimal:
     # Keep classical planets (including Rahu, Ketu)
     p = p.head(10)
     # Add other details
-    add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
+    add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 'Pushkara']
     p = mf.add_non_equi_col(
         p1 = p,
         p2 = rnp,
@@ -32,13 +32,13 @@ def d1(birth_crt: crt) -> chart_minimal:
     p = p[[
         'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 
         'Speed', 'Lat°', 'House', 'Sign', 'Bhava', 'Rashi', 
-        'Nakshatra', 'Nakshatra lord', 'Pada'
+        'Nakshatra', 'Nakshatra lord', 'Pada', 'Pushkara'
     ]]
     return chart_minimal(
         placements = p, 
         display_cols = [
-            'Graha', 'Lon°', 'Nakshatra', 
-            'Nakshatra lord', 'Pada', 'Speed'
+            'Graha', 'Lon°', 'Nakshatra', 'Nakshatra lord', 
+            'Pada', 'Pushkara', 'Speed'
         ]
     )
 

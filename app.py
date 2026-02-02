@@ -283,12 +283,7 @@ def server(input, output, session):
 
     @render.data_frame
     def tajaka_chart_df():
-        out = mf.round_cols(
-            tajaka_divisional().placements, ['Lon°', 'Speed'], [1, 3]
-        )[[
-            'Graha', 'Lon°', 'Nakshatra',
-            'Nakshatra lord', 'Pada', 'Speed'
-        ]]
+        out = tajaka_divisional().display_table
         return out
 
     @render.text

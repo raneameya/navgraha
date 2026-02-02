@@ -129,10 +129,39 @@ p['Degrees']=pd.Series([
     for i in range(1080) if i%10 == 0
 ])
 
+# Indicate Pushkara amsas
+pushkara_amsas = [
+    # Aries [20°0'0.0, 23°20'0.0)
+    fi(left = 20, right = fr(70, 3), closed = 'left'),
+    # Aries [26°40'0.0, 0°0'0.0)
+    fi(left = fr(80, 3), right = 30, closed = 'left'), 
+    # Taurus [6°40'0.0, 10°0'0.0)
+    fi(left = fr(110, 3), right = 40, closed = 'left'),
+    # Taurus [13°20'0.0, 16°40'0.0)
+    fi(left = fr(130, 3), right = fr(140, 3), closed = 'left'),
+    # Gemini [16°40'0.0, 20°0'0.0)
+    fi(left = fr(230, 3), right = 80, closed = 'left'),
+    # Gemini [23°20'0.0, 26°40'0.0)
+    fi(left = fr(250, 3), right = fr(260, 3), closed = 'left'), 
+    # Cancer [0°0'0.0, 3°20'0.0)
+    fi(left = 90, right = fr(280, 3), closed = 'left'),
+    # Cancer [6°40'0.0, 10°0'0.0)
+    fi(left = fr(290, 3), right = 100, closed = 'left')
+]
+# Add 120° to cover other 8 signs symmetrically
+pushkara_amsas = [
+    fi(left = (x.left + 120 * i), right = (x.right + 120 * i), closed = 'left') 
+    for i in range(3) for x in pushkara_amsas
+]
+# Add Pushkara column
+p['Pushkara'] = p['Degrees'].apply(
+    lambda d: 'Yes' if d in pushkara_amsas else 'No'
+)
+
 # Reorder columns
 p=p[[
     'Rashi', 'Nakshatra', 'Nakshatra lord', 'Vimshottari dasa (yrs)', 
-    'Pada', 'Start', 'End', 'Degrees', 'Snippet'
+    'Pada', 'Start', 'End', 'Degrees', 'Pushkara', 'Snippet'
 ]]
 
 nakshatra=p.groupby(by=['Nakshatra'], observed=True).agg({
