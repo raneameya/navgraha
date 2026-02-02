@@ -40,22 +40,22 @@
 - Yogas
     - Use BV Raman's 300 yogas as a reference
 - Divisional charts
-    - ~~D-1 varga table~~
-    - D-2 varga table
-    - D-3 varga table
-    - D-4 varga table
-    - D-7 varga table
-    - D-9 varga table
-    - D-10 varga table
-    - D-12 varga table
-    - D-16 varga table
-    - D-20 varga table
-    - D-24 varga table
-    - D-27 varga table
-    - D-30 varga table
-    - D-40 varga table
-    - D-45 varga table
-    - D-60 varga table
+    - ~~D-1 varga~~
+    - D-2 varga
+    - D-3 varga
+    - D-4 varga
+    - D-7 varga
+    - ~~D-9 varga~~
+    - D-10 varga
+    - D-12 varga
+    - D-16 varga
+    - D-20 varga
+    - D-24 varga
+    - D-27 varga
+    - D-30 varga
+    - D-40 varga
+    - D-45 varga
+    - D-60 varga
 
 ### Bugs
 - In the place selector, if "West Bengal" is selected, we get:
