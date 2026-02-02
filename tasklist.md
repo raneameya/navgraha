@@ -19,7 +19,7 @@
         - ~~Indicate retrograde planets (e.g. an overbar?)~~
         - ~~Indicate degrees in chart (super/sub script)~~
 - Chart extras to add
-    - [Pushkara] (https://komilla.com/lib-pushkara-part-two.html)
+    - ~~[Pushkara](https://komilla.com/lib-pushkara-part-two.html)~~
     - Combustion
     - Chara karakas
     - Planetary state (mudita, etc)
