@@ -2,8 +2,8 @@ import pytz
 import misc_functions as mf
 from datetime import datetime
 from constants import rnp
-from chart_minimal import chart_minimal
-from chart_plot_constants import rasi_dict
+from chart.chart_minimal import chart_minimal
+from chart.chart_plot_constants import rasi_dict
 from functools import cached_property
 from divisionals import Rasi, Navamsa
 

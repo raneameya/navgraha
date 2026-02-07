@@ -1,6 +1,6 @@
 import misc_functions as mf
-import chart as crt
-from chart_minimal import chart_minimal
+import chart.chart as crt
+from chart.chart_minimal import chart_minimal
 from constants import rasis, rnp
 
 amsa_devata_mapping = {
@@ -24,7 +24,8 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
     p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x/(30/9))%1))
     # Pull in info about amsā devata
     p['Amsā Devatā'] = p['Amsā'].apply(lambda x: amsa_devata_mapping[x + 1])
-    # Find navamsa starting house
+    # Find element of rasi containing the graha. This is used to find the 
+    # starting sign to count from to arrive at the navamsa sign
     def element_mapping(natal_rasi, rasis_df = rasis):
         '''
         Map a rasi to the starting rasi in the navamsa. For internal use only

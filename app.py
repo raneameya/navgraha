@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from constants import rnp, ayanamsas, yr_len
 import stdout_to_pd as std2pd
 import misc_functions as mf
-import chart as crt
+import chart.chart as crt
 import vimsottari_dasa as vd
 import sol_cross as sc
 import matplotlib.pyplot as plt

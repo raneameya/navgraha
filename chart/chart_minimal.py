@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import math
 from matplotlib import collections as mc
-from chart_plot_constants import *
+from chart.chart_plot_constants import *
 import warnings
 
 class chart_minimal:

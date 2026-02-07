@@ -1,6 +1,6 @@
 import misc_functions as mf
-import chart as crt
-from chart_minimal import chart_minimal
+import chart.chart as crt
+from chart.chart_minimal import chart_minimal
 import pytz
 import stdout_to_pd as sp
 import pandas as pd
