@@ -1,4 +1,4 @@
-import chart as crt # chart class used as input
+import chart.chart as crt # chart class used as input
 import numpy as np # cumsum
 import pandas as pd # dataframe, interval
 from constants import rnp, nakshatra # lookup table to provide to class
@@ -8,40 +8,72 @@ from fractions import Fraction as fr
 
 class vimsottari_dasa:
     '''
-    A class that computes and stores information about the vimsottari daśā
-    for a given chart.
-    The sub_dasa attributes are a list of dasa_intervals depending on sub_dasa_level
+    Computes and stores Vimsottari Daśā periods for a given chart. 
+    
+    This class calculates the Vimsottari Daśā timeline starting from a 
+    specified seed graha (typically the Moon) and supports multiple 
+    levels of sub-division (mahādaśā through dehāntardaśā). 
+    
+    The depth of subdivision is controlled by sub_dasa_level, and the 
+    resulting daśā intervals are stored as a table with start and end times.
+
     Args:
         chart (chart): The natal chart for which the daśās need to be computed.
-        seed_graha (str): This is usually Moon, unless some other graha is extremely powerful in the chart or the Moon is exceptionally weak.
-        sub_dasa_level (int): One of the following 0:'Mahadaśā', 1:'Antardaśā', 2:'Pratyantardaśā', 3:'Sookshmaantardaśā', 4:'Praanaantardaśā', 5:'Dehaantardaśā'
-        dasa_offset_days (int): By how many days should all the daśā periods be shifted in the future?
-        trunc_intervals (bool): Should the dasa (or sub-dasa) periods be truncated to days? Set False to see more precise daśā intervals.
-        yr_len (float): How long should a year be?
-        lifespan (int): How long should the entire dasa period be? Default is 120 years for a natal chart, but can be changed for other use cases like tājaka.
-        rnp_lut (DataFrame): rasi, nakshatra, pada lookup table. Leave unchanged.
-    Returns:
-        vimsottari_dasa: A vimsottari_dasa object with various attributes
+        seed_graha (str): This is usually the Moon, unless some other graha is 
+            extremely powerful in the chart or the Moon is exceptionally weak.
+        sub_dasa_level (int): Depth of daśā subdivision
+            0:'Mahadaśā'
+            1:'Antardaśā'
+            2:'Pratyantardaśā'
+            3:'Sookshmaantardaśā'
+            4:'Praanaantardaśā'
+            5:'Dehaantardaśā'
+        dasa_offset_days (int): Number of days by which all daśā periods 
+            are shifted into the future (or past if -ve).
+        divisional (str): The divisional chart for which the daśā needs to 
+            be computed. A full list of allowable inputs can be accessed at 
+            TODO:...
+        trunc_intervals (bool): Set False to retain higher precision daśā 
+            intervals. True truncates the intervals to the days.
+        yr_len (float): Approximately 365.25 for a year, but can make a 
+            difference for dasas further into the future.
+        lifespan (int): Total duration of the daśā cycle in years. Defaults 
+            to 120 years for a natal chart, but some cases like tājaka need 1 
+            year, and some entity charts use 144 years.
+        rnp_lut (DataFrame): Rāśi-nakṣatra-pada lookup table. Typically 
+            left unchanged.
     Attributes:
-        dasa_names (list[str]): A list of the names of the 6 sub-dasa levels. Provided for convenience and reuse
-        nakshatra (str): The nakshatra in which the seed graha lies
-        nakshatra_lord (str): The graha lord of the nakshatra in which the seed graha lies
-        dasa_covered (float): A fraction in [0, 1) indicating how much of the nakshatra has the seed graha covered. This determines when the daśā starts. A larger fraction means that the daśā of nakshatra lord began more in the past relative to the natal birth.
-        dasas (DataFrame): A DataFrama with 9^(`sub_dasa_level` + 1) rows. Each row corresponds to 1. a tuple of grahas as period lords and sub-lords, and 2. the start & end time for that dasa period.
+        dasa_names (list[str]): Names of the 6 sub-dasa levels, provided 
+            for convenience.
+        nakshatra (str): Nakṣatra in which the seed graha is located
+        nakshatra_lord (str): Graha lord of the nakshatra in which the seed 
+            graha is located
+        nakshatra_traversed (float): A fraction in [0, 1) indicating how much 
+            of the nakṣatra the seed graha has traversed at the time of birth. 
+            This determines how far in the past the current mahādaśā began. 
+            The remaining fraction determines the balance of the running 
+            mahādaśā at birth.
+        dasas (DataFrame): A DataFrama with 9^(`sub_dasa_level` + 1) rows. 
+            Each row corresponds to:
+            1. a tuple of grahas as period lords and sub-lords 
+            2. the start & end time for that dasa period.
     Methods:
-        compute_sub_dasa_shares: Calculates the shares (sum to 1) of all subdasa periods based on the requested `sub_dasa_level`. These shares can be scaled up to the lifespan interval to get the actual dasa intervals.
-        dasa_to_df: Exists only for compatibility with old implementation.
+        compute_sub_dasa_shares: Calculates the shares (sum to 1) of all 
+            subdasa periods based on the requested `sub_dasa_level`. 
+            These shares can be scaled up to the lifespan interval to 
+            get the actual dasa intervals.
+        dasa_to_df: Exists for compatibility with old implementation.
     '''
     def __init__(
         self,
-        chart:crt.chart,
-        seed_graha:str = 'Moon',
-        sub_dasa_level:int = 0,
-        dasa_offset_days:int = 0,
-        divisional = 'rasi', 
-        trunc_intervals:bool = False,
-        yr_len:float = 365.25,
-        lifespan:int = 120,
+        chart: crt.chart,
+        seed_graha: str = 'Moon',
+        sub_dasa_level: int = 0,
+        dasa_offset_days: int = 0,
+        divisional: str = 'rasi', 
+        trunc_intervals: bool = False,
+        yr_len: float = 365.25,
+        lifespan: int = 120,
         rnp_lut: pd.DataFrame = rnp
     ):
         self.chart = chart
@@ -80,8 +112,7 @@ class vimsottari_dasa:
             Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
             Length = ('Vimshottari dasa (yrs)', 'sum')
         )
-        # Which nakshatra does the seed graha lie in,
-        # and who is that nakshatra's lord?
+        # Identify the nakshatra the seed graha lie in, and its lord
         self.nakshatra, self.nakshatra_lord = rnp_gb[
             rnp_gb['IsIn'] > 0
         ].index.values[0]
@@ -110,7 +141,7 @@ class vimsottari_dasa:
         sub_dasa_shares = self.compute_sub_dasa_shares(
             dasa_length_dict = dasa_lengths,
             sub_level = sub_dasa_level + 1, 
-            start_lord = self.nakshatra_lord
+            first_mahadasa_lord = self.nakshatra_lord
         )
         sub_dasa_datetimes = [first_dasa_start] + [
             first_dasa_start + dt.timedelta(days = delta * yr_len * lifespan)
@@ -141,46 +172,106 @@ class vimsottari_dasa:
 
     def compute_sub_dasa_shares(
         self, 
-        dasa_length_dict:dict,
-        sub_level:int,
-        start_lord:str
-    ):
+        dasa_length_dict: dict,
+        sub_level: int,
+        first_mahadasa_lord: str
+    ) -> pd.DataFrame:
+        '''
+        Compute a cumulative daśā timeline up to a specified sub-level.
+
+        This method constructs all nested daśā periods (e.g. mahādaśā,
+        antardaśā, pratyantara, etc.) up to `sub_level`, calculates their
+        proportional durations using a recursive daśā length engine, and
+        returns the result as a tabular timeline.
+
+        The returned DataFrame lists each complete daśā sequence in order and
+        provides the cumulative endpoint of each period, making it suitable
+        for chronological mapping to actual dates.
+
+        Args:
+        dasa_length_dict (dict[tuple, float]): A mapping from daśā lords to 
+            their proportional duration shares. The keys in this dictionary are 
+            assumed to be the canonical daśā sequence and is used for cyclic 
+            shifting.
+        sub_level(int): The number of daśā levels to compute. For example:
+            - 1 → mahādaśā only
+            - 2 → mahādaśā + antardaśā
+            - 3 → mahādaśā + antardaśā + pratyantaradaśā
+        first_mahadasa_lord(str): The lord of the first mahādaśā
+
+        Returns:
+        pandas.DataFrame: A DataFrame with one row per complete daśā sequence. 
+            Columns correspond to daśā levels (named according to 
+            `self.dasa_names`), and the final column `Length` contains the 
+            cumulative proportion of elapsed time for each period.
+        '''
         lords = list(dasa_length_dict.keys())
-        # cyclic shift `dasa_length_dict` to make start_lord as the first key-value pair
+        # cyclic shift `dasa_length_dict` to bring first_mahadasa_lord first
         dasa_length_dict = {
             k: dasa_length_dict[k] for k in cyclic_shift(
-                x = lords, start = lords.index(start_lord)
+                x = lords, start = lords.index(first_mahadasa_lord)
             )
         }
-        def calculate_dasa_length(d, rp, dl = dasa_length_dict):
+        def calculate_dasa_length(
+            period_shares: dict[tuple[str, ...], float], 
+            sub_level: int, 
+            dasa_shares: dict = dasa_length_dict
+        ) -> dict[tuple[str, ...], float]:
             '''
-            Recursive function to calculate share of dasas from the 
-            dictionary of {graha:share of total dasa} pairs by tupling the 
-            keys in a cartesian product and using regular math product for 
-            the shares.
+            Recursively compute fraction of duration for nested daśā sequences.
+
+            This function builds all possible daśā / sub-daśā paths up to a 
+            given recursion depth (`sub_level`) and assigns each path a 
+            proportional duration based on daśā length shares 
+            (`dasa_length_dict`).
+
+            Each recursion level subdivides the duration of its parent daśā 
+            according to `dasa_length_dict`, with the constraint that 
+            sub-periods are ordered cyclically starting from the lord of 
+            the immediately preceding period.
+
+            Args:            
+            period_shares (dict[tuple, float]): A mapping from daśā paths 
+                (represented as tuples of daśā lords) to their proportional 
+                durations. The empty tuple ``()`` represents the root period 
+                with total normalized duration 1.
+            sub_level (int): Remaining recursion depth. Each decrement 
+                corresponds to one additional sub-daśā level.
+                (e.g. mahādaśā → antardaśā → pratyantaradaśā).
+            dasa_shares (dict): A mapping from daśā lords to their 
+                proportional duration shares.
+            
+            Returns:
+            dict[tuple, float]: A dictionary mapping complete daśā paths 
+            (tuples) to their proportional durations. The sum of all returned 
+            values equals 1. 
             '''
-            if rp == 0: return d
-            dl_keys = list(dasa_length_dict.keys())
-            # For the next sub-level call the function with dl cyclic shifted 
-            # so that the start lord is the same as the lord of k1 
-            # (i.e. previous dasa lord), unless k1 is the lifespan and 
-            # has no lord
+            if sub_level == 0: return period_shares
+            mahadasa_grahas = list(dasa_length_dict.keys())
+            # For the next sub-level call the function with period_shares 
+            # shifted cyclically with the start lord the same as the previous 
+            # dasa lord. (unless period_shares is the lifespan and has no lord)
             return calculate_dasa_length(
-                d = {
-                    k1+(k2,): d[k1]*dl[k2] 
-                    for k1 in d 
-                    for k2 in ({
-                        k:dl[k] for k in cyclic_shift(
-                            x = dl_keys, 
-                            start = dl_keys.index(k1[(len(k1)-1)])
+                period_shares = {
+                    parent_path+(next_lord,): (
+                        period_shares[parent_path]*
+                        dasa_shares[next_lord]
+                    )
+                    for parent_path in period_shares 
+                    for next_lord in ({
+                        lord:dasa_shares[lord] for lord in cyclic_shift(
+                            x = mahadasa_grahas, 
+                            start = mahadasa_grahas.index(
+                                parent_path[(len(parent_path)-1)]
+                            )
                         )
-                    } if len(k1) > 0 else dl)
+                    } if len(parent_path) > 0 else dasa_shares)
                 },
-                rp = rp - 1
+                sub_level = sub_level - 1
             )
         # `{():1}` is the neutral element of the dasa_length_dict on which 
         # the shares can be built
-        out = calculate_dasa_length({():1}, rp = sub_level)
+        out = calculate_dasa_length({():1}, sub_level = sub_level)
         dasa_shares = pd.DataFrame(
             data = list(out.keys()), columns = self.dasa_names[0:sub_level]
         )
