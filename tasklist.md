@@ -33,7 +33,7 @@
     - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
     - ~~Clean dasa UI~~
-    - Separate input (e.g. birth date, time, place) from settings (e.g. ayanamsa, chart style) and env vars (e.g. dasa length 144, 120yrs, etc)
+    - ~~Separate input (e.g. birth date, time, place) from settings (e.g. ayanamsa, chart style) and env vars (e.g. dasa length 144, 120yrs, etc)~~
 - Timeline
     - Visualisation - annual timeline of retrogression, direct & stationary motion for all planets
     - Annual timeline of planets in signs (& houses?)

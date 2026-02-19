@@ -7,6 +7,7 @@ import chart.chart as crt
 import vimsottari_dasa as vd
 import sol_cross as sc
 import matplotlib.pyplot as plt
+from faicons import icon_svg
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -99,6 +100,29 @@ tajaka_ui = ui.nav_panel(
     )
 )
 
+settings_ui = ui.nav_panel(
+    '',
+    ui.accordion(
+        ui.accordion_panel(
+            'Preferences', 
+            ui.input_select(
+                id = 'b_ayanamsa',
+                label = 'Choose Ayanamsa',
+                choices = ayanamsas.to_dict(),
+            ),
+            ui.input_select(
+                id = 'chart_style',
+                label = 'Chart style',
+                choices = ['South Indian', 'North Indian']
+            )
+        ),
+        ui.accordion_panel(
+            'Constants'
+        )
+    ),
+    icon = icon_svg('gear')
+)
+
 app_ui = ui.page_sidebar(
     # Sidebar needs to be open so that the birth inputs (e.g. date, time, 
     # ayanamsa) are initialised.
@@ -110,6 +134,7 @@ app_ui = ui.page_sidebar(
     ui.navset_card_tab(
         natal_ui,
         tajaka_ui,
+        settings_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
         id = 'pill'
     )
@@ -344,16 +369,6 @@ def server(input, output, session):
                 id = 'b_time',
                 label = 'Input time',
                 value = datetime.now().strftime('%H:%M:%S')
-            ),
-            ui.input_select(
-                id = 'b_ayanamsa',
-                label = 'Choose Ayanamsa',
-                choices = ayanamsas.to_dict(),
-            ),
-            ui.input_select(
-                id = 'chart_style',
-                label = 'Chart style',
-                choices = ['South Indian', 'North Indian']
             ),
             ui.input_text(
                 id = 'b_place',
