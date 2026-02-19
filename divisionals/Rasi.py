@@ -7,8 +7,9 @@ import pandas as pd
 import re
 from datetime import datetime
 from constants import rasis, rnp
+from divisionals.divisional_helpers import add_house
 
-def d1(birth_crt: crt) -> chart_minimal:
+def d1(birth_crt: crt.chart) -> chart_minimal:
     # Get birthdate arguments in UTC for swetest
     birth_datetime_utc_args = birth_datetime_args(birth_crt.datetime)
     # location argument, assumed 0 z-height at birth
@@ -101,7 +102,7 @@ def swetest(sweedir, birth_args):
         regex = True
     )
     # House calculation
-    p = crt.add_house(p)
+    p = add_house(p)
     # Add degrees in house as a numeric
     p['Lon30'] = p['Lon'].apply(lambda x: x%30)
     return p

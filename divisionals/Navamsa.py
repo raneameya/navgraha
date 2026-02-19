@@ -2,6 +2,7 @@ import misc_functions as mf
 import chart.chart as crt
 from chart.chart_minimal import chart_minimal
 from constants import rasis, rnp
+from divisionals.divisional_helpers import add_house
 
 amsa_devata_mapping = {
     1: 'Deva', 2: 'Nara', 3: 'Rākṣasa', 
@@ -56,7 +57,7 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
     p['Rashi'] = p['Sign'].apply(lambda x: list(rasis['Rasi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: mf.dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
-    p = crt.add_house(p = p)
+    p = add_house(p = p)
     add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
     p = mf.add_non_equi_col(
         p1 = p,
