@@ -13,3 +13,11 @@ example_chart.pickle
 *.conf
 *.jhd
 experiments/*
+*.pyc
+example_charts.py
+resources/*
+test.py
+rasis.csv
+Varga - amsa devatā.csv
+chart_now
+All vargas table.csv
