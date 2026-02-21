@@ -115,7 +115,7 @@ class chart_minimal:
                         # Style text for graha
                         g_txt = g[0:2]
                         # Degrees graha has progressed in sign
-                        deg_txt = f'{round(grahas[g]['Lon'] % 30, 1):.1f}'
+                        deg_txt = f'''{round(grahas[g]['Lon'] % 30, 1):.1f}'''
                         if grahas[g]['Speed'] >= 0:
                             # Doubly subscripted text indicating degrees
                             txt = (r'$\mathrm{' + g_txt 
