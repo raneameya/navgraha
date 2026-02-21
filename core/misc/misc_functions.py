@@ -1,4 +1,4 @@
-import pytz, re, stdout_to_pd as sp, pandas as pd
+import pytz, re, core.misc.stdout_to_pd as sp, pandas as pd
 from datetime import datetime
 
 def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):

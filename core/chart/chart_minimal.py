@@ -1,9 +1,9 @@
-import misc_functions as mf
+import core.misc.misc_functions as mf
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
 from matplotlib import collections as mc
-from chart.chart_plot_constants import *
+from core.chart.chart_plot_constants import *
 import warnings
 
 class chart_minimal:

@@ -1,0 +1,106 @@
+Area,IAST transliteration,UTF8
+Basics,jyotiṣa,ज्योतिष
+Basics,vedāṅga,वेदाङ्ग
+Basics,gaṇita,गणित
+Basics,saṁhitā,संहिता
+Basics,horā,होरा
+Basics,siddhānta,सिद्धान्त
+Basics,phala,फल
+Basics,dṛṣṭi,दृष्टि
+Basics,bhāva,भाव
+Basics,graha,ग्रह
+Basics,rāśi,राशि
+Basics,varga,वर्ग
+Basics,lagna,लग्न
+Basics,pañcāṅga,पञ्चाङ्ग
+Basics,ayanāṁśa,अयनांश
+Grahas,sūrya,सूर्य
+Grahas,candra,चन्द्र
+Grahas,maṅgala,मङ्गल
+Grahas,budha,बुध
+Grahas,guru,गुरु
+Grahas,bṛhaspati,बृहस्पति
+Grahas,śukra,शुक्र
+Grahas,śani,शनि
+Grahas,rāhu,राहु
+Grahas,ketu,केतु
+Rāśis,meṣa,मेष
+Rāśis,vṛṣabha,वृषभ
+Rāśis,mithuna,मिथुन
+Rāśis,karkaṭa,कर्कट
+Rāśis,siṁha,सिंह
+Rāśis,kanyā,कन्या
+Rāśis,tulā,तुला
+Rāśis,vṛścika,वृश्चिक
+Rāśis,dhanuḥ,धनुः
+Rāśis,makara,मकर
+Rāśis,kumbha,कुम्भ
+Rāśis,mīna,मीन
+Nakṣatras,aśvinī,अश्विनी
+Nakṣatras,bharaṇī,भरणी
+Nakṣatras,kṛttikā,कृत्तिका
+Nakṣatras,rohiṇī,रोहिणी
+Nakṣatras,mṛgaśīrṣa,मृगशीर्ष
+Nakṣatras,ārdrā,आर्द्रा
+Nakṣatras,punarvasu,पुनर्वसु
+Nakṣatras,puṣya,पुष्य
+Nakṣatras,āśleṣā,आश्लेषा
+Nakṣatras,maghā,मघा
+Nakṣatras,pūrvaphālgunī,पूर्वफाल्गुनी
+Nakṣatras,uttaraphālgunī,उत्तरफाल्गुनी
+Nakṣatras,hasta,हस्त
+Nakṣatras,citrā,चित्रा
+Nakṣatras,svātī,स्वाती
+Nakṣatras,viśākhā,विशाखा
+Nakṣatras,anurādhā,अनुराधा
+Nakṣatras,jyeṣṭhā,ज्येष्ठा
+Nakṣatras,mūla,मूल
+Nakṣatras,pūrvāṣāḍhā,पूर्वाषाढा
+Nakṣatras,uttarāṣāḍhā,उत्तराषाढा
+Nakṣatras,śravaṇa,श्रवण
+Nakṣatras,dhaniṣṭhā,धनिष्ठा
+Nakṣatras,śatabhiṣaj,शतभिषज्
+Nakṣatras,pūrvabhādrapadā,पूर्वभाद्रपदा
+Nakṣatras,uttarabhādrapadā,उत्तरभाद्रपदा
+Nakṣatras,revatī,रेवती
+Daśā systems,daśā,दशा
+Daśā systems,mahādaśā,महादशा
+Daśā systems,antardaśā,अन्तर्दशा
+Daśā systems,pratyantardaśā,प्रत्यन्तर्दशा
+Daśā systems,viṁśottarī daśā,विंशोत्तरी दशा
+Daśā systems,aṣṭottarī daśā,अष्टोत्तरी दशा
+Daśā systems,yoginī daśā,योगिनी दशा
+Daśā systems,kālacakra daśā,कालचक्र दशा
+Daśā systems,cara daśā,चर दशा
+Daśā systems,sthira daśā,स्थिर दशा
+Vargas,rāśi,राशि
+Vargas,horā,होरा
+Vargas,drekkāṇa,द्रेक्काण
+Vargas,caturthāṁśa,चतुर्थांश
+Vargas,pañcāṁśa,पञ्चांश
+Vargas,ṣaṣṭhāṁśa,षष्ठांश
+Vargas,saptāṁśa,सप्तांश
+Vargas,navāṁśa,नवांश
+Vargas,daśāṁśa,दशांश
+Vargas,dvādaśāṁśa,द्वादशांश
+Vargas,ṣoḍaśāṁśa,षोडशांश
+Vargas,viṁśāṁśa,विंशांश
+Vargas,caturviṁśāṁśa,चतुर्विंशांश
+Vargas,triṁśāṁśa,त्रिंशांश
+Vargas,ṣaṣṭyāṁśa,षष्ट्यांश
+Yogas,rājayoga,राजयोग
+Yogas,mahāpuruṣa yoga,महापुरुष योग
+Yogas,gajakeśarī yoga,गजकेसरी योग
+Yogas,nīcabhaṅga rājayoga,नीचभङ्ग राजयोग
+Yogas,dharmakarmādhipati yoga,धर्मकर्माधिपति योग
+Yogas,kemadruma yoga,केमद्रुम योग
+Yogas,śakata yoga,शकट योग
+Doṣas & Conditions,doṣa,दोष
+Doṣas & Conditions,kuja doṣa,कुज दोष
+Doṣas & Conditions,kāla sarpa doṣa,काल सर्प दोष
+Doṣas & Conditions,graha yuddha,ग्रह युद्ध
+Doṣas & Conditions,vakra,वक्र
+Doṣas & Conditions,uccha,उच्च
+Doṣas & Conditions,nīca,नीच
+Doṣas & Conditions,mūlatrikoṇa,मूलत्रिकोण
+Doṣas & Conditions,asta,अस्त

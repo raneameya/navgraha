@@ -1,11 +1,11 @@
 import pytz
-import misc_functions as mf
+import core.misc.misc_functions as mf
 from datetime import datetime
-from constants import rnp
-from chart.chart_minimal import chart_minimal
-from chart.chart_plot_constants import rasi_dict
+from core.data.constants import rnp
+from core.chart.chart_minimal import chart_minimal
+from core.chart.chart_plot_constants import rasi_dict
 from functools import cached_property
-from divisionals import Rasi, Navamsa
+from core.divisionals import Rasi, Navamsa
 
 class chart:
     '''

@@ -1,11 +1,11 @@
 from shiny import App, ui, render, req, reactive
 from datetime import datetime, timedelta
-from constants import rnp, ayanamsas, yr_len
-import stdout_to_pd as std2pd
-import misc_functions as mf
-import chart.chart as crt
-import vimsottari_dasa as vd
-import sol_cross as sc
+from core.data.constants import rnp, ayanamsas, yr_len
+import core.misc.stdout_to_pd as std2pd
+import core.misc.misc_functions as mf
+import core.chart.chart as crt
+import core.dasas.vimsottari_dasa as vd
+import core.tajaka.sol_cross as sc
 import matplotlib.pyplot as plt
 from faicons import icon_svg
 
@@ -130,7 +130,7 @@ app_ui = ui.page_sidebar(
         ui.output_ui(id = 'birth_input'),
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
-    ui.include_js(path = 'js/viewport.js'),
+    ui.include_js(path = 'core/js/viewport.js'),
     ui.navset_card_tab(
         natal_ui,
         tajaka_ui,

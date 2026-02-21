@@ -1,6 +1,6 @@
 import datetime as dt
-import misc_functions as mf
-import chart.chart as crt
+import core.misc.misc_functions as mf
+import core.chart.chart as crt
 
 def get_sun_lon(chart:crt.chart):
     df = chart.rasi.placements

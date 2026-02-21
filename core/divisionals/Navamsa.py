@@ -1,8 +1,8 @@
-import misc_functions as mf
-import chart.chart as crt
-from chart.chart_minimal import chart_minimal
-from constants import rasis, rnp
-from divisionals.divisional_helpers import add_house
+import core.misc.misc_functions as mf
+import core.chart.chart as crt
+from core.chart.chart_minimal import chart_minimal
+from core.data.constants import rasis, rnp
+from core.divisionals.divisional_helpers import add_house
 
 amsa_devata_mapping = {
     1: 'Deva', 2: 'Nara', 3: 'Rākṣasa', 

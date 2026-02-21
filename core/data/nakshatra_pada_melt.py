@@ -1,6 +1,7 @@
 import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
-from fractional_interval import fractional_interval as fi
+#from core.misc.fractional_interval import fractional_interval as fi
+from core.misc.fractional_interval import fractional_interval as fi
 
 # Read rashi nakshtra pada from text data. This is copied from the internet 
 # contains incorrect rashi allocation. The incorrect rashi allocation is 
@@ -199,5 +200,5 @@ out={
     'Navamsa': p,
     'Rasi': r
 }
-with open('lut.pickle', 'wb') as handle:
+with open('core/data/lut.pickle', 'wb') as handle:
     pl.dump(out, handle, protocol=0)
