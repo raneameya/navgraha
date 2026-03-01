@@ -35,16 +35,36 @@ def add_non_equi_col_old(p1, p2, p1col, p2col_high, p2col_low, p2col_get):
     ].reset_index(drop = True)
     return p1
 
-def round_cols(p, cols, round):
-    for col, rd in zip(cols, round):
+def round_cols(
+    p: pd.DataFrame, 
+    col_list: list[str], 
+    round_list: list[str]
+) -> pd.DataFrame:
+    '''
+    Truncates columns in p, specified by col_list, to the precision 
+    specified in round_list
+
+    Args:
+        p (pandas.DataFrame): The input DataFrame whose columns will 
+            be truncated.
+        col_list (list[str]): A list of columns in p
+        round_list (list[str]): A list of integers specifying the precision to 
+            which cols in col_list need to be truncated to.
+    
+    Returns:
+        A truncated pandas.DataFrame
+    '''
+    for col, rd in zip(col_list, round_list):
         if pd.api.types.is_numeric_dtype(p[col]):
             p[col] = p[col].round(rd)
-        elif pd.api.types.is_object_dtype(p[col]):
+        elif col == 'Lon°':
+            if rd == 0:
+                l = lambda m: str(int(round(float(m.group(0)),rd)))
+            elif rd > 0:
+                l = lambda m: str(round(float(m.group(0)),rd))
             p[col] = p[col].str.replace(
-                r'(?<=\.).*', 
-                # The commented lambda works in terminal, but not in function
-                # lambda m: str(round(float(m.group(0)),rd)), 
-                lambda m: m.group(0)[0:rd], 
+                pat = r'(?<=\').*', 
+                repl = l, 
                 regex = True
             )
     return p

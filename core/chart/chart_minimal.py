@@ -31,12 +31,18 @@ class chart_minimal:
             diff_cols = set_display_cols.difference(set_cols)
             warnings.warn(f'''
             {diff_cols} not present in this chart. 
-            Table will exclude these column(s)
+            Table will exclude these column(s).
             ''')
             display_cols = list(set_cols.intersection(set_display_cols))
         display_table = placements[display_cols]
-        if 'Speed' in display_cols:
-            display_table = mf.round_cols(display_table, ['Speed'], [3])
+        # Columnwise precision
+        precision = {'Speed': 3, 'Lon°': 0}
+        # Truncate cols
+        for x in ['Speed', 'Lon°']:
+            if x in display_cols:                
+                display_table = mf.round_cols(
+                    display_table, [x], [precision[x]]
+                )
         self.display_table = display_table
     
     def __repr__(self):
