@@ -1,7 +1,6 @@
 ## Running list of features to add, bloat to clean, etc.
 
 ### Feature list
-- Ability to read from .jhd files (Jagannatha Hora savefiles)
 - Tajaka annual charts
     - ~~Use tropical ayanamsa to find out birth Sun longitude~~
     - ~~In tropical ayanamsa, find time in that year when Sun reached same longitude~~
@@ -23,6 +22,13 @@
     - Combustion
     - Chara karakas
     - Planetary state (mudita, etc)
+- Miscellaneous
+    - Ability to read from .jhd files (Jagannatha Hora savefiles)
+    - Add panchanga
+- Add bodies
+    - Brighu Bindu
+    - Gulika
+    - Mandi
 - Read stdout
     - ~~Is there need to write file out and read back in? Unnecessary disk IO?~~
 - Vimsottari dasa
