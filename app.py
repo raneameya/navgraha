@@ -1,12 +1,11 @@
 from shiny import App, ui, render, req, reactive
-from datetime import datetime, timedelta
+from datetime import datetime
 from core.data.constants import rnp, ayanamsas, yr_len
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
 import core.chart.chart as crt
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
-import matplotlib.pyplot as plt
 from faicons import icon_svg
 
 dasa_sub_levels = {
@@ -131,9 +130,10 @@ app_ui = ui.page_sidebar(
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
     ui.include_js(path = 'core/js/viewport.js'),
-    ui.navset_card_tab(
+    ui.navset_card_underline(
         natal_ui,
         tajaka_ui,
+        ui.nav_spacer(),
         settings_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
         id = 'pill'
