@@ -6,7 +6,7 @@ import core.misc.misc_functions as mf
 import core.chart.chart as crt
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
-from faicons import icon_svg
+from core.appui.icons import icon_gear
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -119,7 +119,7 @@ settings_ui = ui.nav_panel(
             'Constants'
         )
     ),
-    icon = icon_svg('gear')
+    icon = icon_gear
 )
 
 app_ui = ui.page_sidebar(
