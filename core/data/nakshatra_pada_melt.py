@@ -1,6 +1,5 @@
 import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
-#from core.misc.fractional_interval import fractional_interval as fi
 from core.misc.fractional_interval import fractional_interval as fi
 
 # Read rashi nakshtra pada from text data. This is copied from the internet 
