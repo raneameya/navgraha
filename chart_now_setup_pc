@@ -6,7 +6,7 @@ cd chart_now
 python -m venv ./.venv
 source ./.venv/bin/activate.fish
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -e .
 
 ## Download and compile swiss ephemeris
 wget -O ./sweph.zip https://github.com/aloistr/swisseph/archive/refs/heads/master.zip
