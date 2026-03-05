@@ -1,0 +1,9 @@
+[project]
+name = "chart_now"
+version = "0.1.0"
+dependencies = [
+    pytz,
+    shiny,
+    pandas,
+    matplotlib
+]

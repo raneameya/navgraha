@@ -1,5 +1,0 @@
-shiny
-pandas
-matplotlib
-pytz
-
