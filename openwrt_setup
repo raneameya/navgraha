@@ -10,10 +10,11 @@ git clone https://raneameya:ghp_tkn@github.com/raneameya/chart_now.git
 
 ## Initialise a python venv
 cd /etc/chart_now
-python -m venv .
-source ./bin/activate
+python -m venv ./.venv
+source ./.venv/bin/activate
 pip install --upgrade pip
-pip install shiny pandas matplotlib faicons pytz
+pip install -e .
+mv webbrowser.py .venv/lib/python3.11/site-packages/
 
 ## Download and compile swisseph
 wget -O ./sweph.zip https://github.com/aloistr/swisseph/archive/refs/heads/master.zip
@@ -27,9 +28,14 @@ cc -g -fPIC -Wall -o swetest swetest.o swecl.o sweph.o swephlib.o swejpl.o swemm
 ./swetest -edir./ephe -topo77.19762627779532,28.567285981949624,0 -b14.6.1991 -utc03:10 -rise -n2 -hindu
 cd ..
 
-## Download and process places.txt file
+## [Optional]Download and process places.txt file
 wget -O ./places.zip https://download.geonames.org/export/dump/allCountries.zip
 bsdtar -x -f ./places.zip -C .
 rm ./places.zip
 awk -v FS='\t' -v OFS='\t' '{ if ($15 != "" && $15 >= 1 && $18 != "") print $1, $2, $3, $5, $6, $9, $16, $15, $18 }' ./allCountries.txt > ./places.txt
 rm ./allCountries.txt
+
+## Run the app
+shiny run --host 0.0.0.0 --port 1506
+# Place below in local startup tab
+cd /etc/chart_now/ && source /etc/chart_now/.venv/bin/activate && shiny run --reload --host 0.0.0.0 --port 1506 /etc/chart_now/app.py &&
