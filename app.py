@@ -7,6 +7,7 @@ import core.chart.chart as crt
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
+from core.appui.time_input import input_time
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -129,7 +130,7 @@ app_ui = ui.page_sidebar(
         ui.output_ui(id = 'birth_input'),
         title = 'Birth inputs', open = 'open', id = 'sidebar'
     ),
-    ui.include_js(path = 'core/js/viewport.js'),
+    ui.include_js(path = 'core/js/custom.js'),
     ui.navset_card_underline(
         natal_ui,
         tajaka_ui,
@@ -196,39 +197,21 @@ def server(input, output, session):
         ui.update_sidebar(id = 'sidebar', show = False)
 
     @reactive.calc
-    def validated_birth_date_time():
-        try:
-            b_hr = int(input.b_time()[0:2])
-            b_mi = int(input.b_time()[3:5])
-            b_sc = int(input.b_time()[6:8])
-        except ValueError:
-            now = datetime.now()
-            b_hr = int(now.strftime('%H'))
-            b_mi = int(now.strftime('%M'))
-            b_sc = int(now.strftime('%S'))
-        inputs = {
-            'b_yr': input.b_date().year,
-            'b_mo': input.b_date().month,
-            'b_da': input.b_date().day,
-            'b_hr': b_hr,
-            'b_mi': b_mi,
-            'b_sc': b_sc
-        }
-        is_valid_hr = 0 <= inputs['b_hr'] <= 23
-        is_valid_mi = 0 <= inputs['b_mi'] <= 59
-        is_valid_sc = 0 <= inputs['b_sc'] <= 59
-        if is_valid_hr * is_valid_mi * is_valid_sc:
-            return inputs
-        else:
-            raise ValueError('Please enter a valid time')
-
-    @reactive.calc
     def natal_chart():
         '''
         Return a chart object that can be reused across the app
         '''
-        divisional = input.natal_divisional()        
-        inputs = validated_birth_date_time() | {
+        divisional = input.natal_divisional()
+        b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
+        # Default to today unless date is valid
+        b_date = input.b_date() or datetime.today()
+        inputs = {
+            'b_yr': b_date.year,
+            'b_mo': b_date.month,
+            'b_da': b_date.day,
+            'b_hr': b_hr,
+            'b_mi': b_mi,
+            'b_sc': b_sc, 
             'b_lon': input.b_lon(),
             'b_lat': input.b_lat(),
             'b_tz': input.b_tz(),
@@ -236,7 +219,7 @@ def server(input, output, session):
             'place': input.b_place()
         }
         return crt.chart(**inputs)
-    
+
     @reactive.calc
     def natal_divisional():
         if input.natal_divisional() == 'rasi':
@@ -311,7 +294,7 @@ def server(input, output, session):
             )
         )
         return crt.chart(**args)
-    
+
     @reactive.calc
     def tajaka_divisional():
         if input.tajaka_divisional() == 'rasi':
@@ -320,7 +303,7 @@ def server(input, output, session):
             return tajaka_chart().divisionals.navamsa
 
     @render.plot
-    def tajaka_plot():        
+    def tajaka_plot():
         return tajaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
             style = input.chart_style(),
@@ -386,10 +369,11 @@ def server(input, output, session):
                 weekstart = 0,
                 autoclose = True
             ),
-            ui.input_text(
+            input_time(
                 id = 'b_time',
                 label = 'Time',
-                value = datetime.now().strftime('%H:%M:%S')
+                value = datetime.now().strftime('%H:%M:%S'),
+                step = 1
             ),
             ui.input_text(
                 id = 'b_place',
@@ -436,7 +420,7 @@ def server(input, output, session):
                 else datetime.now().year - 1
             )
         )
-    
+
     @render.ui
     def tajaka_divisional_choices():
         return ui.input_select(
