@@ -413,11 +413,14 @@ def server(input, output, session):
             label = '',
             choices = list(range(1900, 2200, 1)),
             selected = (
-                datetime.now().year 
-                if input.b_date().month < datetime.now().month
-                else datetime.now().year 
-                if input.b_date().day < datetime.now().day
-                else datetime.now().year - 1
+                datetime.now().year - 1
+                if input.b_date().month > datetime.now().month
+                else datetime.now().year -1 
+                if (
+                    input.b_date().day > datetime.now().day
+                    and input.b_date().month == datetime.now().month
+                )
+                else datetime.now().year
             )
         )
 
