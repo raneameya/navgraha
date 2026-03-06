@@ -106,7 +106,7 @@ settings_ui = ui.nav_panel(
             'Preferences', 
             ui.input_select(
                 id = 'b_ayanamsa',
-                label = 'Choose Ayanamsa',
+                label = 'Ayanamsa',
                 choices = ayanamsas.to_dict(),
             ),
             ui.input_select(
@@ -380,7 +380,7 @@ def server(input, output, session):
         ui_out = ui.row(
             ui.input_date(
                 id = 'b_date',
-                label = 'Input date',
+                label = 'Date',
                 value = datetime.today().strftime('%Y-%m-%d'),
                 format = 'yyyy-mm-dd',
                 weekstart = 0,
@@ -388,12 +388,12 @@ def server(input, output, session):
             ),
             ui.input_text(
                 id = 'b_time',
-                label = 'Input time',
+                label = 'Time',
                 value = datetime.now().strftime('%H:%M:%S')
             ),
             ui.input_text(
                 id = 'b_place',
-                label = 'Enter place',
+                label = 'Place',
                 value = 'Auckland'
             ),
             ui.input_numeric(
@@ -428,7 +428,13 @@ def server(input, output, session):
             id = 'tajaka_year',
             label = '',
             choices = list(range(1900, 2200, 1)),
-            selected = datetime.now().year
+            selected = (
+                datetime.now().year 
+                if input.b_date().month < datetime.now().month
+                else datetime.now().year 
+                if input.b_date().day < datetime.now().day
+                else datetime.now().year - 1
+            )
         )
     
     @render.ui
