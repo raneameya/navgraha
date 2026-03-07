@@ -1,4 +1,4 @@
-import pytz
+from zoneinfo import ZoneInfo
 import core.misc.misc_functions as mf
 from datetime import datetime
 from core.data.constants import rnp
@@ -32,25 +32,21 @@ class chart:
         # Create a datetime object in local timezone, from the individual 
         # inputs of year, month, date, hour, minute, second & timezone
         # Need to specify initial datetime without timezone
-        dt = datetime(
+        self.datetime = datetime(
             year = b_yr,
             month = b_mo,
             day = b_da,
             hour = b_hr,
             minute = b_mi,
             second = b_sc,
-            tzinfo = None
+            tzinfo = ZoneInfo(b_tz)
         )
-        # Create local timezone object
-        local_tz = pytz.timezone(b_tz)
-        # Then localise the initial timezoneless datetime object
-        self.datetime = local_tz.localize(dt)
         self.repr_str = self.datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
         self.divisionals = _divisionals(parent_chart = self)
-        self.rasi = self.divisionals.rasi
         if place is not None:
             self.place = place
             self.repr_str = f'{self.repr_str} {place}({b_lat}, {b_lon})'
+        self.rasi = self.divisionals.rasi
 
     def __repr__(self):
         return self.repr_str

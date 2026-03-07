@@ -1,28 +1,42 @@
-import core.misc.misc_functions as mf
+from core.misc.misc_functions import add_non_equi_col
 import core.chart.chart as crt
 from core.chart.chart_minimal import chart_minimal
-import pytz
 import core.misc.stdout_to_pd as sp
 import pandas as pd
 import re
 from datetime import datetime
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
+from core.misc.birth_inputs import BirthEvent, SwissEphAdapter
 
 def d1(birth_crt: crt.chart) -> chart_minimal:
-    # Get birthdate arguments in UTC for swetest
-    birth_datetime_utc_args = birth_datetime_args(birth_crt.datetime)
-    # location argument, assumed 0 z-height at birth
-    location = '-geopos' + str(birth_crt.lon) + ',' + str(birth_crt.lat) + ',0'
-    wd = './swisseph-master/'
-    # User inputs expected: [UTC birth time, birth place, ayanamsa]
-    input_args = birth_datetime_utc_args + [location] + [birth_crt.ayanamsa]
-    p = swetest(sweedir = wd, birth_args = input_args)
+    # BirthEvent
+    be = BirthEvent(
+        dt = birth_crt.datetime, 
+        latitude = birth_crt.lat,
+        longitude = birth_crt.lon,
+        z_height = 0,
+        place = birth_crt.place
+    )
+    sa = SwissEphAdapter(
+        base_path = './swisseph-master/',
+        binary = 'swetest', 
+        birth = be,
+        ayanamsa = birth_crt.ayanamsa,
+        house = 'W',
+        output_cols = 'TPlLsBj',
+        ephemeris_path = 'ephe',
+        sed_substitutions = ' '.join([
+            '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
+            '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
+        ])
+    )
+    p = swetest(adapter = sa)
     # Keep classical planets (including Rahu, Ketu)
     p = p.head(10)
     # Add other details
     add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada', 'Pushkara']
-    p = mf.add_non_equi_col(
+    p = add_non_equi_col(
         p1 = p,
         p2 = rnp,
         p1col = 'Lon',
@@ -43,46 +57,13 @@ def d1(birth_crt: crt.chart) -> chart_minimal:
         ]
     )
 
-def birth_datetime_args(dt:datetime):
-    # Return a list of UTC birth date & UTC birth time
-    # from local birth datetime
-    # Convert to UTC
-    birth_datetime_utc = dt.astimezone(pytz.utc)
-    # Create birthdate input for swetest
-    birth_date = '-b'+birth_datetime_utc.strftime('%d.%m.%Y')
-    # Create birthtime input for swetest
-    birth_time = '-utc'+birth_datetime_utc.strftime('%H:%M:%S')
-    return [birth_date, birth_time]
-
-def swetest(sweedir, birth_args):
-    # Point to where the ephemeris data files live
-    edir = sweedir + 'ephe'
-    # Binary to run, in this case swetest
-    binary = [sweedir + 'swetest']
-    # These arguments won't be exposed to the user 
-    # (with the possible exception of planets)
-    common_args = ['-pp', '-head', '-edir' + edir]
-    # Ayanamsa and output columns
-    config_args = [birth_args[3], '-fTPlLsBj']
-    # To get ascendant, we need to specify house system to swetest
-    # House system defaults to whole sign
-    house_args = [
-        birth_args[2].replace('geopos', 'house').replace(',0', ',W')
-    ]
-    # Format output of swetest so that it is space delimited
-    format_args = [
-        '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
-        '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
-    ]
+def swetest(adapter: SwissEphAdapter):
     colnames = [
         'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Speed',
         'Lat°', 'House'
     ]
     p = sp.read_stdout(
-        cmd = ' '.join(
-            binary + common_args + birth_args + config_args +
-            house_args + format_args
-        ), 
+        cmd = adapter.call_str(), 
         reader = 'table', sep = r'\s+', col_names = colnames
     )
     # Replace 'Node' with Rahu & Ascendant with Lagna

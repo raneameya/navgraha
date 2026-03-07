@@ -1,5 +1,6 @@
-import pytz, re, core.misc.stdout_to_pd as sp, pandas as pd
+import re, core.misc.stdout_to_pd as sp, pandas as pd
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
     '''
@@ -89,11 +90,9 @@ def lunar_phases(sweedir, dt, tz):
         phases['Datetime'].str.replace('UT', 'UTC'), 
         format='%d.%m.%Y %H:%M:%S %Z'
     )
-    # Create local timezone object
-    local_tz=pytz.timezone(tz)
     # Convert to local timezone
     phases['Datetime']=phases['Datetime'].apply(
-        lambda x: x.astimezone(local_tz)
+        lambda x: x.astimezone(ZoneInfo(tz))
     )
     return phases
 

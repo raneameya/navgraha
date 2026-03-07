@@ -109,7 +109,7 @@ settings_ui = ui.nav_panel(
                 id = 'b_ayanamsa',
                 label = 'Ayanāṁśa',
                 choices = ayanamsas, 
-                selected = '-sid29'
+                selected = 'True Pushya (PVRN Rao)'
             ),
             ui.input_select(
                 id = 'chart_style',

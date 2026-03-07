@@ -22,11 +22,11 @@ def sol_cross(
     )
     if tropical:
         tropical_birth_chart_args = mf.chart_kwargs(
-            chart = birth_crt, dt = birth_crt.datetime, ay = ''
+            chart = birth_crt, dt = birth_crt.datetime, ay = 'Tropical'
         )
         target_lon = get_sun_lon(crt.chart(**tropical_birth_chart_args))
         chart_args = mf.chart_kwargs(
-            chart = birth_crt, dt = init_datetime, ay = ''
+            chart = birth_crt, dt = init_datetime, ay = 'Tropical'
         )
     else:
         chart_args = mf.chart_kwargs(chart = birth_crt, dt = init_datetime)
@@ -44,7 +44,7 @@ def sol_cross(
     loop_lon = 0
     while abs(deg_delta) > 0.000001:
         if tropical:
-            chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt, ay = '')        
+            chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt, ay = 'Tropical')        
         else:
             chart_args = mf.chart_kwargs(chart = birth_crt, dt = loop_dt)
         loop_lon = get_sun_lon(crt.chart(**chart_args))        
