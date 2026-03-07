@@ -107,8 +107,9 @@ settings_ui = ui.nav_panel(
             'Preferences', 
             ui.input_select(
                 id = 'b_ayanamsa',
-                label = 'Ayanamsa',
-                choices = ayanamsas.to_dict(),
+                label = 'Ayanāṁśa',
+                choices = ayanamsas, 
+                selected = '-sid29'
             ),
             ui.input_select(
                 id = 'chart_style',
@@ -125,7 +126,7 @@ settings_ui = ui.nav_panel(
 
 app_ui = ui.page_sidebar(
     # Sidebar needs to be open so that the birth inputs (e.g. date, time, 
-    # ayanamsa) are initialised.
+    # ayanāṁśa) are initialised.
     ui.sidebar(
         ui.output_ui(id = 'birth_input'),
         title = 'Birth inputs', open = 'open', id = 'sidebar'

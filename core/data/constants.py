@@ -1,4 +1,4 @@
-import pandas as pd, pickle as pl
+import pickle as pl # loading pickle file
 
 with open('core/data/lut.pickle', 'rb') as handle:
     lut = pl.load(handle)
@@ -14,9 +14,55 @@ rasis = lut['Rasi']
 
 # Read in list of ayanamsas and their swetest arguments. Used to expose 
 # list of available ayanmsas to user
-ayanamsas = pd.read_csv(
-    'core/data/ayanamsa_list.csv', index_col='Argument', 
-    keep_default_na = False
-)
+ayanamsas = {
+    '-sid00': 'Fagan/Bradley', 
+    '-sid1': 'Lahiri', 
+    '-sid2': 'De Luce', 
+    '-sid3': 'Raman', 
+    '-sid4': 'Usha/Shashi', 
+    '-sid5': 'Krishnamurti', 
+    '-sid6': 'Djwhal Khul', 
+    '-sid7': 'Yukteshwar', 
+    '-sid8': 'J.N. Bhasin', 
+    '-sid9': 'Babylonian/Kugler 1', 
+    '-sid10': 'Babylonian/Kugler 2', 
+    '-sid11': 'Babylonian/Kugler 3', 
+    '-sid12': 'Babylonian/Huber', 
+    '-sid13': 'Babylonian/Eta Piscium', 
+    '-sid14': 'Babylonian/Aldebaran = 15 Tau', 
+    '-sid15': 'Hipparchos', 
+    '-sid16': 'Sassanian', 
+    '-sid17': 'Galact. Center = 0 Sag', 
+    '-sid18': 'J2000', '-sid19': 'J1900', 
+    '-sid20': 'B1950', 
+    '-sid21': 'Suryasiddhanta', 
+    '-sid22': 'Suryasiddhanta (mean Sun)', 
+    '-sid23': 'Aryabhata', 
+    '-sid24': 'Aryabhata (mean Sun)', 
+    '-sid25': 'SS Revati', 
+    '-sid26': 'SS Citra', 
+    '-sid27': 'True Citra', 
+    '-sid28': 'True Revati', 
+    '-sid29': 'True Pushya (PVRN Rao)', 
+    '-sid30': 'Galactic (Gil Brand)', 
+    '-sid31': 'Galactic Equator (IAU1958)', 
+    '-sid32': 'Galactic Equator', 
+    '-sid33': 'Galactic Equator mid-Mula', 
+    '-sid34': 'Skydram (Mardyks)', 
+    '-sid35': 'True Mula (Chandra Hari)', 
+    '-sid36': 'Dhruva/Gal.Center/Mula (Wilhelm)', 
+    '-sid37': 'Aryabhata 522', 
+    '-sid38': 'Babylonian/Britton', 
+    '-sid39': 'Vedic/Sheoran', 
+    '-sid40': 'Cochrane (Gal.Center = 0 Cap)', 
+    '-sid41': 'Galactic Equator (Fiorenza)', 
+    '-sid42': 'Vettius Valens', 
+    '-sid43': 'Lahiri 1940', 
+    '-sid44': 'Lahiri VP285 (1980)', 
+    '-sid45': 'Krishnamurti VP291', 
+    '-sid46': 'Lahiri ICRC', 
+    '': 'Tropical'
+}
+ayanamsas = {'Ayanāṁśa': ayanamsas}
 
 yr_len = 365.24219
