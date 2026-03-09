@@ -118,7 +118,7 @@ def chart_kwargs(chart, dt:datetime, ay = None):
     useful to calculate a tajaka based on the original chart
     '''
     if ay is None:
-        ay = chart.sweph_adaptor.ayanamsa
+        ay = chart.swisseph_adaptor.ayanamsa
     birth_event = BirthEvent(
             dt = dt.replace(tzinfo = chart.birth_event.dt.tzinfo), 
             latitude = chart.birth_event.latitude, 
@@ -128,14 +128,14 @@ def chart_kwargs(chart, dt:datetime, ay = None):
     )
     kwarg_dict = {
         'birth_event': birth_event,
-        'sweph_adaptor': SwissEphAdaptor(
-            base_path = chart.sweph_adaptor.base_path,
-            binary = chart.sweph_adaptor.binary, 
+        'swisseph_adaptor': SwissEphAdaptor(
+            base_path = chart.swisseph_adaptor.base_path,
+            binary = chart.swisseph_adaptor.binary, 
             birth = birth_event,
             ayanamsa = ay,
-            house = chart.sweph_adaptor.house,
-            output_cols = chart.sweph_adaptor.output_cols,
-            ephemeris_path = chart.sweph_adaptor.ephemeris_path
+            house = chart.swisseph_adaptor.house,
+            output_cols = chart.swisseph_adaptor.output_cols,
+            ephemeris_path = chart.swisseph_adaptor.ephemeris_path
         )
     }
     return kwarg_dict

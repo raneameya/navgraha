@@ -18,11 +18,11 @@ class chart:
     def __init__(
         self, 
         birth_event: BirthEvent, 
-        sweph_adaptor: SwissEphAdaptor
+        swisseph_adaptor: SwissEphAdaptor
     ):
         # BirthEvent
         self.birth_event = birth_event
-        self.sweph_adaptor = sweph_adaptor
+        self.swisseph_adaptor = swisseph_adaptor
         self.repr_str = (
             f'{birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'
             f' {birth_event.place}'

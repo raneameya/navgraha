@@ -201,15 +201,12 @@ def server(input, output, session):
         ui.update_sidebar(id = 'sidebar', show = False)
 
     @reactive.calc
-    def natal_chart():
-        '''
-        Return a chart object that can be reused across the app
-        '''
+    def birth_event():
         # Default to today unless date is valid
         b_date = input.b_date() or datetime.today()
         # Get hr, min, sec from time input which is text
         b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
-        birth_event = BirthEvent(
+        be = BirthEvent(
             dt = datetime.combine(
                 date = b_date, 
                 time = time(b_hr, b_mi, b_sc), 
@@ -220,20 +217,31 @@ def server(input, output, session):
             z_height = 0, 
             place = input.b_place()
         )
-        sweph_adaptor = SwissEphAdaptor(
+        return be
+
+    @reactive.calc
+    def swisseph_adaptor():
+        se = SwissEphAdaptor(
             base_path = './swisseph-master/',
             binary = 'swetest', 
-            birth = birth_event,
+            birth = birth_event(),
             ayanamsa = input.b_ayanamsa(),
             house = 'W',
             output_cols = 'TPlLsBj',
             ephemeris_path = 'ephe'
         )
+        return se
+
+    @reactive.calc
+    def natal_chart():
+        '''
+        Return a chart object that can be reused across the app
+        '''
         # Make chart reactive to divisional choice
         divisional = input.natal_divisional()
         return crt.chart(
-            birth_event = birth_event, 
-            sweph_adaptor = sweph_adaptor
+            birth_event = birth_event(), 
+            swisseph_adaptor = swisseph_adaptor()
         )
 
     @reactive.calc
