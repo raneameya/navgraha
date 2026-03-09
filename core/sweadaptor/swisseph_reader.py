@@ -69,18 +69,26 @@ class SwissEphReader:
         import csv
         from io import StringIO
         reader = csv.reader(StringIO(cmd_run.stdout), delimiter = ' ')
+        def str_to_date(datetime_str, tzi):
+            dt = datetime.strptime(
+                datetime_str, 
+                '%d.%m.%Y %H:%M:%S.%f'
+            ).replace(
+                tzinfo = ZoneInfo('UTC')
+            ).astimezone(
+                tz = tzi
+            )
+            return dt
         def make_date(ldt):
             # ldt = list of date & times as [dt, rise_time, set_time] 
             # as provided by row of data
-            rise_time = datetime.strptime(
-                ' '.join(ldt[0:2]), '%d.%m.%Y %H:%M:%S.%f'
-            ).replace(tzinfo = ZoneInfo('UTC')).astimezone(
-                self.se.birth.dt.tzinfo
+            rise_time = str_to_date(
+                datetime_str = ' '.join(ldt[0:2]), 
+                tzi = self.se.birth.dt.tzinfo
             )
-            set_time = datetime.strptime(
-                ' '.join([ldt[0], ldt[2]]), '%d.%m.%Y %H:%M:%S.%f'
-            ).replace(tzinfo = ZoneInfo('UTC')).astimezone(
-                self.se.birth.dt.tzinfo
+            set_time = str_to_date(
+                datetime_str = ' '.join([ldt[0], ldt[2]]), 
+                tzi = self.se.birth.dt.tzinfo
             )
             if set_time < rise_time:
                 set_time = set_time + timedelta(days = 1)
