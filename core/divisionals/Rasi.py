@@ -7,29 +7,10 @@ import re
 from datetime import datetime
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
-from core.misc.birth_event import BirthEvent
-from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 from core.sweadaptor.swisseph_reader import SwissEphReader
 
 def d1(birth_crt: crt.chart) -> chart_minimal:
-    # BirthEvent
-    be = BirthEvent(
-        dt = birth_crt.datetime, 
-        latitude = birth_crt.lat,
-        longitude = birth_crt.lon,
-        z_height = 0,
-        place = birth_crt.place
-    )
-    sa = SwissEphAdaptor(
-        base_path = './swisseph-master/',
-        binary = 'swetest', 
-        birth = be,
-        ayanamsa = birth_crt.ayanamsa,
-        house = 'W',
-        output_cols = 'TPlLsBj',
-        ephemeris_path = 'ephe'
-    )
-    p = swetest(adapter = sa)
+    p = swetest(adapter = birth_crt.sweph_adaptor)
     # Keep classical planets (including Rahu, Ketu)
     p = p.head(10)
     # Add other details

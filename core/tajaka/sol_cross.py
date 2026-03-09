@@ -14,15 +14,15 @@ def sol_cross(
 ):
     # Estimated datetime at when longitides of Sun in the given year are 
     # equal to the longitudes of the Sun in the birth year
-    year_delta = yr - birth_crt.datetime.year
+    year_delta = yr - birth_crt.birth_event.dt.year
     # Add 182 so initial estimate is about midway between birthday of 
     # yr and birthday of (yr - 1)
-    init_datetime = birth_crt.datetime + dt.timedelta(
+    init_datetime = birth_crt.birth_event.dt + dt.timedelta(
         days = ((year_delta - 1) * yr_len) + 182
     )
     if tropical:
         tropical_birth_chart_args = mf.chart_kwargs(
-            chart = birth_crt, dt = birth_crt.datetime, ay = 'Tropical'
+            chart = birth_crt, dt = birth_crt.birth_event.dt, ay = 'Tropical'
         )
         target_lon = get_sun_lon(crt.chart(**tropical_birth_chart_args))
         chart_args = mf.chart_kwargs(

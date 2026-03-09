@@ -1,51 +1,34 @@
 from zoneinfo import ZoneInfo
-import core.misc.misc_functions as mf
 from datetime import datetime
+from functools import cached_property
+
+import core.misc.misc_functions as mf
 from core.data.constants import rnp
 from core.chart.chart_minimal import chart_minimal
 from core.chart.chart_plot_constants import rasi_dict
-from functools import cached_property
 from core.divisionals import Rasi, Navamsa
+from core.misc.birth_event import BirthEvent
+from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
+from core.sweadaptor.swisseph_reader import SwissEphReader
 
 class chart:
     '''
     A class to create birth charts from input datetime, lat, lon & ayanamsa
     '''
     def __init__(
-        self,
-        b_yr:int,
-        b_mo:int,
-        b_da:int,
-        b_hr:int,
-        b_mi:int,
-        b_sc:int,
-        b_lon:float,
-        b_lat:float,
-        b_tz:str,
-        ay:str,
-        place:str = None
+        self, 
+        birth_event: BirthEvent, 
+        sweph_adaptor: SwissEphAdaptor
     ):
-        self.lat = b_lat
-        self.lon = b_lon
-        self.ayanamsa = ay
-        self.tz = b_tz
-        # Create a datetime object in local timezone, from the individual 
-        # inputs of year, month, date, hour, minute, second & timezone
-        # Need to specify initial datetime without timezone
-        self.datetime = datetime(
-            year = b_yr,
-            month = b_mo,
-            day = b_da,
-            hour = b_hr,
-            minute = b_mi,
-            second = b_sc,
-            tzinfo = ZoneInfo(b_tz)
+        # BirthEvent
+        self.birth_event = birth_event
+        self.sweph_adaptor = sweph_adaptor
+        self.repr_str = (
+            f'{birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'
+            f' {birth_event.place}'
+            f'({birth_event.latitude}, {birth_event.longitude})'
         )
-        self.repr_str = self.datetime.strftime('%d-%m-%Y %H:%M:%S %Z')
         self.divisionals = _divisionals(parent_chart = self)
-        if place is not None:
-            self.place = place
-            self.repr_str = f'{self.repr_str} {place}({b_lat}, {b_lon})'
         self.rasi = self.divisionals.rasi
 
     def __repr__(self):

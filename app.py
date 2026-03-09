@@ -1,5 +1,6 @@
 from shiny import App, ui, render, req, reactive
-from datetime import datetime
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
 from core.data.constants import rnp, ayanamsas, yr_len
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
@@ -8,6 +9,8 @@ import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
 from core.appui.time_input import input_time
+from core.misc.birth_event import BirthEvent
+from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -202,24 +205,36 @@ def server(input, output, session):
         '''
         Return a chart object that can be reused across the app
         '''
-        divisional = input.natal_divisional()
-        b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
         # Default to today unless date is valid
         b_date = input.b_date() or datetime.today()
-        inputs = {
-            'b_yr': b_date.year,
-            'b_mo': b_date.month,
-            'b_da': b_date.day,
-            'b_hr': b_hr,
-            'b_mi': b_mi,
-            'b_sc': b_sc, 
-            'b_lon': input.b_lon(),
-            'b_lat': input.b_lat(),
-            'b_tz': input.b_tz(),
-            'ay': input.b_ayanamsa(),
-            'place': input.b_place()
-        }
-        return crt.chart(**inputs)
+        # Get hr, min, sec from time input which is text
+        b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
+        birth_event = BirthEvent(
+            dt = datetime.combine(
+                date = b_date, 
+                time = time(b_hr, b_mi, b_sc), 
+                tzinfo = ZoneInfo(input.b_tz())
+            ), 
+            latitude = input.b_lat(), 
+            longitude = input.b_lon(), 
+            z_height = 0, 
+            place = input.b_place()
+        )
+        sweph_adaptor = SwissEphAdaptor(
+            base_path = './swisseph-master/',
+            binary = 'swetest', 
+            birth = birth_event,
+            ayanamsa = input.b_ayanamsa(),
+            house = 'W',
+            output_cols = 'TPlLsBj',
+            ephemeris_path = 'ephe'
+        )
+        # Make chart reactive to divisional choice
+        divisional = input.natal_divisional()
+        return crt.chart(
+            birth_event = birth_event, 
+            sweph_adaptor = sweph_adaptor
+        )
 
     @reactive.calc
     def natal_divisional():

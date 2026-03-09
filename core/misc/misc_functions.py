@@ -1,6 +1,8 @@
 import re, core.misc.stdout_to_pd as sp, pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from core.misc.birth_event import BirthEvent
+from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
 def add_non_equi_col(p1, p2, p1col, p2col_range, p2col_get):
     '''
@@ -116,19 +118,25 @@ def chart_kwargs(chart, dt:datetime, ay = None):
     useful to calculate a tajaka based on the original chart
     '''
     if ay is None:
-        ay = chart.ayanamsa
+        ay = chart.sweph_adaptor.ayanamsa
+    birth_event = BirthEvent(
+            dt = dt.replace(tzinfo = chart.birth_event.dt.tzinfo), 
+            latitude = chart.birth_event.latitude, 
+            longitude = chart.birth_event.longitude, 
+            z_height = chart.birth_event.z_height, 
+            place = chart.birth_event.place
+    )
     kwarg_dict = {
-        'b_yr': dt.year,
-        'b_mo': dt.month,
-        'b_da': dt.day,
-        'b_hr': dt.hour,
-        'b_mi': dt.minute,
-        'b_sc': dt.second,
-        'b_lon': chart.lon,
-        'b_lat': chart.lat,
-        'b_tz': chart.tz, 
-        'ay': ay,
-        'place': chart.place
+        'birth_event': birth_event,
+        'sweph_adaptor': SwissEphAdaptor(
+            base_path = chart.sweph_adaptor.base_path,
+            binary = chart.sweph_adaptor.binary, 
+            birth = birth_event,
+            ayanamsa = ay,
+            house = chart.sweph_adaptor.house,
+            output_cols = chart.sweph_adaptor.output_cols,
+            ephemeris_path = chart.sweph_adaptor.ephemeris_path
+        )
     }
     return kwarg_dict
 
