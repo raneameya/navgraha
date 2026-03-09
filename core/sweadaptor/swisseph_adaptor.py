@@ -1,35 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from typing import Optional
 
-import pandas as pd
-
-@dataclass
-class BirthEvent:
-    '''
-    Container for a birth date and time with timezone awareness.
-
-    The class serves two main purposes:
-    1. Provides a structured representation of a birth timestamp
-       including timezone information.
-    2. Offers convenient conversion utilities for astrological
-       calculations, including UTC conversion and generation of
-       argument strings compatible with Swiss Ephemeris.
-
-    This allows birth data to be defined once and reused across
-    multiple calculations while ensuring consistent timezone handling.
-    '''
-    dt: datetime
-    latitude: float
-    longitude: float
-    z_height: float
-    place: str
-
-    def utc_datetime(self):
-        return self.dt.astimezone(ZoneInfo('UTC'))
+from core.misc.birth_event import BirthEvent
 
 @dataclass
-class SwissEphAdapter:
+class SwissEphAdaptor:
     base_path: str
     binary: str
     birth: BirthEvent
@@ -37,7 +12,7 @@ class SwissEphAdapter:
     house: str
     output_cols: str
     ephemeris_path: str
-    sed_substitutions: list[str]
+    num_days: int = 0    
 
     def __post_init__(self):
         # Point to where ephemeris files live. This isn't a 
@@ -131,18 +106,3 @@ class SwissEphAdapter:
     
     def planet_args(self):
         return {'planets': '-pp'}
-    
-    def call_str(self):
-        bin_call = f'{self.base_path}{self.binary}'
-        args = (
-            self.ephemeris_path_arg |
-            self.birth_moment_args() | 
-            self.birth_place_args() | 
-            self.ayanamsa_arg() |
-            self.planet_args() |
-            self.misc_args() | 
-            self.output_cols_arg()
-        )
-        args = ' '.join([v for k, v in args.items()])
-        final_call = bin_call + ' ' + args + self.sed_substitutions
-        return final_call

@@ -7,7 +7,9 @@ import re
 from datetime import datetime
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
-from core.misc.birth_inputs import BirthEvent, SwissEphAdapter
+from core.misc.birth_event import BirthEvent
+from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
+from core.sweadaptor.swisseph_reader import SwissEphReader
 
 def d1(birth_crt: crt.chart) -> chart_minimal:
     # BirthEvent
@@ -18,18 +20,14 @@ def d1(birth_crt: crt.chart) -> chart_minimal:
         z_height = 0,
         place = birth_crt.place
     )
-    sa = SwissEphAdapter(
+    sa = SwissEphAdaptor(
         base_path = './swisseph-master/',
         binary = 'swetest', 
         birth = be,
         ayanamsa = birth_crt.ayanamsa,
         house = 'W',
         output_cols = 'TPlLsBj',
-        ephemeris_path = 'ephe',
-        sed_substitutions = ' '.join([
-            '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
-            '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
-        ])
+        ephemeris_path = 'ephe'
     )
     p = swetest(adapter = sa)
     # Keep classical planets (including Rahu, Ketu)
@@ -57,15 +55,8 @@ def d1(birth_crt: crt.chart) -> chart_minimal:
         ]
     )
 
-def swetest(adapter: SwissEphAdapter):
-    colnames = [
-        'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Speed',
-        'Lat°', 'House'
-    ]
-    p = sp.read_stdout(
-        cmd = adapter.call_str(), 
-        reader = 'table', sep = r'\s+', col_names = colnames
-    )
+def swetest(adapter: SwissEphAdaptor):
+    p = SwissEphReader(se = adapter).planetary_positions()
     # Replace 'Node' with Rahu & Ascendant with Lagna
     p.loc[
         p['Graha'].isin([
