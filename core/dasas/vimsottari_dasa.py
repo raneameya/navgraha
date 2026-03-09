@@ -127,11 +127,15 @@ class vimsottari_dasa:
             'Dasa_covered'
         ].squeeze()
         # Start datetime of lifespan, accounting for offset if any
-        first_dasa_start = pd.Timestamp(chart.datetime) - (self.dasa_covered *
-            dt.timedelta(
-                days = nakshatra_lord_mahadasa_len * yr_len
-            )
-        ) + dt.timedelta(days = dasa_offset_days)
+        first_dasa_start = (
+            pd.Timestamp(chart.birth_event.dt) - 
+            (self.dasa_covered *
+                dt.timedelta(
+                    days = nakshatra_lord_mahadasa_len * yr_len
+                )
+            ) + 
+            dt.timedelta(days = dasa_offset_days)
+        )
         dasa_lengths = {
             'Ketu': fr(7, 120), 'Venus': fr(20, 120), 'Sun': fr(6, 120), 
             'Moon': fr(10, 120), 'Mars': fr(7, 120), 'Rahu': fr(18, 120), 
