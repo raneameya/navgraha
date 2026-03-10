@@ -37,7 +37,13 @@ def d1(birth_crt: crt.chart) -> chart_minimal:
     )
 
 def swetest(adapter: SwissEphAdaptor):
-    p = SwissEphReader(se = adapter).planetary_positions()
+    p = SwissEphReader(
+        se = adapter, 
+        post_process = ' '.join([
+            '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
+            '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
+        ])
+    ).planetary_positions()
     # Replace 'Node' with Rahu & Ascendant with Lagna
     p.loc[
         p['Graha'].isin([

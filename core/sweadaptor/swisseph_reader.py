@@ -12,6 +12,7 @@ import core.misc.stdout_to_pd as sp
 @dataclass
 class SwissEphReader:
     se: SwissEphAdaptor
+    post_process: str = None
 
     def planetary_positions(self):
         bin_call = f'{self.se.base_path}{self.se.binary}'
@@ -20,16 +21,12 @@ class SwissEphReader:
             self.se.birth_moment_args() | 
             self.se.birth_place_args() | 
             self.se.ayanamsa_arg() |
-            self.se.planet_args() |
-            self.se.misc_args() | 
+            self.se.planet_args(planet_type = 'poi') |
+            self.se.no_header_arg() | 
             self.se.output_cols_arg()
         )
-        post_process = ' '.join([
-            '| sed -E \'s/(UT\\s\\S+)(\\s{1,2})(\\w)/\\1_\\3/g\'',
-            '| sed -E \'s/° /°/g\'', '| sed -E "s/\' /\'/g\"'
-        ])
         args = ' '.join([v for k, v in args.items()])
-        final_call = bin_call + ' ' + args + post_process
+        final_call = bin_call + ' ' + args + self.post_process
         colnames = [
             'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Speed',
             'Lat°', 'House'
@@ -42,25 +39,30 @@ class SwissEphReader:
 
     def sun_rise_set(self):
         bin_call = f'{self.se.base_path}{self.se.binary}'
-        birth_offset = self.se.birth.dt - timedelta(days = 3)
+        # Need to offset the birth date because swetest does not show the 
+        # rise time for the day of birth.
         args = (
             self.se.ephemeris_path_arg |
-            self.se.birth_place_args() | 
-            self.se.misc_args() | 
+            self.se.birth_place_args() |
+            self.se.birth_moment_args(offset_days = -3) | 
+            self.se.no_header_arg() | 
+            self.se.num_row_arg() |
             {
-                'birth_date': f'-b{birth_offset:%d.%m.%Y}', 
-                'num_days': f'-n{self.se.num_days}',
                 'sunrise_flag': '-rise', 
                 'sunrise_definition': '-hindu'
             }
         )
         args_needed = [
             'ephemeris_path', 'birth_date', 'geopos', 'no_header_info', 
-            'num_days', 'sunrise_flag', 'sunrise_definition'
+            'num_rows', 'sunrise_flag', 'sunrise_definition'
         ]
         args = {k: args[k] for k in args_needed}
         args = ' '.join([v for k, v in args.items()])
-        post_process = ' | awk -v FS=\' \' \'{print $5, $3, $6}\''
+        # Does a cut version of this exists?
+        post_process = (
+            self.post_process or 
+            ' | awk -v FS=\' \' \'{print $5, $3, $6}\''
+        )
         final_call = bin_call + ' ' + args + post_process
         cmd_run = run(
             final_call, capture_output = True, text = True, check = True, 
@@ -99,3 +101,32 @@ class SwissEphReader:
                 rise_time, set_time = make_date(row)
                 if rise_time <= self.se.birth.dt <= set_time:
                     return (rise_time, set_time)
+
+    def graha1_graha2_rel_diff(self):
+        bin_call = f'{self.se.base_path}{self.se.binary}'
+        args = (
+            self.se.ephemeris_path_arg |
+            self.se.birth_moment_args() | 
+            self.se.birth_place_args() | 
+            self.se.planet_args(planet_type = 'poi') |
+            self.se.planet_args(planet_type = 'pod') |
+            self.se.num_row_arg() |
+            self.se.time_delta_arg() |
+            self.se.no_header_arg() | 
+            self.se.output_cols_arg()
+        )
+        args_needed = [
+            'ephemeris_path', 'birth_date', 'birth_time', 'geopos', 
+            'no_header_info', 'planets_poi', 'planets_pod', 'num_rows', 
+            'time_delta_arg', 'output_cols'
+        ]
+        args = {k: args[k] for k in args_needed}
+        post_process = self.post_process or '| cut -d\' \' -f1,2,3,6'
+        args = ' '.join([v for k, v in args.items()])
+        final_call = bin_call + ' ' + args + self.post_process
+        colnames = ['P1-P2', 'Date', 'Time', 'Angular difference']
+        p = sp.read_stdout(
+            cmd = final_call, reader = 'table', sep = r'\s+', 
+            col_names = colnames
+        )
+        return p
