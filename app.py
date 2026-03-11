@@ -224,7 +224,7 @@ def server(input, output, session):
         se = SwissEphAdaptor(
             base_path = './swisseph-master/',
             binary = 'swetest', 
-            birth = birth_event(),
+            birth_event = birth_event(),
             ayanamsa = input.b_ayanamsa(),
             house = 'W',
             output_cols = 'TPlLsBj',
@@ -239,10 +239,7 @@ def server(input, output, session):
         '''
         # Make chart reactive to divisional choice
         divisional = input.natal_divisional()
-        return crt.chart(
-            birth_event = birth_event(), 
-            swisseph_adaptor = swisseph_adaptor()
-        )
+        return crt.chart(swisseph_adaptor = swisseph_adaptor())
 
     @reactive.calc
     def natal_divisional():

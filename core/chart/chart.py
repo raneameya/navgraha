@@ -17,16 +17,14 @@ class chart:
     '''
     def __init__(
         self, 
-        birth_event: BirthEvent, 
         swisseph_adaptor: SwissEphAdaptor
     ):
-        # BirthEvent
-        self.birth_event = birth_event
+        self.birth_event = swisseph_adaptor.birth_event
         self.swisseph_adaptor = swisseph_adaptor
         self.repr_str = (
-            f'{birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'
-            f' {birth_event.place}'
-            f'({birth_event.latitude}, {birth_event.longitude})'
+            f'{self.birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'
+            f' {self.birth_event.place}'
+            f'({self.birth_event.latitude}, {self.birth_event.longitude})'
         )
         self.divisionals = _divisionals(parent_chart = self)
         self.rasi = self.divisionals.rasi

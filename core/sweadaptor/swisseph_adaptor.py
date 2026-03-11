@@ -7,7 +7,7 @@ from core.misc.birth_event import BirthEvent
 class SwissEphAdaptor:
     base_path: str
     binary: str
-    birth: BirthEvent
+    birth_event: BirthEvent
     ayanamsa: str
     house: str
     output_cols: str
@@ -25,7 +25,7 @@ class SwissEphAdaptor:
         }
 
     def birth_moment_args(self, offset_days:int = 0) -> dict:
-        utc = self.birth.utc_datetime()
+        utc = self.birth_event.utc_datetime()
         if offset_days:
             utc = utc + timedelta(days = offset_days)
         return {
@@ -36,10 +36,10 @@ class SwissEphAdaptor:
     def birth_place_args(self) -> dict:
         # lat lon
         ll = (
-            f'{str(self.birth.longitude)},'
-            f'{str(self.birth.latitude)},'
+            f'{str(self.birth_event.longitude)},'
+            f'{str(self.birth_event.latitude)},'
         )
-        geopos_arg = f'-geopos{ll}{self.birth.z_height}'
+        geopos_arg = f'-geopos{ll}{self.birth_event.z_height}'
         house_arg = f'-house{ll}{self.house}'
         return {
             'geopos': geopos_arg,
