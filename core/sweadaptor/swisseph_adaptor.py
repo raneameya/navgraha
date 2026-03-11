@@ -174,7 +174,7 @@ class SwissEphAdaptor:
             except KeyError:
                 print(f'Planet code {p_arg} not found.')
         elif isinstance(p_arg, list):
-            out = [planet_group_mapping[p] for p in p_arg]
+            out = [planet_mapping[p] for p in p_arg]
             if not out:
                 raise ValueError(f'None of the planet arguments were valid.')
             else:

@@ -2,9 +2,6 @@ from zoneinfo import ZoneInfo
 from datetime import datetime
 from functools import cached_property
 
-import core.misc.misc_functions as mf
-from core.data.constants import rnp
-from core.chart.chart_minimal import chart_minimal
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import Rasi, Navamsa
 from core.misc.birth_event import BirthEvent

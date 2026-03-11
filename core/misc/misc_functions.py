@@ -127,11 +127,10 @@ def chart_kwargs(chart, dt:datetime, ay = None):
             place = chart.birth_event.place
     )
     kwarg_dict = {
-        'birth_event': birth_event,
         'swisseph_adaptor': SwissEphAdaptor(
             base_path = chart.swisseph_adaptor.base_path,
             binary = chart.swisseph_adaptor.binary, 
-            birth = birth_event,
+            birth_event = birth_event,
             ayanamsa = ay,
             house = chart.swisseph_adaptor.house,
             output_cols = chart.swisseph_adaptor.output_cols,

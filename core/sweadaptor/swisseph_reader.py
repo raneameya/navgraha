@@ -86,11 +86,11 @@ class SwissEphReader:
             # as provided by row of data
             rise_time = str_to_date(
                 datetime_str = ' '.join(ldt[0:2]), 
-                tzi = self.se.birth.dt.tzinfo
+                tzi = self.se.birth_event.dt.tzinfo
             )
             set_time = str_to_date(
                 datetime_str = ' '.join([ldt[0], ldt[2]]), 
-                tzi = self.se.birth.dt.tzinfo
+                tzi = self.se.birth_event.dt.tzinfo
             )
             if set_time < rise_time:
                 set_time = set_time + timedelta(days = 1)
@@ -99,8 +99,12 @@ class SwissEphReader:
         for i, row in enumerate(reader):
             if i >= 2:
                 rise_time, set_time = make_date(row)
-                if rise_time <= self.se.birth.dt <= set_time:
+                if rise_time <= self.se.birth_event.dt <= set_time:
                     return (rise_time, set_time)
+                else:
+                    pass
+            else:
+                pass
 
     def graha1_graha2_rel_diff(self):
         bin_call = f'{self.se.base_path}{self.se.binary}'
