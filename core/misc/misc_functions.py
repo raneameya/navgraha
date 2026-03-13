@@ -157,7 +157,7 @@ def dms(degrees: float) -> str:
     out = f'{degree_int}°{minutes}\'{seconds:.1f}'
     return out
 
-def parse_time(timestr: str) -> time:
+def parse_time(timestr: str):
     h, m, *s = map(int, timestr.split(':'))
     s = s[0] if s else 0
     return (h, m, s)

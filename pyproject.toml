@@ -13,4 +13,5 @@ dependencies = [
     "shiny",
     "pandas",
     "matplotlib",
+    "tzdata"
 ]

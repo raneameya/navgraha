@@ -19,7 +19,7 @@ class chart:
         self.birth_event = swisseph_adaptor.birth_event
         self.swisseph_adaptor = swisseph_adaptor
         self.repr_str = (
-            f'{self.birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'
+            f'''{self.birth_event.dt.strftime('%d-%m-%Y %H:%M:%S %Z')}'''
             f' {self.birth_event.place}'
             f'({self.birth_event.latitude}, {self.birth_event.longitude})'
         )

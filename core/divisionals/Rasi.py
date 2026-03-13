@@ -8,6 +8,7 @@ from datetime import datetime
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
 from core.sweadaptor.swisseph_reader import SwissEphReader
+from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
 def d1(birth_crt: crt.chart) -> chart_minimal:
     p = swetest(adapter = birth_crt.swisseph_adaptor)
