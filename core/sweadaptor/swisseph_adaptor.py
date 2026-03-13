@@ -113,7 +113,12 @@ class SwissEphAdaptor:
         return {'num_rows': f'-n{self.num_rows}'}
     
     def time_delta_arg(self):
-        return {'time_delta_arg': f'-s{self.time_delta}'}
+        if self.time_delta:
+            out = f'-s{self.time_delta}'
+        else:
+            # Default timedelta is 1 day
+            out = ''
+        return {'time_delta_arg': out}
     
     def planet_args(self, planet_type:str):
         planet_mapping = {

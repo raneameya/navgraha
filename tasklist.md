@@ -10,6 +10,9 @@
     - Add Muntha. Does a subclass need to be created for this? i.e. a tajaka year aware class that can compute Muntha?
 - Chart class
     - Clean functions
+        - ~~Create many more modular functions, especially around datetime conversion and swisseph is used~~
+        - ~~Separate datetime data from other ayanamsa, place data~~
+        - ~~Use dataclasses to store datetime info and then localise~~
     - Plotting
         - ~~Add South Indian style~~
         - Add Western style
@@ -24,7 +27,7 @@
     - Planetary state (mudita, etc)
 - Miscellaneous
     - Ability to read from .jhd files (Jagannatha Hora savefiles)
-    - Add panchanga
+    ~~- Add Pañcāṅga~~
 - Add bodies
     - Brighu Bindu
     - Gulika

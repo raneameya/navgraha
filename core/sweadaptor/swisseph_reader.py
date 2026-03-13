@@ -14,6 +14,23 @@ class SwissEphReader:
     se: SwissEphAdaptor
     post_process: str = None
 
+    @staticmethod
+    def str_to_date(datetime_str, tzi):
+        formats = ['%d.%m.%Y %H:%M:%S.%f', '%d.%m.%Y %H:%M:%S']
+        for fmt in formats:
+            try:
+                # Attempt to parse the string using the current format
+                dt = datetime.strptime(datetime_str, fmt)
+            except ValueError:
+                # If parsing fails, continue to the next format
+                continue
+        dt = dt.replace(
+            tzinfo = ZoneInfo('UTC')
+        ).astimezone(
+            tz = tzi
+        )
+        return dt
+
     def planetary_positions(self):
         bin_call = f'{self.se.base_path}{self.se.binary}'
         args = (
@@ -68,43 +85,44 @@ class SwissEphReader:
             final_call, capture_output = True, text = True, check = True, 
             shell = True
         )
-        import csv
-        from io import StringIO
-        reader = csv.reader(StringIO(cmd_run.stdout), delimiter = ' ')
-        def str_to_date(datetime_str, tzi):
-            dt = datetime.strptime(
-                datetime_str, 
-                '%d.%m.%Y %H:%M:%S.%f'
-            ).replace(
-                tzinfo = ZoneInfo('UTC')
-            ).astimezone(
-                tz = tzi
-            )
-            return dt
-        def make_date(ldt):
-            # ldt = list of date & times as [dt, rise_time, set_time] 
-            # as provided by row of data
-            rise_time = str_to_date(
-                datetime_str = ' '.join(ldt[0:2]), 
-                tzi = self.se.birth_event.dt.tzinfo
-            )
-            set_time = str_to_date(
-                datetime_str = ' '.join([ldt[0], ldt[2]]), 
-                tzi = self.se.birth_event.dt.tzinfo
-            )
-            if set_time < rise_time:
-                set_time = set_time + timedelta(days = 1)
-            return (rise_time, set_time)
-        data = []
-        for i, row in enumerate(reader):
-            if i >= 2:
-                rise_time, set_time = make_date(row)
-                if rise_time <= self.se.birth_event.dt <= set_time:
-                    return (rise_time, set_time)
-                else:
-                    pass
-            else:
-                pass
+        colnames = ['Date', 'Rise time', 'Set time']
+        out = sp.read_stdout(
+            cmd = final_call, reader = 'table', sep = r'\s+', 
+            col_names = colnames
+        )[1:]
+        out['Rise time'] = out.apply(
+            lambda df: df['Date'] + ' ' + df['Rise time'], axis = 1
+        ).apply(
+            lambda x: self.str_to_date(x, self.se.birth_event.dt.tzinfo)
+        )
+        out['Set time'] = out.apply(
+            lambda df: df['Date'] + ' ' + df['Set time'], axis = 1
+        ).apply(
+            lambda x: self.str_to_date(x, self.se.birth_event.dt.tzinfo)
+        )
+        # Adjust set time as the output is a quirk of swetest
+        out['Set time'] = out.apply(
+            lambda df: (
+                df['Set time'] + timedelta(days = 1) 
+                if df['Set time'] < df['Rise time'] 
+                else df['Set time']
+            ), axis = 1
+        )
+        out1 = out.copy()
+        birth_datetime = self.se.birth_event.dt
+        # First row where birth_datetime <= set_time contains rise and set 
+        # times on that day. Next row is required for the sunrise of the next 
+        # day indicating the end of the birthday.
+        all_rise_times = out['Rise time'].to_list()
+        all_set_times = out['Set time'].to_list()
+        rise_time_idx = max([
+            i for i, x in enumerate(all_rise_times) 
+            if x <= birth_datetime
+        ])
+        rise_time = all_rise_times[rise_time_idx]
+        set_time = all_set_times[rise_time_idx]
+        rise_time_next_day = all_rise_times[rise_time_idx + 1]
+        return (rise_time, set_time, rise_time_next_day)
 
     def graha1_graha2_rel_diff(self):
         bin_call = f'{self.se.base_path}{self.se.binary}'
@@ -125,12 +143,19 @@ class SwissEphReader:
             'time_delta_arg', 'output_cols'
         ]
         args = {k: args[k] for k in args_needed}
-        post_process = self.post_process or '| cut -d\' \' -f1,2,3,6'
+        post_process = (
+            self.post_process 
+            or ' | awk -v FS=\' \' \'{print $1, $2, $3, $5}\''
+        )
         args = ' '.join([v for k, v in args.items()])
-        final_call = bin_call + ' ' + args + self.post_process
+        final_call = bin_call + ' ' + args + post_process
         colnames = ['P1-P2', 'Date', 'Time', 'Angular difference']
         p = sp.read_stdout(
             cmd = final_call, reader = 'table', sep = r'\s+', 
             col_names = colnames
         )
-        return p
+        p['Datetime'] = p.apply(lambda df: self.str_to_date(
+            datetime_str = df['Date'] + ' ' + df['Time'], 
+            tzi = self.se.birth_event.dt.tzinfo
+        ), axis = 1)
+        return p[['P1-P2', 'Datetime', 'Angular difference']]

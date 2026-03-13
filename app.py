@@ -5,6 +5,7 @@ from core.data.constants import rnp, ayanamsas, yr_len
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
 import core.chart.chart as crt
+from core.panchanga.panchanga import Panchanga
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
@@ -24,8 +25,13 @@ natal_chart_ui = ui.accordion_panel(
 )
 
 natal_table_ui = ui.accordion_panel(
-    'Positions',
-    ui.output_data_frame(id = 'get_chart_data')
+    'Table',
+    ui.output_data_frame(id = 'natal_table')
+)
+
+natal_panchanga_ui = ui.accordion_panel(
+    'Pañcāṅga',
+    ui.output_data_frame(id = 'natal_panchanga')
 )
 
 natal_dasa_ui = ui.accordion_panel(
@@ -57,6 +63,7 @@ natal_ui = ui.nav_panel(
     ui.accordion(
         natal_chart_ui,
         natal_table_ui,
+        natal_panchanga_ui,
         natal_dasa_ui
     )
 )
@@ -67,8 +74,13 @@ tajaka_chart_ui = ui.accordion_panel(
 )
 
 tajaka_table_ui = ui.accordion_panel(
-    'Positions',
-    ui.output_data_frame(id = 'tajaka_chart_df')
+    'Table',
+    ui.output_data_frame(id = 'tajaka_table')
+)
+
+tajaka_panchanga_ui = ui.accordion_panel(
+    'Pañcāṅga',
+    ui.output_data_frame(id = 'tajaka_panchanga')
 )
 
 tajaka_dasa_ui = ui.accordion_panel(
@@ -99,6 +111,7 @@ tajaka_ui = ui.nav_panel(
     ui.accordion(
         tajaka_chart_ui,
         tajaka_table_ui,
+        tajaka_panchanga_ui,
         tajaka_dasa_ui
     )
 )
@@ -257,9 +270,14 @@ def server(input, output, session):
         )
 
     @render.data_frame
-    def get_chart_data():
+    def natal_table():
         p = natal_divisional().display_table
         return p
+    
+    @render.data_frame
+    def natal_panchanga():
+        p = Panchanga(birth_chart = natal_chart())
+        return p.df()
 
     @reactive.calc
     def natal_vimsottari_dasa():
@@ -332,9 +350,14 @@ def server(input, output, session):
         )
 
     @render.data_frame
-    def tajaka_chart_df():
+    def tajaka_table():
         out = tajaka_divisional().display_table
         return out
+ 
+    @render.data_frame
+    def tajaka_panchanga():
+        p = Panchanga(birth_chart = tajaka_chart())
+        return p.df()
 
     @render.text
     def tajaka_info():
