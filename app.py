@@ -104,7 +104,7 @@ tajaka_dasa_ui = ui.accordion_panel(
 tajaka_ui = ui.nav_panel(
     'Tājaka',
     ui.output_text(id = 'tajaka_info'),
-    ui.row(
+    ui.layout_column_wrap(
         ui.output_ui(id = 'tajaka_year_choices'),
         ui.output_ui(id = 'tajaka_divisional_choices')
     ),
@@ -301,7 +301,7 @@ def server(input, output, session):
     @render.text
     def natal_info():
         # To give user feedback about birth place & time selection
-        return natal_chart().repr_str
+        return str(birth_event())
 
     @render.text
     def natal_dasa_offset_info():

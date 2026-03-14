@@ -25,3 +25,18 @@ class BirthEvent:
 
     def utc_datetime(self):
         return self.dt.astimezone(ZoneInfo('UTC'))
+
+    def __str__(self):
+        print_str = (
+          f'''{self.dt.strftime('%d-%m-%Y %H:%M:%S %Z (%z)')} '''
+          f'{self.place} {(self.latitude, self.longitude)}'
+        )
+        return print_str
+'''   
+    def __repr__(self):
+      repr_str = (
+         f'BirthEvent(dt = {self.dt}, latitude = {self.latitude}, '
+         f'longitude = {self.longitude}, z_height = {self.z_height}'
+         f', place = {self.place})'
+      )
+'''
