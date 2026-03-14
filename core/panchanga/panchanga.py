@@ -176,12 +176,3 @@ class Panchanga:
         yoga_index = (sun_moon_lon_sum // (360/27)) + 1
         remaining = 1 - ((sun_moon_lon_sum / (360/27)) % 1)
         return yogas[yoga_index] | {'% remaining': remaining}
-
-
-'''
-tithi
-vara
-nakshatra
-yoga
-karna
-'''

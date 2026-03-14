@@ -105,8 +105,8 @@ tajaka_ui = ui.nav_panel(
     'Tājaka',
     ui.output_text(id = 'tajaka_info'),
     ui.layout_column_wrap(
-        ui.output_ui(id = 'tajaka_year_choices'),
-        ui.output_ui(id = 'tajaka_divisional_choices')
+        ui.output_ui(id = 'tajaka_divisional_choices'),
+        ui.output_ui(id = 'tajaka_year_choices')
     ),
     ui.accordion(
         tajaka_chart_ui,
