@@ -17,7 +17,7 @@ dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
     '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
 }
-divisional_choices = {'rasi': 'Rāśi', 'navamsa': 'Navāmśā'}
+divisional_choices = {'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā'}
 
 natal_chart_ui = ui.accordion_panel(
     'Chart',
@@ -260,6 +260,8 @@ def server(input, output, session):
             return natal_chart().divisionals.rasi
         elif input.natal_divisional() == 'navamsa':
             return natal_chart().divisionals.navamsa
+        elif input.natal_divisional() == 'hora':
+            return natal_chart().divisionals.hora
 
     @render.plot
     def natal_plot():
@@ -340,6 +342,8 @@ def server(input, output, session):
             return tajaka_chart().divisionals.rasi
         elif input.tajaka_divisional() == 'navamsa':
             return tajaka_chart().divisionals.navamsa
+        elif input.tajaka_divisional() == 'hora':
+            return tajaka_chart().divisionals.hora
 
     @render.plot
     def tajaka_plot():
