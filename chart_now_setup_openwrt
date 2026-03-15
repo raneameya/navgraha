@@ -17,7 +17,6 @@ rm /etc/chart_now/sweph.zip
 # Compile the programs into binaries
 cd /etc/chart_now/swisseph-master
 for i in swetest.c swecl.c sweph.c swephlib.c swejpl.c swemmoon.c swemplan.c swedate.c swehouse.c swehel.c; do cc -g  -fPIC -Wall -c $i; done
-# for i in swetest swevents swehouse swecl swemmoon swemini swedate swehel swejpl swemplan sweph swephgen4 swephlib; do cc -g -fPIC -Wall -o $i swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm; done
 cc -g -fPIC -Wall -o swetest swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
 cc -g -fPIC -Wall -o swevents swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
 cc -g -fPIC -Wall -o swehouse swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
@@ -49,18 +48,42 @@ tkn=xxx
 # Add the standard library webbrowser to the site-packages as it is not 
 # included in the OpenWRT package system
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/lib/python3.11/site-packages/webbrowser.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/webbrowser.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/lut.pickle https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/lut.pickle
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/time_input.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/time_input.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/icons.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/icons.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart_minimal.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart_minimal.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart_plot_constants.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart_plot_constants.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart_helpers.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart_helpers.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/dasas/vimsottari_dasa.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/dasas/vimsottari_dasa.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/data/lut.pickle https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/data/lut.pickle
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/data/constants.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/data/constants.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/data/nakshatra_pada_melt.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/data/nakshatra_pada_melt.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/Navamsa.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/Navamsa.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/Rasi.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/Rasi.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/divisional_helpers.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/divisional_helpers.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/js/custom.js https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/js/custom.js
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/misc/misc_functions.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/misc/misc_functions.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/misc/stdout_to_pd.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/misc/stdout_to_pd.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/misc/fractional_interval.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/misc/fractional_interval.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/misc/birth_event.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/misc/birth_event.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/panchanga/panchanga.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/panchanga/panchanga.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/sweadaptor/swisseph_reader.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/sweadaptor/swisseph_reader.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/sweadaptor/swisseph_adaptor.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/sweadaptor/swisseph_adaptor.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/tajaka/sol_cross.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/tajaka/sol_cross.py
+
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/app.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/app.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/misc_functions.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/misc_functions.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/stdout_to_pd.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/stdout_to_pd.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/constants.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/constants.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/ayanamsa_list.csv https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/ayanamsa_list.csv
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/sol_cross.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/sol_cross.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/fractional_interval.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/fractional_interval.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/vimsottari_dasa.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/vimsottari_dasa.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/chart.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/chart.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/chart_plot_constants.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/chart_plot_constants.py
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/js/viewport.js https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/js/viewport.js
+
+
 
 # In case wget does not support header option
 scp -O /run/media/ameya/Data/Programming/chart_now/webbrowser.py root@192.168.1.1:/etc/chart_now/

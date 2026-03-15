@@ -3,18 +3,12 @@
 chart_now.egg-info/*
 core/chart_now.egg-info/*
 /swisseph-master/*
-allCountries.txt
 pyvenv.cfg
-setup
-example_chart.pickle
-*.conf
-*.jhd
 experiments/*
 *.pyc
 example_charts.py
 resources/*
 test.py
-rasis.csv
 Varga - amsa devatā.csv
-chart_now
 All vargas table.csv
+.vscode/*
