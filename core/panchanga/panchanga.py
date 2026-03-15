@@ -78,12 +78,13 @@ class Panchanga:
             {'Name': 'Kiṃstughna', 'Lord': 'Śani', 'Diety': 'Vāyu', 'Type': 'Sthira'},
         ]
         karanas = {1: karanas[10]} | {
-            (k + 2): v for k, v in enumerate(karanas[0:8] * 8)
+            (k + 2): v for k, v in enumerate(karanas[0:7] * 8)
         } | {
             58: karanas[7],
             59: karanas[8],
             60: karanas[9]
         }
+        print(karanas)
         sr = SwissEphReader(se = SwissEphAdaptor(
             base_path = './swisseph-master/',
             binary = 'swetest', 
