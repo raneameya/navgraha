@@ -84,7 +84,6 @@ class Panchanga:
             59: karanas[8],
             60: karanas[9]
         }
-        print(karanas)
         sr = SwissEphReader(se = SwissEphAdaptor(
             base_path = './swisseph-master/',
             binary = 'swetest', 

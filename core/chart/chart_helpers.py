@@ -6,10 +6,7 @@ def graha_nakshatra_traversal(
     graha: str, 
     divisional: str
 ):
-    if divisional == 'rasi':
-        chart_df = birth_chart.rasi.placements
-    if divisional == 'navamsa':
-        chart_df = birth_chart.divisionals.navamsa.placements
+    chart_df = getattr(birth_chart.divisionals, divisional).placements
     # Longitude of the seed graha
     seed_deg = chart_df.loc[
         chart_df['Graha'] == graha, 'Lon'
@@ -38,7 +35,7 @@ def graha_nakshatra_traversal(
     nakshatra, nakshatra_lord = rnp_gb[
         rnp_gb['IsIn'] > 0
     ].index.values[0]
-    # How much of the dasa is completed at the time of birth?
+    # How much of the nakshatra is traversed at the time of birth?
     nakshatra_traversed = rnp_gb[rnp_gb['IsIn'] > 0][
         'Nakshatra_traversed'
     ].squeeze()

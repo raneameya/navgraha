@@ -5,8 +5,9 @@ import numpy as np # cumsum
 import pandas as pd # dataframe, interval
 
 import core.chart.chart as crt # chart class used as input
-from core.data.constants import rnp, nakshatra # lookup table to provide to class
+from core.data.constants import rnp # lookup table to provide to class
 from core.misc.misc_functions import cyclic_shift
+from core.chart.chart_helpers import graha_nakshatra_traversal
 
 
 class vimsottari_dasa:
@@ -88,44 +89,23 @@ class vimsottari_dasa:
             'Mahadaśā', 'Antardaśā', 'Pratyantardaśā', 'Sookshmaantardaśā',
             'Praanaantardaśā', 'Dehaantardaśā'
         ]
+        self.dasa_lengths = {
+            'Ketu': fr(7, 120), 'Venus': fr(20, 120), 'Sun': fr(6, 120), 
+            'Moon': fr(10, 120), 'Mars': fr(7, 120), 'Rahu': fr(18, 120), 
+            'Jupiter': fr(16, 120), 'Saturn': fr(19, 120), 
+            'Mercury': fr(17, 120)
+        }
         chart_df = getattr(chart.divisionals, divisional).placements
-        # Longitude of the seed graha
-        seed_deg = chart_df.loc[
-            chart_df['Graha'] == seed_graha, 'Lon'
-        ].squeeze()
-        # At the longitude of the seed graha, how much of an interval
-        # (in this case pada, i.e. a 3° 20' interval) has the graha covered?
-        rnp_lut['Dasa covered'] = rnp_lut['Degrees'].apply(
-            lambda x: x.point_in_range_coverage(seed_deg)
+        (
+            self.nakshatra, self.nakshatra_lord, self.dasa_covered
+        ) = graha_nakshatra_traversal(
+            birth_chart = chart, graha = seed_graha, divisional = divisional
         )
-        # Identify the interval the seed graha is in
-        rnp_lut['Is in'] = rnp_lut['Degrees'].apply(
-            lambda x: x.isin(seed_deg)
-        )
-        # Sorting by categorical nakshatra is important because this
-        # allows meaningful sequential subsets
-        rnp_gb = rnp_lut.groupby(
-            ['Nakshatra', 'Nakshatra lord'], observed = True, sort = True
-        ).agg(
-            Dasa_covered = ('Dasa covered', 'mean'),
-            IsIn = ('Is in', 'mean'), 
-            Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
-            Length = ('Vimshottari dasa (yrs)', 'sum')
-        )
-        # Identify the nakshatra the seed graha lie in, and its lord
-        self.nakshatra, self.nakshatra_lord = rnp_gb[
-            rnp_gb['IsIn'] > 0
-        ].index.values[0]
+        self.dasa_covered = 1 - self.dasa_covered
         # What is the length of the mahadasa of the nakshatra lord?
-        nakshatra_lord_mahadasa_len = rnp_gb.at[
-            (self.nakshatra, self.nakshatra_lord), 'Length'
-        ].squeeze()
+        nakshatra_lord_mahadasa_len = 120 * self.dasa_lengths[self.nakshatra_lord]
         # Scale mahadasa length as per lifespan
-        nakshatra_lord_mahadasa_len *= lifespan / 120
-        # How much of the dasa is completed at the time of birth?
-        self.dasa_covered = rnp_gb[rnp_gb['IsIn'] > 0][
-            'Dasa_covered'
-        ].squeeze()
+        nakshatra_lord_mahadasa_len *= lifespan / 120        
         # Start datetime of lifespan, accounting for offset if any
         first_dasa_start = (
             pd.Timestamp(chart.birth_event.dt) - 
@@ -136,14 +116,8 @@ class vimsottari_dasa:
             ) + 
             dt.timedelta(days = dasa_offset_days)
         )
-        dasa_lengths = {
-            'Ketu': fr(7, 120), 'Venus': fr(20, 120), 'Sun': fr(6, 120), 
-            'Moon': fr(10, 120), 'Mars': fr(7, 120), 'Rahu': fr(18, 120), 
-            'Jupiter': fr(16, 120), 'Saturn': fr(19, 120), 
-            'Mercury': fr(17, 120)
-        }
         sub_dasa_shares = self.compute_sub_dasa_shares(
-            dasa_length_dict = dasa_lengths,
+            dasa_length_dict = self.dasa_lengths,
             sub_level = sub_dasa_level + 1, 
             first_mahadasa_lord = self.nakshatra_lord
         )
