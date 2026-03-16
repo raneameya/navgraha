@@ -1,10 +1,13 @@
-import core.chart.chart as crt # chart class used as input
-import numpy as np # cumsum
-import pandas as pd # dataframe, interval
-from core.data.constants import rnp, nakshatra # lookup table to provide to class
-from core.misc.misc_functions import cyclic_shift
 import datetime as dt # timedeltas used
 from fractions import Fraction as fr
+
+import numpy as np # cumsum
+import pandas as pd # dataframe, interval
+
+import core.chart.chart as crt # chart class used as input
+from core.data.constants import rnp, nakshatra # lookup table to provide to class
+from core.misc.misc_functions import cyclic_shift
+
 
 class vimsottari_dasa:
     '''
@@ -85,12 +88,7 @@ class vimsottari_dasa:
             'Mahadaśā', 'Antardaśā', 'Pratyantardaśā', 'Sookshmaantardaśā',
             'Praanaantardaśā', 'Dehaantardaśā'
         ]
-        if divisional == 'rasi':
-            chart_df = chart.rasi.placements
-        if divisional == 'navamsa':
-            chart_df = chart.divisionals.navamsa.placements
-        if divisional == 'hora':
-            chart_df = chart.divisionals.hora.placements
+        chart_df = getattr(chart.divisionals, divisional).placements
         # Longitude of the seed graha
         seed_deg = chart_df.loc[
             chart_df['Graha'] == seed_graha, 'Lon'

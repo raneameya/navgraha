@@ -256,12 +256,7 @@ def server(input, output, session):
 
     @reactive.calc
     def natal_divisional():
-        if input.natal_divisional() == 'rasi':
-            return natal_chart().divisionals.rasi
-        elif input.natal_divisional() == 'navamsa':
-            return natal_chart().divisionals.navamsa
-        elif input.natal_divisional() == 'hora':
-            return natal_chart().divisionals.hora
+        return getattr(natal_chart().divisionals, input.natal_divisional())
 
     @render.plot
     def natal_plot():
@@ -338,12 +333,7 @@ def server(input, output, session):
 
     @reactive.calc
     def tajaka_divisional():
-        if input.tajaka_divisional() == 'rasi':
-            return tajaka_chart().divisionals.rasi
-        elif input.tajaka_divisional() == 'navamsa':
-            return tajaka_chart().divisionals.navamsa
-        elif input.tajaka_divisional() == 'hora':
-            return tajaka_chart().divisionals.hora
+        return getattr(tajaka_chart().divisionals, input.tajaka_divisional())
 
     @render.plot
     def tajaka_plot():
