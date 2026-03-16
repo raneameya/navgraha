@@ -68,7 +68,7 @@ class chart_minimal:
             # Get the placements of grahas. Sorting allows for the planets 
             # to be shown in the order of progession in a sign
             p = self.placements[[
-                'Graha', 'Bhava', 'Rashi', 'Sign', 'Speed', 'Lon'
+                'Graha', 'Bhava', 'Rāśi', 'Sign', 'Speed', 'Lon'
             ]].sort_values(by = 'Lon')
             # Convert to dictionary for easy subsetting. Setting graha as index 
             # allows graha to be the keys of the resulting dict

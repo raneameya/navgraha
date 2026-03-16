@@ -1,45 +1,142 @@
-import pandas as pd, io as io, pickle as pl
 from fractions import Fraction as fr
+import pickle as pl
+
+import pandas as pd
+
 from core.misc.fractional_interval import fractional_interval as fi
 
-# Read rashi nakshtra pada from text data. This is copied from the internet 
-# contains incorrect rashi allocation. The incorrect rashi allocation is 
-# overwritten later
-txt_data = '''Nakshatra	Pada-1	Pada-2	Pada-3	Pada-4
-Ashwini	Aries	Taurus	Gemini	Cancer
-Bharani	Leo	Virgo	Libra	Scorpio
-Krittika	Sagittarius	Capricorn	Aquarius	Pisces
-Rohini	Aries	Taurus	Gemini	Cancer
-Mrigsira	Leo	Virgo	Libra	Scorpio
-Ardra	Sagittarius	Capricorn	Aquarius	Pisces
-Punarvasu	Aries	Taurus	Gemini	Cancer
-Pushya	Leo	Virgo	Libra	Scorpio
-Ashlesha	Sagittarius	Capricorn	Aquarius	Pisces
-Magha	Aries	Taurus	Gemini	Cancer
-Purva Phalguni	Leo	Virgo	Libra	Scorpio
-Uttar Phalguni	Sagittarius	Capricorn	Aquarius	Pisces
-Hasta	Aries	Taurus	Gemini	Cancer
-Chitra	Leo	Virgo	Libra	Scorpio
-Swati	Sagittarius	Capricorn	Aquarius	Pisces
-Vishakha	Aries	Taurus	Gemini	Cancer
-Anuradha	Leo	Virgo	Libra	Scorpio
-Jyeshtha	Sagittarius	Capricorn	Aquarius	Pisces
-Moola	Aries	Taurus	Gemini	Cancer
-Purva Ashada	Leo	Virgo	Libra	Scorpio
-Uttar Ashada	Sagittarius	Capricorn	Aquarius	Pisces
-Shravan	Aries	Taurus	Gemini	Cancer
-Dhanistha	Leo	Virgo	Libra	Scorpio
-Satabhisha	Sagittarius	Capricorn	Aquarius	Pisces
-Purva Bhadrapada	Aries	Taurus	Gemini	Cancer
-Uttar Bhadrapada	Leo	Virgo	Libra	Scorpio
-Revati	Sagittarius	Capricorn	Aquarius	Pisces'''
-p = pd.read_csv(io.StringIO(txt_data), sep='\t')
+# Define nakṣatra level info
+nakshatras = {
+    'Nakṣatra': [
+        'Aśvinī', 'Bharaṇī', 'Kṛttikā', 'Rohiṇī', 'Mṛgaśīrṣā', 'Ārdrā', 
+        'Punarvasu', 'Puṣya', 'Āśleṣā', 'Maghā', 'Pūrva Phalgunī', 
+        'Uttara Phalgunī', 'Hasta', 'Citrā', 'Svāti', 'Viśākhā', 'Anurādhā', 
+        'Jyeṣṭhā', 'Mūla', 'Pūrvāṣāḍhā', 'Uttarāṣāḍhā', 'Śravaṇa', 'Dhaniṣṭhā', 
+        'Śatabhiṣaj', 'Pūrva Bhādrapadā', 'Uttara Bhādrapadā', 'Revatī'
+    ],
+    'Graha devatā': [
+        'Ketu', 'Śukra', 'Sūrya', 'Candra', 
+        'Maṅgala', 'Rāhu', 'Guru', 'Śani', 'Budha'
+    ] * 3,
+    'Planetary ruler': [
+        'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 
+        'Rahu', 'Jupiter', 'Saturn', 'Mercury'
+    ] * 3,
+    'Graha unicode': [
+        '\u260B', '\u2640', '\u2609', '\u263E', '\u2642', 
+        '\u260A', '\u2643', '\u2644', '\u263F'
+    ] * 3,
+    'Viṃśottarī daśā length': [
+        x/4 for x in [7, 20, 6, 10, 7, 18, 16, 19, 17]
+    ] * 3
+}
+nakshatras = pd.DataFrame(nakshatras)
+nakshatras['Nakṣatra'] = nakshatras['Nakṣatra'].astype(
+    pd.api.types.CategoricalDtype(
+        categories = nakshatras['Nakṣatra'].to_list()[0:27], ordered = True
+    )
+)
+
+# Define padas
+padas = pd.DataFrame(['P1', 'P2', 'P3', 'P4'], columns = ['Pada'])
+
+# Create navamsa table (27 * 4 = 108 rows)
+navamsa = pd.merge(nakshatras, padas, how = 'cross')
+
+# Define rāśi level info
+rasis_dict = {
+    'Rāśi': [
+        'Meṣa', 'Vṛṣabha', 'Mithuna', 'Karka', 'Siṃha', 'Kanyā', 
+        'Tulā', 'Vṛścika', 'Dhanu', 'Makara', 'Kumbha', 'Mīna'
+    ],
+    'Zodiac sign': [
+        'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
+        'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+    ],
+    'Graha devatā': [
+        'Maṅgala', 'Śukra', 'Budha', 'Candra', 'Sūrya', 'Budha', 
+        'Śukra', 'Maṅgala', 'Guru', 'Śani', 'Śani', 'Guru'
+    ],
+    'Planetary ruler': [
+        'Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 
+        'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'
+    ],
+    'Graha unicode': [
+        '\u2642', '\u2640', '\u263F', '\u263E', '\u2609', '\u263F', 
+        '\u2640', '\u2642', '\u2643', '\u2644', '\u2644', '\u2643'
+    ],
+    'Rāśi unicode': [
+        '\u2648', '\u2649', '\u264A', '\u264B', '\u264C', '\u264D', 
+        '\u264E', '\u264F', '\u2650', '\u2651', '\u2652', '\u2653'
+    ],
+    'Element': ['Fire', 'Earth', 'Air', 'Water'] * 3, 
+    'Modality': ['Chara', 'Sthira', 'Dvisvabhāva'] * 4, 
+    'Gender': ['Male', 'Female'] * 6, 
+    'Nature': [
+        'Krūra', 'Saumya', 'Miśra', 'Saumya', 'Krūra', 'Miśra', 
+        'Saumya', 'Krūra', 'Saumya', 'Krūra', 'Krūra', 'Saumya'
+    ], 
+    'Direction': ['East', 'South', 'West', 'North'] * 3,
+    'Varṇa': ['Kṣatriya', 'Vaiśya', 'Śūdra', 'Brahmin'] * 3
+}
+rasis = pd.DataFrame({
+    k: [x for x in v for _ in range(9)] for k, v in rasis_dict.items()
+})
+rasis['Rāśi'] = rasis['Rāśi'].astype(
+    pd.api.types.CategoricalDtype(
+        categories = rasis_dict['Rāśi'], ordered = True
+    )
+)
+add_cols = ['Rāśi', 'Zodiac sign', 'Rāśi unicode']
+navamsa[add_cols] = rasis[add_cols]
+
+# Define start & end degrees for each navamsa/pada
+navamsa[['Start', 'End']] = pd.DataFrame({
+    'Start':[fr(i, 3) for i in range(1080) if i%10 == 0],
+    'End':[fr(i+10, 3) for i in range(1080) if i%10 == 0]
+})
+
+# Create fractional interval column
+navamsa['Degrees'] = pd.Series([
+    fi(left=fr(i, 3), right = fr(i+10, 3), closed = 'left') 
+    for i in range(1080) if i%10 == 0
+])
+
+# Indicate Pushkara amsas
+pushkara_amsas = [
+    # Aries [20°0'0.0, 23°20'0.0)
+    fi(left = 20, right = fr(70, 3), closed = 'left'),
+    # Aries [26°40'0.0, 0°0'0.0)
+    fi(left = fr(80, 3), right = 30, closed = 'left'), 
+    # Taurus [6°40'0.0, 10°0'0.0)
+    fi(left = fr(110, 3), right = 40, closed = 'left'),
+    # Taurus [13°20'0.0, 16°40'0.0)
+    fi(left = fr(130, 3), right = fr(140, 3), closed = 'left'),
+    # Gemini [16°40'0.0, 20°0'0.0)
+    fi(left = fr(230, 3), right = 80, closed = 'left'),
+    # Gemini [23°20'0.0, 26°40'0.0)
+    fi(left = fr(250, 3), right = fr(260, 3), closed = 'left'), 
+    # Cancer [0°0'0.0, 3°20'0.0)
+    fi(left = 90, right = fr(280, 3), closed = 'left'),
+    # Cancer [6°40'0.0, 10°0'0.0)
+    fi(left = fr(290, 3), right = 100, closed = 'left')
+]
+# Add 120° to cover other 8 signs symmetrically
+pushkara_amsas = [
+    fi(left = (x.left + 120 * i), right = (x.right + 120 * i), closed = 'left') 
+    for i in range(3) for x in pushkara_amsas
+]
+# Add Pushkara column
+navamsa['Puṣkara'] = navamsa['Degrees'].apply(
+    lambda d: 'Yes' if d in pushkara_amsas else 'No'
+)
 
 # Source: https://www.selfrealisation.net/UK/VedicAstrology/pada.htm
+# Supposedly from Yavana Jataka as mentioned in Hora Ratnam of Bala Bhadra
 snippet = [
     'Tendency to use other\'s wealth', 'Childish in acts', 'Fortunate', 
     'Enjoys pleasures; longlived', 'Sacrificial in disposition', 
-    'Rich and happy', 'Inflicting suffering ', 'Incurs poverty', 
+    'Rich and happy', 'Inflicting suffering', 'Incurs poverty', 
     'Radiant', 'Has knowledge of scriptures', 'Experiences grief', 
     'Enjoys longevity and many sons', 'Highly prosperous', 'Incurs evils', 
     'Timid in disposition', 'Truthful', 'Kingly in status', 
@@ -72,132 +169,19 @@ snippet = [
     'Tendency to use other\'s wealth', 'Winner in battles', 'Incurring grief'
 ]
 
-# Melt pada columns into one column to have 108 rows, each corresponding to
-# a pada/navamsa
-p = pd.melt(frame=p, id_vars=['Nakshatra'],var_name='Pada',value_name='Rashi')
-p['Pada']=p['Pada'].str.replace(pat='ada-', repl='')
+navamsa['Snippet'] = pd.Series(snippet)
 
-# Create constants for nakshatras & rashis
-nakshatras=p.iloc[
-    0:27, p.columns.get_indexer(['Nakshatra'])
-]['Nakshatra'].to_list()
-rashis=[
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 
-    'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+col_order = [
+    'Rāśi', 'Nakṣatra', 'Graha devatā', 'Viṃśottarī daśā length', 
+    'Pada', 'Start', 'End', 'Degrees', 'Puṣkara', 'Snippet'
 ]
-
-# Vimsottari rulers and respective duration in years
-vimsottari=pd.DataFrame({
-    'Lords':[
-        'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 
-        'Saturn', 'Mercury'
-    ], 
-    'Duration':[x/4 for x in [7, 20, 6, 10, 7, 18, 16, 19, 17]]
-})
-
-# Expand out vimsottari table, first each row repeated 4 times and then 
-# appended to itself two more times to create the 108 row table we need
-vimsottari=vimsottari.loc[vimsottari.index.repeat(4)].reset_index(drop=True)
-vimsottari=pd.concat([vimsottari] * 3, ignore_index=True)
-
-# Redefine rashis & nakshatras as ordered categorical variables
-# Rashis can only be appended after sorting by nakshatra & pada
-p['Nakshatra']=p['Nakshatra'].astype(pd.api.types.CategoricalDtype(
-    categories=nakshatras, ordered=True
-))
-p.sort_values(by=['Nakshatra', 'Pada'], inplace=True, ignore_index=True)
-p['Rashi']=pd.Series([r for r in rashis for _ in range(9)]).astype(
-    pd.api.types.CategoricalDtype(categories=rashis, ordered=True)
-)
-
-# Append vimsottari info
-p[['Nakshatra lord', 'Vimshottari dasa (yrs)']]=vimsottari
-
-# Append snippet info from Yavana Jataka as mentioned in the 
-# Hora Ratnam of Bala Bhadra. 
-p['Snippet']=pd.Series(data=snippet)
-
-# Define start & end degrees for each navamsa/pada
-p[['Start', 'End']]=pd.DataFrame({
-    'Start':[fr(i, 3) for i in range(1080) if i%10 == 0],
-    'End':[fr(i+10, 3) for i in range(1080) if i%10 == 0]
-})
-
-# Create fractional interval column
-p['Degrees']=pd.Series([
-    fi(left=fr(i, 3), right = fr(i+10, 3), closed = 'left') 
-    for i in range(1080) if i%10 == 0
-])
-
-# Indicate Pushkara amsas
-pushkara_amsas = [
-    # Aries [20°0'0.0, 23°20'0.0)
-    fi(left = 20, right = fr(70, 3), closed = 'left'),
-    # Aries [26°40'0.0, 0°0'0.0)
-    fi(left = fr(80, 3), right = 30, closed = 'left'), 
-    # Taurus [6°40'0.0, 10°0'0.0)
-    fi(left = fr(110, 3), right = 40, closed = 'left'),
-    # Taurus [13°20'0.0, 16°40'0.0)
-    fi(left = fr(130, 3), right = fr(140, 3), closed = 'left'),
-    # Gemini [16°40'0.0, 20°0'0.0)
-    fi(left = fr(230, 3), right = 80, closed = 'left'),
-    # Gemini [23°20'0.0, 26°40'0.0)
-    fi(left = fr(250, 3), right = fr(260, 3), closed = 'left'), 
-    # Cancer [0°0'0.0, 3°20'0.0)
-    fi(left = 90, right = fr(280, 3), closed = 'left'),
-    # Cancer [6°40'0.0, 10°0'0.0)
-    fi(left = fr(290, 3), right = 100, closed = 'left')
-]
-# Add 120° to cover other 8 signs symmetrically
-pushkara_amsas = [
-    fi(left = (x.left + 120 * i), right = (x.right + 120 * i), closed = 'left') 
-    for i in range(3) for x in pushkara_amsas
-]
-# Add Pushkara column
-p['Pushkara'] = p['Degrees'].apply(
-    lambda d: 'Yes' if d in pushkara_amsas else 'No'
-)
-
-# Reorder columns
-p=p[[
-    'Rashi', 'Nakshatra', 'Nakshatra lord', 'Vimshottari dasa (yrs)', 
-    'Pada', 'Start', 'End', 'Degrees', 'Pushkara', 'Snippet'
-]]
-
-nakshatra=p.groupby(by=['Nakshatra'], observed=True).agg({
-    #'Nakshatra':'first',
-    'Nakshatra lord':'first',
-    'Vimshottari dasa (yrs)':'sum',
-    'Start':'min',
-    'End':'max'    
-}).sort_values(by=['Nakshatra'])
-
-# Rasis. TODO: Add colour and rising type
-r = pd.DataFrame(data = {
-    'Rasi': [
-        'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 
-        'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-    ], 
-    'Ruler': [
-        'Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 
-        'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'
-    ], 
-    'Element': ['Fire', 'Earth', 'Air', 'Water'] * 3, 
-    'Modality': ['Chara', 'Sthira', 'Dvisvabhāva'] * 4, 
-    'Gender': ['Male', 'Female'] * 6, 
-    'Nature': [
-        'Krūra', 'Saumya', 'Miśra', 'Saumya', 'Krūra', 'Miśra', 
-        'Saumya', 'Krūra', 'Saumya', 'Krūra', 'Krūra', 'Saumya'
-    ], 
-    'Direction': ['East', 'South', 'West', 'North'] * 3,
-    'Varṇa': ['Kṣatriya', 'Vaiśya', 'Śūdra', 'Brahmin'] * 3
-})
+rasis = pd.DataFrame(rasis_dict)
 
 # Pickle file and save on disk
-out={
-    'Nakshatra': nakshatra,
-    'Navamsa': p,
-    'Rasi': r
+out = {
+    'Navāṁśa': navamsa,
+    'Rāśi': rasis
 }
+
 with open('core/data/lut.pickle', 'wb') as handle:
-    pl.dump(out, handle, protocol=0)
+    pl.dump(out, handle, protocol = 0)

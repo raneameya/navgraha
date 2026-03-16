@@ -24,12 +24,12 @@ def graha_nakshatra_traversal(
     # Sorting by categorical nakshatra is important because this
     # allows meaningful sequential subsets
     rnp_gb = rnp_lut.groupby(
-        ['Nakshatra', 'Nakshatra lord'], observed = True, sort = True
+        ['Nakṣatra', 'Graha devatā'], observed = True, sort = True
     ).agg(
         Nakshatra_traversed = ('Pada traversed', 'mean'),
         IsIn = ('Is in', 'mean'), 
-        Lord = ('Nakshatra lord', 'min'), # i.e. pick one as all are same
-        Length = ('Vimshottari dasa (yrs)', 'sum')
+        Lord = ('Graha devatā', 'min'), # i.e. pick one as all are same
+        Length = ('Viṃśottarī daśā length', 'sum')
     )
     # Identify the nakshatra the seed graha lie in, and its lord
     nakshatra, nakshatra_lord = rnp_gb[

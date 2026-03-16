@@ -47,11 +47,11 @@ def d2(birth_crt:crt.chart) -> chart_minimal:
             else 30 - (30 * ((df['Lon30']/(30/2))%1))
         ), axis = 1
     )
-    p['Rashi'] = p['Sign'].apply(lambda x: list(rasis['Rasi'])[x - 1])
+    p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: mf.dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
     p = add_house(p = p)
-    add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
+    add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
     p = mf.add_non_equi_col(
         p1 = p,
         p2 = rnp,
@@ -61,14 +61,14 @@ def d2(birth_crt:crt.chart) -> chart_minimal:
     )
     p = p[[
         'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 
-        'Amsā Devatā', 'Sign', 'Bhava', 'Rashi', 'Nakshatra', 
-        'Nakshatra lord', 'Pada', 'Speed'
+        'Amsā Devatā', 'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 
+        'Pada', 'Speed'
     ]]
     out = chart_minimal(
         placements = p, 
         display_cols = [
-            'Graha', 'Lon°', 'Amsā Devatā', 'Nakshatra', 
-            'Nakshatra lord', 'Pada'
+            'Graha', 'Lon°', 'Amsā Devatā', 'Nakṣatra', 
+            'Graha devatā', 'Pada'
         ]
     )
     return out

@@ -4,13 +4,10 @@ with open('core/data/lut.pickle', 'rb') as handle:
     lut = pl.load(handle)
 
 # Read in mapping table for rashi-nakshatra-pada (i.e. 108 rows)
-rnp = lut['Navamsa']
-
-# Create aggregated table for only nakshatras
-nakshatra =  lut['Nakshatra']
+rnp = lut['Navāṁśa']
 
 # Table of rasis with attributes
-rasis = lut['Rasi']
+rasis = lut['Rāśi']
 
 # Read in list of ayanamsas and their swetest arguments. Used to expose 
 # list of available ayanmsas to user

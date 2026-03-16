@@ -5,7 +5,6 @@ import numpy as np # cumsum
 import pandas as pd # dataframe, interval
 
 import core.chart.chart as crt # chart class used as input
-from core.data.constants import rnp # lookup table to provide to class
 from core.misc.misc_functions import cyclic_shift
 from core.chart.chart_helpers import graha_nakshatra_traversal
 
@@ -44,8 +43,6 @@ class vimsottari_dasa:
         lifespan (int): Total duration of the daśā cycle in years. Defaults 
             to 120 years for a natal chart, but some cases like tājaka need 1 
             year, and some entity charts use 144 years.
-        rnp_lut (DataFrame): Rāśi-nakṣatra-pada lookup table. Typically 
-            left unchanged.
     Attributes:
         dasa_names (list[str]): Names of the 6 sub-dasa levels, provided 
             for convenience.
@@ -77,8 +74,7 @@ class vimsottari_dasa:
         divisional: str = 'rasi', 
         trunc_intervals: bool = False,
         yr_len: float = 365.25,
-        lifespan: int = 120,
-        rnp_lut: pd.DataFrame = rnp
+        lifespan: int = 120
     ):
         self.chart = chart
         self.seed = seed_graha
@@ -90,10 +86,10 @@ class vimsottari_dasa:
             'Praanaantardaśā', 'Dehaantardaśā'
         ]
         self.dasa_lengths = {
-            'Ketu': fr(7, 120), 'Venus': fr(20, 120), 'Sun': fr(6, 120), 
-            'Moon': fr(10, 120), 'Mars': fr(7, 120), 'Rahu': fr(18, 120), 
-            'Jupiter': fr(16, 120), 'Saturn': fr(19, 120), 
-            'Mercury': fr(17, 120)
+            'Ketu': fr(7, 120), 'Śukra': fr(20, 120), 'Sūrya': fr(6, 120), 
+            'Candra': fr(10, 120), 'Maṅgala': fr(7, 120), 'Rāhu': fr(18, 120), 
+            'Guru': fr(16, 120), 'Śani': fr(19, 120), 
+            'Budha': fr(17, 120)
         }
         chart_df = getattr(chart.divisionals, divisional).placements
         (

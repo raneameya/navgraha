@@ -33,7 +33,7 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
         Fire signs map to Aries, Earth to Capricorn, Air to Libra and Water to Cancer
         '''
         # Mapping of rasis to elements
-        r = rasis.set_index('Rasi')
+        r = rasis.set_index('Rāśi')
         r = r.to_dict(orient = 'index')
         e = r[natal_rasi]['Element']
         # Returns the index of the intended rasis (i.e. Cancer = 3)
@@ -53,12 +53,14 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
         start_rasi = element_mapping(natal_rasi = natal_rasi)
         navamsa_rasi = int((start_rasi + progression) % 12 + 1)
         return navamsa_rasi
-    p['Sign'] = p.apply(lambda x: d9_progression(x.Rashi, x['Amsā']), axis = 1)
-    p['Rashi'] = p['Sign'].apply(lambda x: list(rasis['Rasi'])[x - 1])
+    p['Sign'] = p.apply(
+        lambda x: d9_progression(x['Rāśi'], x['Amsā']), axis = 1
+    )
+    p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: mf.dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
     p = add_house(p = p)
-    add_cols = ['Rashi', 'Nakshatra', 'Nakshatra lord', 'Pada']
+    add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
     p = mf.add_non_equi_col(
         p1 = p,
         p2 = rnp,
@@ -68,14 +70,14 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
     )
     p = p[[
         'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 
-        'Amsā Devatā', 'Sign', 'Bhava', 'Rashi', 'Nakshatra', 
-        'Nakshatra lord', 'Pada', 'Speed'
+        'Amsā Devatā', 'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 
+        'Pada', 'Speed'
     ]]
     out = chart_minimal(
         placements = p, 
         display_cols = [
-            'Graha', 'Lon°', 'Amsā Devatā', 'Nakshatra', 
-            'Nakshatra lord', 'Pada'
+            'Graha', 'Lon°', 'Amsā Devatā', 'Nakṣatra', 
+            'Graha devatā', 'Pada'
         ]
     )
     return out
