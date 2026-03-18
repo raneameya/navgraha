@@ -9,118 +9,24 @@ from core.panchanga.panchanga import Panchanga
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
+from core.appui.custom_nav_panel import (
+    custom_nav_panel, divisional_choices, dasa_sub_levels
+)
 from core.appui.time_input import input_time
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
-dasa_sub_levels = {
-    '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
-    '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
-}
-divisional_choices = {'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā'}
+now = datetime.now()
 
-natal_chart_ui = ui.accordion_panel(
-    'Chart',
-    ui.output_plot(id = 'natal_plot')
-)
+natal_ui = custom_nav_panel(id = 'natal')
 
-natal_table_ui = ui.accordion_panel(
-    'Table',
-    ui.output_data_frame(id = 'natal_table')
-)
-
-natal_panchanga_ui = ui.accordion_panel(
-    'Pañcāṅga',
-    ui.output_data_frame(id = 'natal_panchanga')
-)
-
-natal_dasa_ui = ui.accordion_panel(
-    'Daśa',
-    ui.row(
-        ui.input_numeric(
-            id = 'dasa_offset_days',
-            label = '# days to offset daśa (+ve/-ve)',
-            value = 0, step = 1
-        ),
-        ui.input_select(
-            id = 'vimsottari_dasa_sub_level',
-            label = 'Daśā level',
-            choices = dasa_sub_levels
-        )
-    ),
-    ui.output_text(id = 'natal_dasa_offset_info'),
-    ui.output_data_frame(id = 'natal_vimsottari_dasa_df')
-)
-
-natal_ui = ui.nav_panel(
-    'Natal',
-    ui.output_text(id = 'natal_info'),
-    ui.input_select(
-            id = 'natal_divisional',
-            label = '',
-            choices = divisional_choices
-    ),
-    ui.accordion(
-        natal_chart_ui,
-        natal_table_ui,
-        natal_panchanga_ui,
-        natal_dasa_ui
-    )
-)
-
-tajaka_chart_ui = ui.accordion_panel(
-    'Chart',
-    ui.output_plot(id = 'tajaka_plot')
-)
-
-tajaka_table_ui = ui.accordion_panel(
-    'Table',
-    ui.output_data_frame(id = 'tajaka_table')
-)
-
-tajaka_panchanga_ui = ui.accordion_panel(
-    'Pañcāṅga',
-    ui.output_data_frame(id = 'tajaka_panchanga')
-)
-
-tajaka_dasa_ui = ui.accordion_panel(
-    'Daśa',
-    ui.row(
-        ui.input_numeric(
-            id = 'tajaka_dasa_offset_days',
-            label = '# days to offset daśa (+ve/-ve)',
-            value = 0, step = 1
-        ),
-        ui.input_select(
-            id = 'tajaka_vimsottari_dasa_sub_level',
-            label = 'Daśā level',
-            choices = dasa_sub_levels
-        )
-    ),
-    ui.output_text(id = 'tajaka_dasa_offset_info'),
-    ui.output_data_frame(id = 'tajaka_vimsottari_dasa_df')
-)
-
-tajaka_ui = ui.nav_panel(
-    'Tājaka',
-    ui.output_text(id = 'tajaka_info'),
-    ui.layout_column_wrap(
-        ui.output_ui(id = 'tajaka_divisional_choices'),
-        ui.output_ui(id = 'tajaka_year_choices')
-    ),
-    ui.accordion(
-        tajaka_chart_ui,
-        tajaka_table_ui,
-        tajaka_panchanga_ui,
-        tajaka_dasa_ui
-    )
-)
+tājaka_ui = custom_nav_panel(id = 'tājaka')
 
 settings_ui = ui.nav_panel(
     '',
     ui.accordion(
         ui.accordion_panel(
-            'Preferences', 
+            'Preferences',
             ui.input_select(
                 id = 'b_ayanamsa',
                 label = 'Ayanāṁśa',
@@ -150,7 +56,7 @@ app_ui = ui.page_sidebar(
     ui.include_js(path = 'core/js/custom.js'),
     ui.navset_card_underline(
         natal_ui,
-        tajaka_ui,
+        tājaka_ui,
         ui.nav_spacer(),
         settings_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
@@ -280,8 +186,8 @@ def server(input, output, session):
         return vd.vimsottari_dasa(
             chart = natal_chart(),
             divisional = input.natal_divisional(),
-            sub_dasa_level = int(input.vimsottari_dasa_sub_level()),
-            dasa_offset_days = input.dasa_offset_days(),
+            sub_dasa_level = int(input.natal_vimsottari_dasa_sub_level()),
+            dasa_offset_days = input.natal_dasa_offset_days(),
             trunc_intervals = True
         )
 
@@ -291,7 +197,7 @@ def server(input, output, session):
         # Adjust number below to increase/decrease table height
         return render.DataGrid(
             data = dasas.dasa_to_df(), height = f'{input.height() - 300}px',
-            filters = int(input.vimsottari_dasa_sub_level()) > 0
+            filters = int(input.natal_vimsottari_dasa_sub_level()) > 0
         )
 
     @render.text
@@ -318,11 +224,11 @@ def server(input, output, session):
         return dasa_shift_text
 
     @reactive.calc
-    def tajaka_chart():
+    def tājaka_chart():
         args = mf.chart_kwargs(
             chart = natal_chart(),
             dt = sc.sol_cross(
-                yr = int(input.tajaka_year()),
+                yr = int(input.tājaka_year()),
                 birth_crt = natal_chart(),
                 tropical = True
             )
@@ -330,45 +236,45 @@ def server(input, output, session):
         return crt.chart(**args)
 
     @reactive.calc
-    def tajaka_divisional():
-        return getattr(tajaka_chart().divisionals, input.tajaka_divisional())
+    def tājaka_divisional():
+        return getattr(tājaka_chart().divisionals, input.tājaka_divisional())
 
     @render.plot
-    def tajaka_plot():
-        return tajaka_divisional().chart_plot(
+    def tājaka_plot():
+        return tājaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
             style = input.chart_style(),
-            title = divisional_choices[input.tajaka_divisional()]
+            title = divisional_choices[input.tājaka_divisional()]
         )
 
     @render.data_frame
-    def tajaka_table():
-        out = tajaka_divisional().display_table
+    def tājaka_table():
+        out = tājaka_divisional().display_table
         return out
  
     @render.data_frame
-    def tajaka_panchanga():
-        p = Panchanga(birth_chart = tajaka_chart())
+    def tājaka_panchanga():
+        p = Panchanga(birth_chart = tājaka_chart())
         return p.df()
 
     @render.text
-    def tajaka_info():
-        return tajaka_chart().repr_str
+    def tājaka_info():
+        return tājaka_chart().repr_str
 
     @reactive.calc
-    def tajaka_vimsottari_dasa():
+    def tājaka_vimsottari_dasa():
         return vd.vimsottari_dasa(
-            chart = tajaka_chart(),
-            divisional = input.tajaka_divisional(),
-            sub_dasa_level = int(input.tajaka_vimsottari_dasa_sub_level()),
-            dasa_offset_days = input.tajaka_dasa_offset_days(),
+            chart = tājaka_chart(),
+            divisional = input.tājaka_divisional(),
+            sub_dasa_level = int(input.tājaka_vimsottari_dasa_sub_level()),
+            dasa_offset_days = input.tājaka_dasa_offset_days(),
             trunc_intervals = True,
             lifespan = 1
         )
 
     @render.text
-    def tajaka_dasa_offset_info():
-        dasa_offset_days = tajaka_vimsottari_dasa().dasa_offset_days
+    def tājaka_dasa_offset_info():
+        dasa_offset_days = tājaka_vimsottari_dasa().dasa_offset_days
         if dasa_offset_days > 0:
             direction = 'future'
         elif dasa_offset_days < 0:
@@ -385,13 +291,14 @@ def server(input, output, session):
         return dasa_shift_text
 
     @render.data_frame
-    def tajaka_vimsottari_dasa_df():
-        dasas = tajaka_vimsottari_dasa()
+    def tājaka_vimsottari_dasa_df():
+        dasas = tājaka_vimsottari_dasa()
+        print(dasas.dasa_to_df())
         return render.DataGrid(
             data = dasas.dasa_to_df(),
             # Adjust number below to increase/decrease table height
             height = f'{input.height() - 300}px',
-            filters = int(input.tajaka_vimsottari_dasa_sub_level()) > 0
+            filters = int(input.tājaka_vimsottari_dasa_sub_level()) > 0
         )
 
     @render.ui
@@ -443,29 +350,20 @@ def server(input, output, session):
         return ui_out
 
     @render.ui
-    def tajaka_year_choices():
+    def tājaka_year_choices():
         return ui.input_select(
-            id = 'tajaka_year',
+            id = 'tājaka_year',
             label = '',
             choices = list(range(1900, 2200, 1)),
             selected = (
-                datetime.now().year - 1
-                if input.b_date().month > datetime.now().month
-                else datetime.now().year -1 
+                now.year - 1 if input.b_date().month > now.month
+                else now.year - 1 
                 if (
-                    input.b_date().day > datetime.now().day
-                    and input.b_date().month == datetime.now().month
+                    input.b_date().day > now.day
+                    and input.b_date().month == now.month
                 )
-                else datetime.now().year
+                else now.year
             )
-        )
-
-    @render.ui
-    def tajaka_divisional_choices():
-        return ui.input_select(
-            id = 'tajaka_divisional',
-            label = '',
-            choices = divisional_choices
         )
 
 app = App(app_ui, server)
