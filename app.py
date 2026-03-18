@@ -166,6 +166,7 @@ def server(input, output, session):
         ui.update_sidebar(id = 'sidebar', show = False)
 
     @render.data_frame
+    @reactive.event(input.search_place)
     def filtered_places():
         # Filter file for only matches to entered birth place
         cmd = 'grep -i "' + input.b_place() + '" places.txt'
@@ -250,8 +251,6 @@ def server(input, output, session):
         '''
         Return a chart object that can be reused across the app
         '''
-        # Make chart reactive to divisional choice
-        divisional = input.natal_divisional()
         return crt.chart(swisseph_adaptor = swisseph_adaptor())
 
     @reactive.calc
@@ -320,7 +319,6 @@ def server(input, output, session):
 
     @reactive.calc
     def tajaka_chart():
-        divisional = input.tajaka_divisional()
         args = mf.chart_kwargs(
             chart = natal_chart(),
             dt = sc.sol_cross(
