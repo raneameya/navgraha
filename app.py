@@ -1,6 +1,8 @@
-from shiny import App, ui, render, req, reactive
 from datetime import datetime, time
 from zoneinfo import ZoneInfo
+
+from shiny import App, ui, render, req, reactive
+
 from core.data.constants import rnp, ayanamsas, yr_len
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
@@ -111,14 +113,17 @@ def server(input, output, session):
         lat = place_selected.latitude.iloc[0]
         place = place_selected.name.iloc[0]
         tz = place_selected.timezone.iloc[0]
-        ui.update_numeric('b_lon', value = lon)
-        ui.update_numeric('b_lat', value = lat)
-        ui.update_text('b_tz', value = tz)
-        ui.update_text('b_place', value = place)
-        # Close the place search modal user clicks on row
-        ui.modal_remove()
-        # Close sidebar when user selects place
-        ui.update_sidebar(id = 'sidebar', show = False)
+        # Updating inputs for user feedback should be in isolate scope
+        # to avoid 
+        with reactive.isolate():
+            ui.update_numeric('b_lon', value = lon)
+            ui.update_numeric('b_lat', value = lat)
+            ui.update_text('b_tz', value = tz)
+            ui.update_text('b_place', value = place)
+            # Close the place search modal user clicks on row
+            ui.modal_remove()
+            # Close sidebar when user selects place
+            ui.update_sidebar(id = 'sidebar', show = False)
 
     @reactive.calc
     def birth_event():
@@ -126,6 +131,11 @@ def server(input, output, session):
         b_date = input.b_date() or datetime.today()
         # Get hr, min, sec from time input which is text
         b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
+        # Don't take a reactive dependency on place input
+        with reactive.isolate():
+            place = input.b_place()
+            # Avoid downstream computation if place is empty
+            req(place)
         be = BirthEvent(
             dt = datetime.combine(
                 date = b_date, 
@@ -135,7 +145,7 @@ def server(input, output, session):
             latitude = input.b_lat(), 
             longitude = input.b_lon(), 
             z_height = 0, 
-            place = input.b_place()
+            place = place
         )
         return be
 
@@ -173,13 +183,11 @@ def server(input, output, session):
 
     @render.data_frame
     def natal_table():
-        p = natal_divisional().display_table
-        return p
+        return natal_divisional().display_table
     
     @render.data_frame
     def natal_panchanga():
-        p = Panchanga(birth_chart = natal_chart())
-        return p.df()
+        return Panchanga(birth_chart = natal_chart()).df()
 
     @reactive.calc
     def natal_vimsottari_dasa():
