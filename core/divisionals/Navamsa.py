@@ -18,7 +18,7 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
     Returns:
         A chart_minimal object with the navamsa placements including degrees
     '''
-    p = birth_crt.rasi.placements
+    p = birth_crt.rasi.placements.copy(deep = True)
     # Which amsa is a planet in? (i.e. 0-8)
     p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30/9)))
     # How much has the planet progressed in the amsā?
