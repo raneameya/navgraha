@@ -14,7 +14,7 @@ python -m venv ./.venv
 source ./.venv/bin/activate
 pip install --upgrade pip
 pip install -e .
-mv webbrowser.py .venv/lib/python3.11/site-packages/
+mv webbrowser.py .venv/lib/python3.13/site-packages/
 
 ## Download and compile swisseph
 wget -O ./sweph.zip https://github.com/aloistr/swisseph/archive/refs/heads/master.zip
