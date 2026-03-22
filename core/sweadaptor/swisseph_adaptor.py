@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import timedelta
 
+from core.data.constants import ayanamsa_dict
 from core.misc.birth_event import BirthEvent
 
 @dataclass
@@ -47,59 +48,9 @@ class SwissEphAdaptor:
         }
 
     def ayanamsa_arg(self):
-        ayanamsas = {
-            'Fagan/Bradley':'00',
-            'Lahiri':'1',
-            'De Luce':'2',
-            'Raman':'3',
-            'Usha/Shashi':'4',
-            'Krishnamurti':'5',
-            'Djwhal Khul':'6',
-            'Yukteshwar':'7',
-            'J.N. Bhasin':'8',
-            'Babylonian/Kugler 1':'9',
-            'Babylonian/Kugler 2':'10',
-            'Babylonian/Kugler 3':'11',
-            'Babylonian/Huber':'12',
-            'Babylonian/Eta Piscium':'13',
-            'Babylonian/Aldebaran = 15 Tau':'14',
-            'Hipparchos':'15',
-            'Sassanian':'16',
-            'Galact. Center = 0 Sag':'17',
-            'J2000':'18',
-            'J1900':'19',
-            'B1950':'20',
-            'Suryasiddhanta':'21',
-            'Suryasiddhanta (mean Sun)':'22',
-            'Aryabhata':'23',
-            'Aryabhata (mean Sun)':'24',
-            'SS Revati':'25',
-            'SS Citra':'26',
-            'True Citra':'27',
-            'True Revati':'28',
-            'True Pushya (PVRN Rao)':'29',
-            'Galactic (Gil Brand)':'30',
-            'Galactic Equator (IAU1958)':'31',
-            'Galactic Equator':'32',
-            'Galactic Equator mid-Mula':'33',
-            'Skydram (Mardyks)':'34',
-            'True Mula (Chandra Hari)':'35',
-            'Dhruva/Gal.Center/Mula (Wilhelm)':'36',
-            'Aryabhata 522':'37',
-            'Babylonian/Britton':'38',
-            'Vedic/Sheoran':'39',
-            'Cochrane (Gal.Center = 0 Cap)':'40',
-            'Galactic Equator (Fiorenza)':'41',
-            'Vettius Valens':'42',
-            'Lahiri 1940':'43',
-            'Lahiri VP285 (1980)':'44',
-            'Krishnamurti VP291':'45',
-            'Lahiri ICRC':'46',
-            'Tropical':''
-        }
         out = (
             '' if self.ayanamsa == 'Tropical' 
-            else f'-sid{ayanamsas[self.ayanamsa]}'
+            else f'-sid{ayanamsa_dict[self.ayanamsa]}'
         )
         return {'ayanamsa': out}
 
