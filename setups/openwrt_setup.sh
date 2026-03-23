@@ -16,13 +16,17 @@ pip install --upgrade pip
 pip install -e .
 mv webbrowser.py .venv/lib/python3.13/site-packages/
 
-## Download and compile swisseph
+## Download and compile swisseph components
 wget -O ./sweph.zip https://github.com/aloistr/swisseph/archive/refs/heads/master.zip
 bsdtar -x -f ./sweph.zip -C .
 rm ./sweph.zip
 cd ./swisseph-master
 nano Makefile #edit out (delete) the "-ldl" flag in linux
 ./swetest -edir./ephe -topo77.19763,28.5673,0 -b10.8.1983 -utc03:10 -rise -n2 -hindu
+# Create shared library from swe_simple for python get_sun_lon
+cp /etc/chart_now/core/cdeps/swe_simple.c .
+# The below should compile provided the makefile has been successfully compiled
+gcc -fPIC -shared -o swe_simple.so swe_simple.c -L. -lswe
 cd ..
 
 ## [Optional]Download and process places.txt file
