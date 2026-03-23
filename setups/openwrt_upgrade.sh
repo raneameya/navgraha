@@ -1,11 +1,11 @@
-# To recopy app
+# To recopy app from GitHub
 tkn=xxx
-# Add the standard library webbrowser to the site-packages as it is not 
-# included in the OpenWRT package system
-wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/lib/python3.11/site-packages/webbrowser.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/webbrowser.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/.venv/lib/python3.13/site-packages/webbrowser.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/webbrowser.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/time_input.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/time_input.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/icons.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/icons.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/custom_nav_panel.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/custom_nav_panel.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/cdeps/swe_simple.c https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/cdeps/swe_simple.c
 
@@ -22,6 +22,7 @@ wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/data/naksha
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/Navamsa.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/Navamsa.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/Rasi.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/Rasi.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/Hora.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/Hora.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/divisionals/divisional_helpers.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/divisionals/divisional_helpers.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/js/custom.js https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/js/custom.js
@@ -40,3 +41,8 @@ wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/tajaka/sol_
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/tajaka/get_sun_lon.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/tajaka/get_sun_lon.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/app.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/app.py
+
+cp core/cdeps/swe_simple.c swisseph-master/
+cd /etc/chart_now/swisseph-master/
+# The below should compile provided the makefile has been successfully compiled
+gcc -fPIC -shared -o swe_simple.so swe_simple.c -L. -lswe
