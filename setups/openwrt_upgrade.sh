@@ -1,48 +1,3 @@
-opkg update
-opkg install python3 python3-pip python3-venv gcc bsdtar
-
-# Create virtual environment for the chart app and upgrade pip
-python -m venv /etc/chart_now
-source /etc/chart_now/bin/activate
-pip install --upgrade pip
-# Install the shiny module
-pip install shiny pandas matplotlib
-
-# Download the swiss ephemeris code and data files from GitHub, unzip them 
-# in a folder and delete the zip file.
-wget -O /etc/chart_now/sweph.zip https://github.com/aloistr/swisseph/archive/refs/heads/master.zip
-bsdtar -x -f /etc/chart_now/sweph.zip -C /etc/chart_now/
-rm /etc/chart_now/sweph.zip
-
-# Compile the programs into binaries
-cd /etc/chart_now/swisseph-master
-for i in swetest.c swecl.c sweph.c swephlib.c swejpl.c swemmoon.c swemplan.c swedate.c swehouse.c swehel.c; do cc -g  -fPIC -Wall -c $i; done
-cc -g -fPIC -Wall -o swetest swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swevents swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swehouse swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swecl swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swemmoon swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swemini swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swedate swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swehel swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swejpl swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swemplan swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o sweph swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swephgen4 swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-cc -g -fPIC -Wall -o swephlib swetest.o swecl.o sweph.o swephlib.o swejpl.o swemmoon.o swemplan.o swedate.o swehouse.o swehel.o -lm
-
-# Test if below produces an output
-./swetest -edir./ephe -geopos77.19762627779532,28.567285981949624,0 -b15.6.1991 -utc03:10:49 -pp -speed -sid29 -house77.19762628,28.567286,W -fTPlbsg
-
-# Get places database
-wget -O /etc/chart_now/places.zip https://download.geonames.org/export/dump/allCountries.zip
-bsdtar -x -f /etc/chart_now/places.zip -C /etc/chart_now
-rm /etc/chart_now/places.zip
-awk -v FS='\t' -v OFS='\t' '{ if ($15 != "" && $15 >= 1 && $18 != "") print $1, $2, $3, $5, $6, $9, $16, $15, $18 }' /etc/chart_now/allCountries.txt > /etc/chart_now/places.txt
-rm /etc/chart_now/allCountries.txt
-
-# Create folder for js files
-mkdir js
 # To recopy app
 tkn=xxx
 # Add the standard library webbrowser to the site-packages as it is not 
@@ -51,6 +6,8 @@ wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/lib/python3.11/s
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/time_input.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/time_input.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/appui/icons.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/appui/icons.py
+
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/cdeps/swe_simple.c https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/cdeps/swe_simple.c
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart.py
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/chart/chart_minimal.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/chart/chart_minimal.py
@@ -80,33 +37,6 @@ wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/sweadaptor/
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/sweadaptor/swisseph_adaptor.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/sweadaptor/swisseph_adaptor.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/tajaka/sol_cross.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/tajaka/sol_cross.py
+wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/core/tajaka/get_sun_lon.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/core/tajaka/get_sun_lon.py
 
 wget --header 'Authorization: token '"$tkn"'' -O /etc/chart_now/app.py https://raw.githubusercontent.com/raneameya/chart_now/refs/heads/main/app.py
-
-
-
-# In case wget does not support header option
-scp -O /run/media/ameya/Data/Programming/chart_now/webbrowser.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/lut.pickle root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/misc_functions.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/stdout_to_pd.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/constants.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/ayanamsa_list.csv root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/sol_cross.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/fractional_interval.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/vimsottari_dasa.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/chart.py root@192.168.1.1:/etc/chart_now/
-scp -O /run/media/ameya/Data/Programming/chart_now/js/viewport.js root@192.168.1.1:/etc/chart_now/js
-scp -O /run/media/ameya/Data/Programming/chart_now/app.py root@192.168.1.1:/etc/chart_now/
-
-shiny run --host 0.0.0.0 --port 1506
-
-# To restart everything again
-# rm -rf /etc/chart_now
-
-# Enable run on startup
-
-cd /etc/init.d
-touch chart_now
-
-# Contents of file to 
