@@ -22,6 +22,7 @@ bsdtar -x -f ./sweph.zip -C .
 rm ./sweph.zip
 cd ./swisseph-master
 nano Makefile #edit out (delete) the "-ldl" flag in linux
+make
 ./swetest -edir./ephe -topo77.19763,28.5673,0 -b10.8.1983 -utc03:10 -rise -n2 -hindu
 # Create shared library from swe_simple for python get_sun_lon
 cp /etc/chart_now/core/cdeps/swe_simple.c .

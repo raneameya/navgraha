@@ -15,7 +15,7 @@ rm ./sweph.zip
 cd swisseph-master
 make
 cd ..
-cp /core/cdeps/swe_simple.c /swisseph-master
+cp core/cdeps/swe_simple.c swisseph-master
 cd swisseph-master
 # The below should compile provided the makefile has been successfully compiled
 gcc -fPIC -shared -o swe_simple.so swe_simple.c -L. -lswe
