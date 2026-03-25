@@ -13,10 +13,6 @@ lib.planet_lon.argtypes = [
 ]
 lib.planet_lon.restype = ctypes.c_double
 
-#lon = lib.planet_lon(1991, 6, 15, 3, 10, 49.0, 0, 1, 29, './ephe'.encode('utf-8'))
-
-#print(f'lon is {lon}.')
-
 def get_sun_lon(dt: datetime, ay: str, tropical: bool) -> float:
     if not tropical:
         ay_int = int(ayanamsa_dict[ay])
@@ -28,7 +24,3 @@ def get_sun_lon(dt: datetime, ay: str, tropical: bool) -> float:
         utc_dt.second, 0, int(not tropical), ay_int, './ephe'.encode('utf-8')
     )
     return lon
-
-#dt = datetime(1991, 6, 15, 8, 40, 49, tzinfo = ZoneInfo('Asia/Kolkata'))
-#lon = get_sun_lon(dt = dt, ay = 'True Pushya (PVRN Rao)', tropical = False)
-#print(f'lon is {lon}.')
