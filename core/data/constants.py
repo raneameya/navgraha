@@ -59,8 +59,63 @@ ayanamsa_dict = {
     'Lahiri VP285 (1980)':'44',
     'Krishnamurti VP291':'45',
     'Lahiri ICRC':'46',
-    'Tropical':''
+    'Tropical':'-1'
 }
 ayanamsas = [k for k, v in ayanamsa_dict.items()]
 
 yr_len = 365.24219
+
+graha_dict = {
+    # 'graha_name': (sweph_ipl, sweph_const)
+    'Lagna': (-2,),
+    'Sūrya': (0, 'SE_SUN'),
+    'Candra': (1, 'SE_MOON'),
+    'Budha': (2, 'SE_MERCURY'),
+    'Śukra': (3, 'SE_VENUS'),
+    'Maṅgala': (4, 'SE_MARS'),
+    'Guru': (5, 'SE_JUPITER'),
+    'Śani': (6, 'SE_SATURN'),
+    'Rāhu': (11, 'SE_TRUE_NODE'),
+    'Ketu': (-7,),
+    'Bhr̥gu Bindu': (-8,)
+}
+'''
+('SE_ECL_NUT', -1),
+('SE_URANUS', 7),
+('SE_NEPTUNE', 8),
+('SE_PLUTO', 9),
+('SE_MEAN_NODE', 10),
+('SE_MEAN_APOG', 12),
+('SE_OSCU_APOG', 13),
+('SE_EARTH', 14),
+('SE_CHIRON', 15),
+('SE_PHOLUS', 16),
+('SE_CERES', 17),
+('SE_PALLAS', 18),
+('SE_JUNO', 19),
+('SE_VESTA', 20),
+('SE_INTP_APOG', 21),
+('SE_INTP_PERG', 22),
+('SE_NPLANETS', 23),
+('SE_FICT_OFFSET', 40), #, offset, for, fictitious, objects
+('SE_NFICT_ELEM', 15),
+('SE_PLMOON_OFFSET', 9000), #, offset, for, planetary, moons
+('SE_AST_OFFSET', 10000), #, offset, for, asteroids
+#, Hamburger, or, Uranian, "planets", 
+('SE_CUPIDO', 40),
+('SE_HADES', 41),
+('SE_ZEUS', 42),
+('SE_KRONOS', 43),
+('SE_APOLLON', 44),
+('SE_ADMETOS', 45),
+('SE_VULKANUS', 46),
+('SE_POSEIDON', 47),
+#, other, fictitious, bodies
+('SE_ISIS', 48),
+('SE_NIBIRU', 49),
+('SE_HARRINGTON', 50),
+('SE_NEPTUNE_LEVERRIER', 51),
+('SE_NEPTUNE_ADAMS', 52),
+('SE_PLUTO_LOWELL', 53),
+('SE_PLUTO_PICKERING', 54)
+'''

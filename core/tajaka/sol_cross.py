@@ -1,7 +1,7 @@
 import datetime as dt
-import core.misc.misc_functions as mf
+
 import core.chart.chart as crt
-from core.tajaka.get_sun_lon import get_sun_lon
+from core.sweadaptor.swe_helper import get_sun_lon
 
 def sol_cross(
     yr:int, 
@@ -20,11 +20,11 @@ def sol_cross(
     # Birth chart ayanamsa
     b_ay = birth_crt.swisseph_adaptor.ayanamsa
     if tropical:
-        target_lon = get_sun_lon(dt = birth_crt.birth_event.dt, ay = 'Tropical', tropical = True)
-        init_lon = get_sun_lon(dt = init_datetime, ay = 'Tropical', tropical = True)
+        target_lon = get_sun_lon(dt = birth_crt.birth_event.dt, ay = 'Tropical')
+        init_lon = get_sun_lon(dt = init_datetime, ay = 'Tropical')
     else:
-        target_lon = get_sun_lon(dt = birth_crt.birth_event.dt, ay = b_ay, tropical = False)
-        init_lon = get_sun_lon(dt = init_datetime, ay = b_ay, tropical = False)
+        target_lon = get_sun_lon(dt = birth_crt.birth_event.dt, ay = b_ay)
+        init_lon = get_sun_lon(dt = init_datetime, ay = b_ay)
     # Account for targets being "behind" init lon as per 0 point (i.e. 0° Aries)
     if target_lon < init_lon:
         target_lon = target_lon + 360
@@ -37,9 +37,9 @@ def sol_cross(
     loop_lon = 0
     while abs(deg_delta) > 0.000001:
         if tropical:
-            loop_lon = get_sun_lon(dt = loop_dt, ay = 'Tropical', tropical = True)
+            loop_lon = get_sun_lon(dt = loop_dt, ay = 'Tropical')
         else:
-            loop_lon = get_sun_lon(dt = loop_dt, ay = b_ay, tropical = False)
+            loop_lon = get_sun_lon(dt = loop_dt, ay = b_ay)
         deg_delta = (target_lon%360) - loop_lon
         loop_td = dt.timedelta(days = deg_delta/(360/365))
         loop_dt = loop_dt + loop_td
