@@ -84,7 +84,7 @@ double planet_info(
     int is_bhrgu = 0;
     int sid_bool;
     double pl_lon, pl_speed, pl_lon_or_speed;
-
+    
     if (ipl == -7) { // define true Ketu
         ipl = 11; // true Rahu
         is_ketu = 1;

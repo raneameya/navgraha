@@ -68,7 +68,7 @@ class vimsottari_dasa:
     def __init__(
         self,
         chart: crt.chart,
-        seed_graha: str = 'Moon',
+        seed_graha: str = 'Candra',
         sub_dasa_level: int = 0,
         dasa_offset_days: int = 0,
         divisional: str = 'rasi', 

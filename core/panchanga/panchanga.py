@@ -130,7 +130,7 @@ class Panchanga:
     def nakshatra(self):
         nakshatra, lord, remaining = graha_nakshatra_traversal(
             birth_chart = self.birth_chart,
-            graha = 'Moon', divisional = 'rasi'
+            graha = 'Candra', divisional = 'rasi'
         )
         return {
             'Name': nakshatra, 
