@@ -1,4 +1,4 @@
-import core.misc.misc_functions as mf
+from core.misc.misc_functions import add_non_equi_col, dms
 import core.chart.chart as crt
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
@@ -20,19 +20,29 @@ def d2(birth_crt:crt.chart) -> chart_minimal:
         A chart_minimal object with the hora placements including degrees
     '''
     p = birth_crt.rasi.placements.copy(deep = True)
-    # Create a copy of sign in rasi
+    # Create a copy of sign in rasi. Used to classify whether graha in 
+    # even/odd sign
     p['Rasi sign'] = p['Sign']
     # Which amsa is a planet in? (i.e. 0-1)
     p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30/2)))
-    # Maping of hora indices (0-23) to sign in hora
-    horaindex_horasign_mapping = [
-        n for i in range(1, 12, 4) for n in (i, i + 1, i + 3, i + 2)
-    ] * 2
-    # Find out hora index (0-23) based on the sign and the half of the sign 
-    # in which the graha is
+    # How much has the planet progressed in the amsā? Progression is 
+    # reversed if graha is in an even sign in rāśi
+    p['Lon30'] = p.apply(lambda df: (
+            30 * ((df['Lon30']/(30/2))%1) if df['Rasi sign'] % 2 != 0
+            else 30 - (30 * ((df['Lon30']/(30/2))%1))
+        ), axis = 1
+    )
+    # Compute hora index (0-23) based on the sign and the half of the sign 
+    # in which the graha is. (e.g. 23°30' Ge maps to 5). This is NOT the amsa 
+    # which is the index within a sign.
     p['Hora index'] = p.apply(
         lambda df: (df['Sign'] - 1) * 2 + df['Amsā'], axis = 1
     )
+    # Maping of hora indices (0-23) to sign in hora. This is the Uma-Shambhu 
+    # mapping as stated by PVR.
+    horaindex_horasign_mapping = [
+        n for i in range(1, 12, 4) for n in (i, i + 1, i + 3, i + 2)
+    ] * 2
     p['Sign'] = p['Hora index'].apply(lambda x: horaindex_horasign_mapping[x])
     # Pull in info about amsā devata
     p['Amsā Devatā'] = p.apply(
@@ -41,18 +51,12 @@ def d2(birth_crt:crt.chart) -> chart_minimal:
             else amsa_devata_mapping_rev[df['Amsā'] + 1]
         ), axis = 1
     )
-    # How much has the planet progressed in the amsā?
-    p['Lon30'] = p.apply(lambda df: (
-            30 * ((df['Lon30']/(30/2))%1) if df['Rasi sign'] % 2 != 0
-            else 30 - (30 * ((df['Lon30']/(30/2))%1))
-        ), axis = 1
-    )
     p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
-    p['Lon°'] = p['Lon30'].apply(lambda x: mf.dms(degrees = x))
+    p['Lon°'] = p['Lon30'].apply(lambda x: dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
     p = add_house(p = p)
     add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
-    p = mf.add_non_equi_col(
+    p = add_non_equi_col(
         p1 = p,
         p2 = rnp,
         p1col = 'Lon',
@@ -60,9 +64,8 @@ def d2(birth_crt:crt.chart) -> chart_minimal:
         p2col_get = add_cols
     )
     p = p[[
-        'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 
-        'Amsā Devatā', 'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 
-        'Pada', 'Speed'
+        'Birth', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 'Amsā Devatā', 
+        'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada', 'Speed'
     ]]
     out = chart_minimal(
         placements = p, 

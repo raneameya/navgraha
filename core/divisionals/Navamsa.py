@@ -69,9 +69,8 @@ def d9(birth_crt:crt.chart) -> chart_minimal:
         p2col_get = add_cols
     )
     p = p[[
-        'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 
-        'Amsā Devatā', 'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 
-        'Pada', 'Speed'
+        'Birth', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 'Amsā Devatā', 
+        'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada', 'Speed'
     ]]
     out = chart_minimal(
         placements = p, 
