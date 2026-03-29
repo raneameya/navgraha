@@ -77,7 +77,7 @@ def server(input, output, session):
     @reactive.event(input.search_place)
     def filtered_places():
         # Filter file for only matches to entered birth place
-        cmd = 'grep -i "' + input.b_place() + '" places.txt'
+        cmd = 'rg -i "' + input.b_place() + '" places.txt'
         # Column names as reference. Not used as explained below
         colnames = [
             'geonameid', 'name', 'asciiname', 'latitude', 'longitude',
