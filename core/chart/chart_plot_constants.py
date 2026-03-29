@@ -114,6 +114,7 @@ graha_coord_offsets_raw = {
             (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
             (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
         ],
+        # Need to be visually checked. Example needed.
         '10': [
             (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
             (fr(1, 5), fr(1, 2)), (fr(2, 5), fr(1, 2)), (fr(3, 5), fr(1, 2)), 
@@ -159,7 +160,7 @@ graha_coord_offsets_raw = {
             (fr(-4, 6), 1), (fr(-2, 6), 1), (0, 1), (fr(2, 6), 1), (fr(4, 6), 1),
             (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
         ],
-        # 10 grahas in kendra needs to visually checked.
+        # 10 grahas in kendra needs to visually checked. Example needed
         '10': [
             (fr(-1, 4), fr(19, 12)), (fr(1, 4), fr(19, 12)),
             (fr(-1, 2), fr(14, 12)), (0, fr(14, 12)), (fr(1, 2), fr(14, 12)),
@@ -168,6 +169,8 @@ graha_coord_offsets_raw = {
         ]
     }, 
     'North Indian 3-5': {
+        # North Indian houses (triangles) are defined with origin (0, 0) at 
+        # the bottom left corner. The hypotenuse is 2 units and height is 1
         '1': [(fr(5, 12), 1)],
         '2': [(fr(1, 3), fr(2, 3)), (fr(1, 3), fr(4, 3))],
         '3': [
@@ -206,6 +209,18 @@ graha_coord_offsets_raw = {
             (fr(1, 4), fr(6, 5)),
             (fr(1, 2), 1),
             (fr(3, 4), 1),
+            (fr(1, 4), fr(4, 5)),
+            (fr(1, 2), fr(3, 4)),
+            (fr(1, 4), fr(2, 5))
+        ],
+        # Needs visual check. Need example
+        '9': [
+            (fr(1, 4), fr(8, 5)), 
+            (fr(1, 2), fr(5, 4)),
+            (fr(1, 4), fr(6, 5)),
+            (fr(1, 2), 1),
+            (fr(3, 4), fr(9, 8)),
+            (fr(3, 4), fr(7, 8)),
             (fr(1, 4), fr(4, 5)),
             (fr(1, 2), fr(3, 4)),
             (fr(1, 4), fr(2, 5))
