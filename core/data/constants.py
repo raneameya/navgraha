@@ -67,17 +67,18 @@ yr_len = 365.24219
 
 graha_dict = {
     # 'graha_name': (sweph_ipl, sweph_const)
-    'Lagna': (-2,),
-    'Sūrya': (0, 'SE_SUN'),
-    'Candra': (1, 'SE_MOON'),
-    'Budha': (2, 'SE_MERCURY'),
-    'Śukra': (3, 'SE_VENUS'),
-    'Maṅgala': (4, 'SE_MARS'),
-    'Guru': (5, 'SE_JUPITER'),
-    'Śani': (6, 'SE_SATURN'),
-    'Rāhu': (11, 'SE_TRUE_NODE'),
-    'Ketu': (-7,),
-    'Bhr̥gu Bindu': (-8,)
+    # empty string for sweph_const means undefined
+    'Lagna': (-2, '', 'La'),
+    'Sūrya': (0, 'SE_SUN', 'Sū'),
+    'Candra': (1, 'SE_MOON', 'Ch'),
+    'Budha': (2, 'SE_MERCURY', 'Me'),
+    'Śukra': (3, 'SE_VENUS', 'Ve'),
+    'Maṅgala': (4, 'SE_MARS', 'Ma'),
+    'Guru': (5, 'SE_JUPITER', 'Gu'),
+    'Śani': (6, 'SE_SATURN', 'Sa'),
+    'Rāhu': (11, 'SE_TRUE_NODE', 'Rā'),
+    'Ketu': (-7, '', 'Ke'),
+    'Bhr̥gu Bindu': (-8, '', 'Br̥')
 }
 '''
 ('SE_ECL_NUT', -1),

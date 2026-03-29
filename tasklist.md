@@ -5,7 +5,7 @@
     - ~~Use tropical ayanamsa to find out birth Sun longitude~~
     - ~~In tropical ayanamsa, find time in that year when Sun reached same longitude~~
     - ~~Cast chart at that time in sideral ayanamsa~~
-    - Explore otions to speed up tropical longitude search. e.g. `scipy.fsolve`?
+    ~~- Explore otions to speed up tropical longitude search. e.g. `scipy.fsolve`?~~
     - ~~Add annual dasas~~
     - Add Muntha. Does a subclass need to be created for this? i.e. a tajaka year aware class that can compute Muntha?
 - Chart class
@@ -29,7 +29,7 @@
     - Ability to read from .jhd files (Jagannatha Hora savefiles)
     ~~- Add Pañcāṅga~~
 - Add bodies
-    - Brighu Bindu
+    ~~- Brighu Bindu~~
     - Gulika
     - Mandi
 - Read stdout
@@ -69,4 +69,4 @@
 ### Bugs
 - In the place selector, if "West Bengal" is selected, we get:
 > Object of type int64 is not JSON serializable
-- In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.
+~~- In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.~~

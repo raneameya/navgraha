@@ -1,10 +1,12 @@
-import core.misc.misc_functions as mf
+import warnings
+
 import pandas as pd
 import matplotlib.pyplot as plt
-import math
 from matplotlib import collections as mc
+
 from core.chart.chart_plot_constants import *
-import warnings
+import core.misc.misc_functions as mf
+from core.data.constants import graha_dict
 
 class chart_minimal:
     '''
@@ -94,9 +96,6 @@ class chart_minimal:
             ax.add_collection(mc.LineCollection(
                 chart_frame[style], colors = writecolour, linewidths = 0.5
             ))
-            # Lagna needs to be plotted for NI charts as degrees are mentioned
-            # if style == 'North Indian':
-            #     del grahas['Lagna']
             # Plot grahas in bhavas, loop over 12 bhavas
             for i in list(range(1, 13, 1)):
                 str_i = str(i)
@@ -119,7 +118,7 @@ class chart_minimal:
                     num_grahas_in_house = len(grahas_i)
                     for g_num, g in enumerate(grahas_i):
                         # Style text for graha
-                        g_txt = g[0:2]
+                        g_txt = graha_dict[g][2]
                         # Degrees graha has progressed in sign
                         deg_txt = f'''{round(grahas[g]['Lon'] % 30, 1):.1f}'''
                         if grahas[g]['Speed'] >= 0:

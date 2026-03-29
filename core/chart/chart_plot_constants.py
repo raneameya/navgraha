@@ -77,8 +77,11 @@ chart_frame = {
         [(0, 0), (4, 4)], [(0, 4), (4, 0)]
     ]
 }
+# Provide offsets for n grahas to be plotted in a house
 graha_coord_offsets_raw = {
     'South Indian': {
+        # South Indian houses (squares) are defined with origin (0, 0) at 
+        # the bottom left corner. They have an edge length of 1
         '1': [(fr(1, 2), fr(1, 2))],
         '2': [(fr(1, 3), fr(1, 2)), (fr(2, 3), fr(1, 2))],
         '3': [
@@ -110,9 +113,18 @@ graha_coord_offsets_raw = {
             (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
             (fr(1, 4), fr(1, 2)), (fr(1, 2), fr(1, 2)), (fr(3, 4), fr(1, 2)),
             (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
+        ],
+        '10': [
+            (fr(1, 4), fr(3, 4)), (fr(1, 2), fr(3, 4)), (fr(3, 4), fr(3, 4)),
+            (fr(1, 5), fr(1, 2)), (fr(2, 5), fr(1, 2)), (fr(3, 5), fr(1, 2)), 
+            (fr(4, 5), fr(1, 2)),
+            (fr(1, 4), fr(1, 4)), (fr(1, 2), fr(1, 4)), (fr(3, 4), fr(1, 4))
         ]
     }, 
     'North Indian kendras': {
+        # North Indian kendra houses (rhombuses) are defined with origin as 
+        # the bottommost corner and the vertices (clockwise) are 
+        # [(0, 0), (-1, 1), (0, 2), (1, 1)]
         '1': [(0, 1)],
         '2': [(fr(-1, 3), 1), (fr(1, 3), 1)],
         '3': [
@@ -141,6 +153,18 @@ graha_coord_offsets_raw = {
             (fr(-1, 4), fr(17, 12)), (fr(1, 4), fr(17, 12)),
             (fr(-3, 5), 1), (fr(-1, 5), 1), (fr(1, 5), 1), (fr(3, 5), 1),
             (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
+        ],
+        '9': [
+            (fr(-1, 4), fr(17, 12)), (fr(1, 4), fr(17, 12)),
+            (fr(-4, 6), 1), (fr(-2, 6), 1), (0, 1), (fr(2, 6), 1), (fr(4, 6), 1),
+            (fr(-1, 4), fr(7, 12)), (fr(1, 4), fr(7, 12))
+        ],
+        # 10 grahas in kendra needs to visually checked.
+        '10': [
+            (fr(-1, 4), fr(19, 12)), (fr(1, 4), fr(19, 12)),
+            (fr(-1, 2), fr(14, 12)), (0, fr(14, 12)), (fr(1, 2), fr(14, 12)),
+            (fr(-1, 2), fr(10, 12)), (0, fr(10, 12)), (fr(1, 2), fr(10, 12)),
+            (fr(-1, 4), fr(5, 12)), (fr(1, 4), fr(5, 12))
         ]
     }, 
     'North Indian 3-5': {
