@@ -4,7 +4,10 @@ dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
     '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
 }
-divisional_choices = {'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā'}
+divisional_choices = {
+    'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
+    'shashtiamsa_trd': 'Ṣaṣṭyāṃśa (trd)', 'shashtiamsa_rev': 'Ṣaṣṭyāṃśa (rev)'
+}
 
 def custom_nav_panel(id: str):
 
