@@ -8,7 +8,7 @@ import core.chart.chart as crt
 from core.chart.chart_minimal import chart_minimal
 from core.divisionals.divisional_helpers import add_house
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
-from core.sweadaptor.swe_helper import get_planet_info
+from core.sweadaptor.swe_helper import get_planet_info, get_planet_info_arr
 from core.data.constants import graha_dict, rnp
 from core.misc.misc_functions import dms
 
@@ -41,15 +41,16 @@ def swetest(adapter: SwissEphAdaptor):
     latitude = adapter.birth_event.latitude
     longitude = adapter.birth_event.longitude
     ayanamsa = adapter.ayanamsa
-    p = [
-        (
-            birth_datetime.strftime('%Y-%m-%d %H:%M:%S %Z(%z)'), graha
-        ) + get_planet_info(
-            planet = graha, dt = birth_datetime, lat = latitude, 
-            lon = longitude, ay = ayanamsa
-        ) 
-        for graha in graha_dict
-    ]
+    lon_speeds = get_planet_info_arr(
+        planets = list(graha_dict.keys()), dt = birth_datetime, 
+        lat = latitude, lon = longitude, ay = ayanamsa
+    )
+    p = {
+        'Birth': birth_datetime.strftime('%Y-%m-%d %H:%M:%S %Z(%z)'),
+        'Graha': list(graha_dict.keys()), 
+        'Lon': lon_speeds[0], 
+        'Speed': lon_speeds[1]
+    }
     p = pd.DataFrame(data = p, columns = ['Birth', 'Graha', 'Lon', 'Speed'])
     # Replace total degrees by degrees in house/sign
     p['Lon°'] = p['Lon'].apply(lambda x: dms(x))
