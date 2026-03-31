@@ -33,35 +33,35 @@ class Panchanga:
 
     def tithi_and_karana(self):
         tithis = {
-            1: {'Name':'Śukla Pratipadā', 'Lord': 'Sun'},
-            2: {'Name':'Śukla Dvitīyā', 'Lord': 'Moon'},
-            3: {'Name':'Śukla Tṛtīyā', 'Lord': 'Mars'},
-            4: {'Name':'Śukla Caturthī', 'Lord': 'Mercury'},
-            5: {'Name':'Śukla Pañcamī', 'Lord': 'Jupiter'},
-            6: {'Name':'Śukla Ṣaṣṭhī', 'Lord': 'Venus'},
-            7: {'Name':'Śukla Saptamī', 'Lord': 'Saturn'},
+            1: {'Name':'Śukla Pratipadā', 'Lord': 'Sūrya'},
+            2: {'Name':'Śukla Dvitīyā', 'Lord': 'Candra'},
+            3: {'Name':'Śukla Tṛtīyā', 'Lord': 'Maṅgala'},
+            4: {'Name':'Śukla Caturthī', 'Lord': 'Budha'},
+            5: {'Name':'Śukla Pañcamī', 'Lord': 'Guru'},
+            6: {'Name':'Śukla Ṣaṣṭhī', 'Lord': 'Śukra'},
+            7: {'Name':'Śukla Saptamī', 'Lord': 'Śani'},
             8: {'Name':'Śukla Aṣṭamī', 'Lord': 'Rahu'},
-            9: {'Name':'Śukla Navamī', 'Lord': 'Sun'},
-            10: {'Name':'Śukla Daśamī', 'Lord': 'Moon'},
-            11: {'Name':'Śukla Ekādaśī', 'Lord': 'Mars'},
-            12: {'Name':'Śukla Dvādaśī', 'Lord': 'Mercury'},
-            13: {'Name':'Śukla Trayodaśī', 'Lord': 'Jupiter'},
-            14: {'Name':'Śukla Caturdaśī', 'Lord': 'Venus'},
-            15: {'Name':'Śukla Pūrṇimā', 'Lord': 'Saturn'},
-            16: {'Name':'Kṛṣṇa Pratipadā', 'Lord': 'Sun'},
-            17: {'Name':'Kṛṣṇa Dvitīyā', 'Lord': 'Moon'},
-            18: {'Name':'Kṛṣṇa Tṛtīyā', 'Lord': 'Mars'},
-            19: {'Name':'Kṛṣṇa Caturthī', 'Lord': 'Mercury'},
-            20: {'Name':'Kṛṣṇa Pañcamī', 'Lord': 'Jupiter'},
-            21: {'Name':'Kṛṣṇa Ṣaṣṭhī', 'Lord': 'Venus'},
-            22: {'Name':'Kṛṣṇa Saptamī', 'Lord': 'Saturn'},
+            9: {'Name':'Śukla Navamī', 'Lord': 'Sūrya'},
+            10: {'Name':'Śukla Daśamī', 'Lord': 'Candra'},
+            11: {'Name':'Śukla Ekādaśī', 'Lord': 'Maṅgala'},
+            12: {'Name':'Śukla Dvādaśī', 'Lord': 'Budha'},
+            13: {'Name':'Śukla Trayodaśī', 'Lord': 'Guru'},
+            14: {'Name':'Śukla Caturdaśī', 'Lord': 'Śukra'},
+            15: {'Name':'Śukla Pūrṇimā', 'Lord': 'Śani'},
+            16: {'Name':'Kṛṣṇa Pratipadā', 'Lord': 'Sūrya'},
+            17: {'Name':'Kṛṣṇa Dvitīyā', 'Lord': 'Candra'},
+            18: {'Name':'Kṛṣṇa Tṛtīyā', 'Lord': 'Maṅgala'},
+            19: {'Name':'Kṛṣṇa Caturthī', 'Lord': 'Budha'},
+            20: {'Name':'Kṛṣṇa Pañcamī', 'Lord': 'Guru'},
+            21: {'Name':'Kṛṣṇa Ṣaṣṭhī', 'Lord': 'Śukra'},
+            22: {'Name':'Kṛṣṇa Saptamī', 'Lord': 'Śani'},
             23: {'Name':'Kṛṣṇa Aṣṭamī', 'Lord': 'Rahu'},
-            24: {'Name':'Kṛṣṇa Navamī', 'Lord': 'Sun'},
-            25: {'Name':'Kṛṣṇa Daśamī', 'Lord': 'Moon'},
-            26: {'Name':'Kṛṣṇa Ekādaśī', 'Lord': 'Mars'},
-            27: {'Name':'Kṛṣṇa Dvādaśī', 'Lord': 'Mercury'},
-            28: {'Name':'Kṛṣṇa Trayodaśī', 'Lord': 'Jupiter'},
-            29: {'Name':'Kṛṣṇa Caturdaśī', 'Lord': 'Venus'},
+            24: {'Name':'Kṛṣṇa Navamī', 'Lord': 'Sūrya'},
+            25: {'Name':'Kṛṣṇa Daśamī', 'Lord': 'Candra'},
+            26: {'Name':'Kṛṣṇa Ekādaśī', 'Lord': 'Maṅgala'},
+            27: {'Name':'Kṛṣṇa Dvādaśī', 'Lord': 'Budha'},
+            28: {'Name':'Kṛṣṇa Trayodaśī', 'Lord': 'Guru'},
+            29: {'Name':'Kṛṣṇa Caturdaśī', 'Lord': 'Śukra'},
             30: {'Name':'Kṛṣṇa Amāvāsyā', 'Lord': 'Rahu'}
         }
         karanas = [
@@ -112,13 +112,13 @@ class Panchanga:
             se = self.birth_chart.swisseph_adaptor
         ).sun_rise_set()
         varas = {
-            'Sunday': {'Name': 'Ravivāsara', 'Lord': 'Sun'},
-            'Monday': {'Name': 'Somavāsara', 'Lord': 'Moon'},
-            'Tuesday': {'Name': 'Maṅgalavāsara', 'Lord': 'Mars'},
-            'Wednesday': {'Name': 'Budhavāsara', 'Lord': 'Mercury'},
-            'Thursday': {'Name': 'Bṛhaspativāsara', 'Lord': 'Jupiter'},
-            'Friday': {'Name': 'Śukravāsara', 'Lord': 'Venus'},
-            'Saturday': {'Name': 'Śanivāsara', 'Lord': 'Saturn'},
+            'Sunday': {'Name': 'Ravivāsara', 'Lord': 'Sūrya'},
+            'Monday': {'Name': 'Somavāsara', 'Lord': 'Candra'},
+            'Tuesday': {'Name': 'Maṅgalavāsara', 'Lord': 'Maṅgala'},
+            'Wednesday': {'Name': 'Budhavāsara', 'Lord': 'Budha'},
+            'Thursday': {'Name': 'Bṛhaspativāsara', 'Lord': 'Guru'},
+            'Friday': {'Name': 'Śukravāsara', 'Lord': 'Śukra'},
+            'Saturday': {'Name': 'Śanivāsara', 'Lord': 'Śani'},
         }
         vedic_weekday = sunrise.strftime('%A')
         remaining = 1 - ((birth - sunrise) / (sunrise_next - sunrise))
@@ -170,7 +170,7 @@ class Panchanga:
         }
         placements = self.birth_chart.divisionals.rasi.placements
         sun_moon_lon_sum = sum(
-            placements[placements['Graha'].isin(['Sun', 'Moon'])]['Lon']
+            placements[placements['Graha'].isin(['Sūrya', 'Candra'])]['Lon']
         )
         sun_moon_lon_sum = sun_moon_lon_sum % 360
         yoga_index = (sun_moon_lon_sum // (360/27)) + 1
