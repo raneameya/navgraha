@@ -20,6 +20,9 @@
         - Add East Indian style
         - ~~Indicate retrograde planets (e.g. an overbar?)~~
         - ~~Indicate degrees in chart (super/sub script)~~
+    - Performance
+        - Can pointer to array be used as output in `planet_info` (C func) instead of returning double and having to run twice (once for speed, once for lon)?
+        - Sunrise, sunset direct C funs possible? (Required for Gulika, Mandi)
 - Chart extras to add
     - ~~[Pushkara](https://komilla.com/lib-pushkara-part-two.html)~~
     - Combustion
@@ -64,9 +67,9 @@
     - D-30 varga
     - D-40 varga
     - D-45 varga
-    - D-60 varga
+    ~~- D-60 varga~~
 
 ### Bugs
-- In the place selector, if "West Bengal" is selected, we get:
-> Object of type int64 is not JSON serializable
+~~- In the place selector, if "West Bengal" is selected, we get:~~
+~~> Object of type int64 is not JSON serializable~~
 ~~- In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.~~

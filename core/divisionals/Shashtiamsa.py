@@ -102,16 +102,14 @@ def d60(birth_chart, type: str) -> chart_minimal:
                 else 30 - (30 * ((df['Lon30'] / (30 / 60)) % 1))
             ), axis = 1
         )
-    def d60_progression(natal_rasi: int, amsa: int , type: str) -> int:
+    def d60_progression(natal_rasi: int, amsa: int, type: str) -> int:
         if type == 'Traditional Parashari':
-            ṣaṣṭyāṃśa_rasi = int((natal_rasi + amsa) % 12)
-        elif type == 'Parashari reversed': # Even sign reversal
-            if natal_rasi % 2 == 1:
-                ṣaṣṭyāṃśa_rasi = int((natal_rasi + amsa) % 12)
-            else:
-                x = int((natal_rasi - amsa - 1) % 12)
-                ṣaṣṭyāṃśa_rasi = 12 if x == 0 else x                
-        return ṣaṣṭyāṃśa_rasi
+            return ((natal_rasi - 1 + amsa) % 12) + 1
+        elif type == 'Parashari reversed':
+            if natal_rasi % 2 == 1:  # odd → forward
+                return ((natal_rasi - 1 + amsa) % 12) + 1
+            else:  # even → backward
+                return ((natal_rasi - 1 - amsa) % 12) + 1
     p['Sign'] = p.apply(
         lambda df: d60_progression(
             df['Natal sign'], df['Amsā'], type = type
@@ -119,7 +117,7 @@ def d60(birth_chart, type: str) -> chart_minimal:
     )
     p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: dms(degrees = x))
-    p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * x['Sign'] - 30, axis = 1)
+    p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * (x['Sign'] - 1), axis = 1)
     p = add_house(p = p)
     add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
     p = add_non_equi_col(
