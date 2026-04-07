@@ -118,6 +118,7 @@ def d60(birth_chart, type: str) -> chart_minimal:
     p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
     p['Lon°'] = p['Lon30'].apply(lambda x: dms(degrees = x))
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * (x['Sign'] - 1), axis = 1)
+    p['Amsā'] = p['Amsā'].apply(lambda x: x + 1)
     p = add_house(p = p)
     add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
     p = add_non_equi_col(

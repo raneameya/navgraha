@@ -3,7 +3,9 @@ from datetime import datetime
 from functools import cached_property
 
 from core.chart.chart_plot_constants import rasi_dict
-from core.divisionals import Rasi, Navamsa, Hora, Shashtiamsa
+from core.divisionals import (
+    Rasi, Navamsa, Hora, Dasamsa, Shashtiamsa
+)
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 from core.sweadaptor.swisseph_reader import SwissEphReader
@@ -66,6 +68,18 @@ class _divisionals:
     @cached_property
     def hora(self):
         return Hora.d2(self.parent)
+
+    @cached_property
+    def dasamsa_trd(self):
+        return Dasamsa.d10(self.parent, type = 'Traditional Parashari')
+
+    @cached_property
+    def dasamsa_rev(self):
+        return Dasamsa.d10(self.parent, type = 'Parashari reversed')
+
+    @cached_property
+    def dasamsa_rev69(self):
+        return Dasamsa.d10(self.parent, type = 'Parashari reversed (6-9)')
 
     @cached_property
     def shashtiamsa_trd(self):
