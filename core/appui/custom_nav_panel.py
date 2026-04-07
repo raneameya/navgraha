@@ -8,6 +8,7 @@ divisional_choices = {
     'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
     'dasamsa_trd': 'Daśāṃśa (trd)', 'dasamsa_rev': 'Daśāṃśa (rev)', 
     'dasamsa_rev69': 'Daśāṃśa (rev 6-9)', 
+    'vimsamsa_trd': 'Vimśāṃśa (trd)', 'vimsamsa_rev': 'Vimśāṃśa (rev)', 
     'shashtiamsa_trd': 'Ṣaṣṭyāṃśa (trd)', 'shashtiamsa_rev': 'Ṣaṣṭyāṃśa (rev)'
 }
 
