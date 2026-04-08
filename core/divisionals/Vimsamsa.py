@@ -1,4 +1,4 @@
-# Vimśāṃśa
+# Viṃśāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
 import core.chart.chart as crt
 from core.chart.chart_minimal import chart_minimal
@@ -53,11 +53,11 @@ even_devis = {
 
 def d20(birth_chart, type: str) -> chart_minimal:
     '''
-    Compute the vimśāṃśa (D-20) of a birth chart
+    Compute the viṃśāṃśa (D-20) of a birth chart
     Args:
         birth_crt (chart): The base natal (D-1) chart.
     Returns:
-        A chart_minimal object with the vimśāṃśa placements including degrees
+        A chart_minimal object with the viṃśāṃśa placements including degrees
     '''
     d = 20
     p = birth_chart.rasi.placements.copy(deep = True)

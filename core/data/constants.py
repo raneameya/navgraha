@@ -78,8 +78,14 @@ graha_dict = {
     'Śani': (6, 'SE_SATURN', 'Sa'),
     'Rāhu': (11, 'SE_TRUE_NODE', 'Rā'),
     'Ketu': (-7, '', 'Ke'),
-    'Bhr̥gu Bindu': (-8, '', 'Br̥')
+    'Bhr̥gu Bindu': (-8, '', 'Bb')
 }
+
+divisionals = {
+    'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
+    'dasamsa': 'Daśāṃśa', 'vimsamsa': 'Viṃśāṃśa', 'sastyamsa': 'Ṣaṣṭyāṃśa'
+}
+
 '''
 ('SE_ECL_NUT', -1),
 ('SE_URANUS', 7),

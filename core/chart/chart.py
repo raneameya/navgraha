@@ -42,7 +42,8 @@ class chart:
         Args:
             dark (bool): Set to true for dark mode friendly plotting
             style (str): Can be one of 'North Indian' or 'South Indian'
-            rasis (dict): Leave unchanged. By default imports a dictionary mapping rasi to unicode glyph of that rasi
+            rasis (dict): Leave unchanged. By default imports a dictionary 
+                        mapping rasi to unicode glyph of that rasi
         Returns:
             A matplot figure
         '''
@@ -90,9 +91,9 @@ class _divisionals:
         return Vimsamsa.d20(self.parent, type = 'Parashari reversed')
 
     @cached_property
-    def shashtiamsa_trd(self):
+    def sastyamsa_trd(self):
         return Shashtiamsa.d60(self.parent, type = 'Traditional Parashari')
 
     @cached_property
-    def shashtiamsa_rev(self):
+    def sastyamsa_rev(self):
         return Shashtiamsa.d60(self.parent, type = 'Parashari reversed')

@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 from shiny import App, ui, render, req, reactive
 
-from core.data.constants import rnp, ayanamsas, yr_len
+from core.data.constants import rnp, ayanamsas, yr_len, divisionals
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
 import core.chart.chart as crt
@@ -12,11 +12,12 @@ import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
 from core.appui.custom_nav_panel import (
-    custom_nav_panel, divisional_choices, dasa_sub_levels
+    custom_nav_panel, dasa_sub_levels
 )
 from core.appui.time_input import input_time
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
+from core.appui.divisional_mapper import divisional_map
 
 now = datetime.now()
 
@@ -43,6 +44,34 @@ settings_ui = ui.nav_panel(
         ),
         ui.accordion_panel(
             'Constants'
+        ),
+        ui.accordion_panel(
+            'Divisionals',
+            ui.input_select(
+                id = 'navamsa_type', label = 'Navāmśā', 
+                choices = ['Traditional Parashari']#, 'Parashari reversed']
+            ),
+            ui.input_select(
+                id = 'hora_type', label = 'Horā',
+                choices = ['Uma Shambhu']#, 'Traditional Parashari']
+            ),
+            ui.input_select(
+                id = 'dasamsa_type', label = 'Daśāṃśa',
+                choices = [
+                    'Traditional Parashari', 'Parashari reversed', 
+                    'Parashari reversed (6-9)'
+                ], selected = 'Parashari reversed (6-9)'
+            ),
+            ui.input_select(
+                id = 'vimsamsa_type', label = 'Viṃśāṃśa', 
+                choices = ['Traditional Parashari', 'Parashari reversed'], 
+                selected = 'Parashari reversed'
+            ),
+            ui.input_select(
+                id = 'sastyamsa_type', label = 'Ṣaṣṭyāṃśa', 
+                choices = ['Traditional Parashari', 'Parashari reversed'], 
+                selected = 'Parashari reversed'
+            )
         )
     ),
     icon = icon_gear
@@ -170,15 +199,35 @@ def server(input, output, session):
         return crt.chart(swisseph_adaptor = swisseph_adaptor())
 
     @reactive.calc
+    def natal_divisional_choice():
+        base_divisional = input.natal_divisional()
+        divisional_type = (
+            '' if base_divisional == 'rasi' 
+            else input[base_divisional + '_type']()
+        )
+        divisional = divisional_map(
+            divisional = base_divisional, 
+            type = divisional_type
+        )
+        return {
+            'Choice': divisional, 
+            'Plot title': 'Rāśi' if base_divisional == 'rasi' else ''.join([
+                divisionals[base_divisional], ' (', divisional_type, ')'
+            ])
+        }
+
+    @reactive.calc
     def natal_divisional():
-        return getattr(natal_chart().divisionals, input.natal_divisional())
+        return getattr(
+            natal_chart().divisionals, natal_divisional_choice()['Choice']
+        )
 
     @render.plot
     def natal_plot():
         return natal_divisional().chart_plot(
             dark = input.dark_mode() == 'dark',
             style = input.chart_style(),
-            title = divisional_choices[input.natal_divisional()]
+            title = natal_divisional_choice()['Plot title']
         )
 
     @render.data_frame
@@ -193,7 +242,7 @@ def server(input, output, session):
     def natal_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = natal_chart(),
-            divisional = input.natal_divisional(),
+            divisional = natal_divisional_choice()['Choice'],
             sub_dasa_level = int(input.natal_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.natal_dasa_offset_days(),
             trunc_intervals = True
@@ -204,7 +253,7 @@ def server(input, output, session):
         dasas = natal_vimsottari_dasa()
         # Adjust number below to increase/decrease table height
         return render.DataGrid(
-            data = dasas.dasa_to_df(), height = f'{input.height() - 300}px',
+            data = dasas.dasa_to_df(), height = f'{input.height() - 250}px',
             filters = int(input.natal_vimsottari_dasa_sub_level()) > 0
         )
 
@@ -244,15 +293,36 @@ def server(input, output, session):
         return crt.chart(**args)
 
     @reactive.calc
+    def tājaka_divisional_choice():
+        base_divisional = input.tājaka_divisional()
+        divisional_type = (
+            '' if base_divisional == 'rasi' 
+            else input[base_divisional + '_type']()
+        )
+        divisional = divisional_map(
+            divisional = base_divisional, 
+            type = divisional_type
+        )
+        return {
+            'Choice': divisional, 
+            'Plot title': 'Rāśi' if base_divisional == 'rasi' else ''.join([
+                divisionals[base_divisional], ' (', divisional_type, ')'
+            ])
+        }
+    
+    @reactive.calc
     def tājaka_divisional():
-        return getattr(tājaka_chart().divisionals, input.tājaka_divisional())
+        return getattr(
+            tājaka_chart().divisionals, 
+            tājaka_divisional_choice()['Choice']
+        )
 
     @render.plot
     def tājaka_plot():
         return tājaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
             style = input.chart_style(),
-            title = divisional_choices[input.tājaka_divisional()]
+            title = tājaka_divisional_choice()['Plot title']
         )
 
     @render.data_frame
@@ -273,7 +343,7 @@ def server(input, output, session):
     def tājaka_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = tājaka_chart(),
-            divisional = input.tājaka_divisional(),
+            divisional = tājaka_divisional_choice()['Choice'],
             sub_dasa_level = int(input.tājaka_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.tājaka_dasa_offset_days(),
             trunc_intervals = True,
@@ -301,7 +371,6 @@ def server(input, output, session):
     @render.data_frame
     def tājaka_vimsottari_dasa_df():
         dasas = tājaka_vimsottari_dasa()
-        print(dasas.dasa_to_df())
         return render.DataGrid(
             data = dasas.dasa_to_df(),
             # Adjust number below to increase/decrease table height

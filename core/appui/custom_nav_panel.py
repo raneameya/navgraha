@@ -1,15 +1,10 @@
 from shiny import ui
 
+from core.data.constants import divisionals
+
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
     '3': 'Sookśmaantardaśā'#, '4': 'Praanaantardaśā', '5': 'Dehaantardaśā'
-}
-divisional_choices = {
-    'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
-    'dasamsa_trd': 'Daśāṃśa (trd)', 'dasamsa_rev': 'Daśāṃśa (rev)', 
-    'dasamsa_rev69': 'Daśāṃśa (rev 6-9)', 
-    'vimsamsa_trd': 'Vimśāṃśa (trd)', 'vimsamsa_rev': 'Vimśāṃśa (rev)', 
-    'shashtiamsa_trd': 'Ṣaṣṭyāṃśa (trd)', 'shashtiamsa_rev': 'Ṣaṣṭyāṃśa (rev)'
 }
 
 def custom_nav_panel(id: str):
@@ -46,7 +41,7 @@ def custom_nav_panel(id: str):
     select_divisional_ui = ui.input_select(
         id = f'{id}_divisional',
         label = '',
-        choices = divisional_choices
+        choices = divisionals
     )
     custom_select_ui = ui.layout_column_wrap(
         select_divisional_ui,
