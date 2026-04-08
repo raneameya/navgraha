@@ -46,6 +46,7 @@
     - ~~viewport dimensions so that outputs can react to dimensions where default scaling isn't good enough~~
     - ~~Clean dasa UI~~
     - ~~Separate input (e.g. birth date, time, place) from settings (e.g. ayanamsa, chart style) and env vars (e.g. dasa length 144, 120yrs, etc)~~
+    - Move divisional settings to settings tab. i.e. there must be only one vimśāṃśa, while the variation of the vimśāṃśa must be chosen in settings
 - Timeline
     - Visualisation - annual timeline of retrogression, direct & stationary motion for all planets
     - Annual timeline of planets in signs (& houses?)
@@ -53,15 +54,15 @@
     - Use BV Raman's 300 yogas as a reference
 - Divisional charts
     - ~~D-1 varga~~
-    - D-2 varga
+    - ~~D-2 varga~~
     - D-3 varga
     - D-4 varga
     - D-7 varga
     - ~~D-9 varga~~
-    - D-10 varga
+    - ~~D-10 varga~~
     - D-12 varga
     - D-16 varga
-    - D-20 varga
+    - ~~D-20 varga~~
     - D-24 varga
     - D-27 varga
     - D-30 varga
