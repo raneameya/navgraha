@@ -56,6 +56,10 @@ settings_ui = ui.nav_panel(
                 choices = ['Uma Shambhu']#, 'Traditional Parashari']
             ),
             ui.input_select(
+                id = 'chathurtamsa_type', label = 'Caturthāṁśa',
+                choices = ['Traditional Parashari', 'Parivṛtti']
+            ), 
+            ui.input_select(
                 id = 'dasamsa_type', label = 'Daśāṃśa',
                 choices = [
                     'Traditional Parashari', 'Parashari reversed', 

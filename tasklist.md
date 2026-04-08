@@ -21,7 +21,7 @@
         - ~~Indicate retrograde planets (e.g. an overbar?)~~
         - ~~Indicate degrees in chart (super/sub script)~~
     - Performance
-        - Can pointer to array be used as output in `planet_info` (C func) instead of returning double and having to run twice (once for speed, once for lon)?
+        ~~- Can pointer to array be used as output in `planet_info` (C func) instead of returning double and having to run twice (once for speed, once for lon)?~~
         - Sunrise, sunset direct C funs possible? (Required for Gulika, Mandi)
 - Chart extras to add
     - ~~[Pushkara](https://komilla.com/lib-pushkara-part-two.html)~~
@@ -56,7 +56,7 @@
     - ~~D-1 varga~~
     - ~~D-2 varga~~
     - D-3 varga
-    - D-4 varga
+    - ~~D-4 varga~~
     - D-7 varga
     - ~~D-9 varga~~
     - ~~D-10 varga~~
