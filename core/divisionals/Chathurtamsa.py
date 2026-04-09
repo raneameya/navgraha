@@ -5,7 +5,7 @@ from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
 
-amsa_devata_mapping = {
+amsa_devata_map = {
     1: ('Sanaka', 'Deep focus in the pursuit of wealth and happiness'),
     2: ('Sanandana', 'Enjoy one\'s possessions without constant complaint'),
     3: ('Sanatkumāra', 'Youthful energy and courage to retain happiness despite changes'),
@@ -27,16 +27,8 @@ def d4(birth_chart, type: str) -> chart_minimal:
     p['Natal sign'] = p['Sign']
     # Which amsa is a planet in? (i.e. 0, 1, 2, 3)
     p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30 / d)))
-    # Pull in info about amsā devata. Reverse pull if graha is in 
-    # even sign natally
-    p['Amsā Devatā'] = p.apply(
-        lambda df: (
-            amsa_devata_mapping[df['Amsā'] + 1][0]
-            if df['Natal sign'] % 2 == 1
-            else amsa_devata_mapping[d - df['Amsā']][0]
-        ), 
-        axis = 1
-    )
+    # Pull in info about amsā devata.
+    p['Amsā Devatā'] = p['Amsā'].apply(lambda x: amsa_devata_map[x + 1][0])
     # How much has the planet progressed in the amsā?
     p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x / (30 / d)) % 1))
     def d4_progression(natal_rasi: int, amsa: int, type: str) -> int:
