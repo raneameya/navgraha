@@ -93,7 +93,7 @@ def d60(birth_chart, type: str) -> chart_minimal:
         axis = 1
     )
     # How much has the planet progressed in the amsā?
-    if type == 'Traditional Parashari':
+    if type == 'Parashari':
         p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x / (30 / 60)) % 1))
     elif type == 'Parashari reversed':
         p['Lon30'] = p.apply(lambda df: (
@@ -103,7 +103,7 @@ def d60(birth_chart, type: str) -> chart_minimal:
             ), axis = 1
         )
     def d60_progression(natal_rasi: int, amsa: int, type: str) -> int:
-        if type == 'Traditional Parashari':
+        if type == 'Parashari':
             return ((natal_rasi - 1 + amsa) % 12) + 1
         elif type == 'Parashari reversed':
             if natal_rasi % 2 == 1:  # odd → forward

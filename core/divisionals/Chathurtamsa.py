@@ -14,7 +14,7 @@ amsa_devata_mapping = {
 
 def d4(birth_chart, type: str) -> chart_minimal:
     '''
-    Compute the caturthāṁśa (D-10) of a birth chart
+    Compute the caturthāṁśa (D-4) of a birth chart
     Args:
         birth_crt (chart): The base natal (D-1) chart.
     Returns:
@@ -40,7 +40,7 @@ def d4(birth_chart, type: str) -> chart_minimal:
     # How much has the planet progressed in the amsā?
     p['Lon30'] = p['Lon30'].apply(lambda x: 30*((x / (30 / d)) % 1))
     def d4_progression(natal_rasi: int, amsa: int, type: str) -> int:
-        if type == 'Traditional Parashari':
+        if type == 'Parashari':
             return ((natal_rasi - 1 + (amsa * 3)) % 12) + 1
         if type == 'Parivṛtti':
             start_rasi = (((natal_rasi - 1) % 3) * 4) + 1

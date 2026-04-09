@@ -71,16 +71,16 @@ class _divisionals:
         return Hora.d2(self.parent)
 
     @cached_property
-    def chathurtamsa_trd(self):
-        return Chathurtamsa.d4(self.parent, type = 'Traditional Parashari')
+    def chathurtamsa_psr(self):
+        return Chathurtamsa.d4(self.parent, type = 'Parashari')
 
     @cached_property
     def chathurtamsa_prv(self):
         return Chathurtamsa.d4(self.parent, type = 'Parivṛtti')
 
     @cached_property
-    def dasamsa_trd(self):
-        return Dasamsa.d10(self.parent, type = 'Traditional Parashari')
+    def dasamsa_psr(self):
+        return Dasamsa.d10(self.parent, type = 'Parashari')
 
     @cached_property
     def dasamsa_rev(self):
@@ -91,16 +91,16 @@ class _divisionals:
         return Dasamsa.d10(self.parent, type = 'Parashari reversed (6-9)')
 
     @cached_property
-    def vimsamsa_trd(self):
-        return Vimsamsa.d20(self.parent, type = 'Traditional Parashari')
+    def vimsamsa_psr(self):
+        return Vimsamsa.d20(self.parent, type = 'Parashari')
 
     @cached_property
     def vimsamsa_rev(self):
         return Vimsamsa.d20(self.parent, type = 'Parashari reversed')
 
     @cached_property
-    def sastyamsa_trd(self):
-        return Shashtiamsa.d60(self.parent, type = 'Traditional Parashari')
+    def sastyamsa_psr(self):
+        return Shashtiamsa.d60(self.parent, type = 'Parashari')
 
     @cached_property
     def sastyamsa_rev(self):

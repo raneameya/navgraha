@@ -77,7 +77,7 @@ def d20(birth_chart, type: str) -> chart_minimal:
         axis = 1
     )
     # How much has the planet progressed in the amsā?
-    if type == 'Traditional Parashari':
+    if type == 'Parashari':
         p['Lon30'] = p['Lon30'].apply(lambda x: 30 * ((x / (30 / d)) % 1))
     elif type == 'Parashari reversed':
         p['Lon30'] = p.apply(lambda df: (
@@ -95,7 +95,7 @@ def d20(birth_chart, type: str) -> chart_minimal:
             return ((start_rasi - 1 + amsa) % 12) + 1
         else:
             # Different variations of progression if natal sign is even
-            if type == 'Traditional Parashari':        
+            if type == 'Parashari':        
                 # go forward
                 return ((start_rasi - 1 + amsa) % 12) + 1
             elif type == 'Parashari reversed':

@@ -49,7 +49,7 @@ settings_ui = ui.nav_panel(
             'Divisionals',
             ui.input_select(
                 id = 'navamsa_type', label = 'Navāmśā', 
-                choices = ['Traditional Parashari']#, 'Parashari reversed']
+                choices = ['Parashari']#, 'Parashari reversed']
             ),
             ui.input_select(
                 id = 'hora_type', label = 'Horā',
@@ -57,23 +57,23 @@ settings_ui = ui.nav_panel(
             ),
             ui.input_select(
                 id = 'chathurtamsa_type', label = 'Caturthāṁśa',
-                choices = ['Traditional Parashari', 'Parivṛtti']
+                choices = ['Parashari', 'Parivṛtti']
             ), 
             ui.input_select(
                 id = 'dasamsa_type', label = 'Daśāṃśa',
                 choices = [
-                    'Traditional Parashari', 'Parashari reversed', 
+                    'Parashari', 'Parashari reversed', 
                     'Parashari reversed (6-9)'
                 ], selected = 'Parashari reversed (6-9)'
             ),
             ui.input_select(
                 id = 'vimsamsa_type', label = 'Viṃśāṃśa', 
-                choices = ['Traditional Parashari', 'Parashari reversed'], 
+                choices = ['Parashari', 'Parashari reversed'], 
                 selected = 'Parashari reversed'
             ),
             ui.input_select(
                 id = 'sastyamsa_type', label = 'Ṣaṣṭyāṃśa', 
-                choices = ['Traditional Parashari', 'Parashari reversed'], 
+                choices = ['Parashari', 'Parashari reversed'], 
                 selected = 'Parashari reversed'
             )
         )

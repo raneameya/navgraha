@@ -6,24 +6,24 @@ def divisional_map(divisional: str, type: str) -> str:
     elif divisional == 'hora':
         return 'hora'
     elif divisional == 'chathurtamsa':
-        if type == 'Traditional Parashari':
-            return 'chathurtamsa_trd'
+        if type == 'Parashari':
+            return 'chathurtamsa_psr'
         elif type == 'Parivṛtti':
             return 'chathurtamsa_prv'
     elif divisional == 'dasamsa':
-        if type == 'Traditional Parashari':
-            return 'dasamsa_trd'
+        if type == 'Parashari':
+            return 'dasamsa_psr'
         elif type == 'Parashari reversed':
             return 'dasamsa_rev'
         elif type == 'Parashari reversed (6-9)':
             return 'dasamsa_rev69'
     elif divisional == 'vimsamsa':
-        if type == 'Traditional Parashari':
-            return 'vimsamsa_trd'
+        if type == 'Parashari':
+            return 'vimsamsa_psr'
         elif type == 'Parashari reversed':
             return 'vimsamsa_rev'
     elif divisional == 'sastyamsa':
-        if type == 'Traditional Parashari':
-            return 'sastyamsa_trd'
+        if type == 'Parashari':
+            return 'sastyamsa_psr'
         elif type == 'Parashari reversed':
             return 'sastyamsa_rev'
