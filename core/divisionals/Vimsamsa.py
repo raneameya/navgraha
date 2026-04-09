@@ -72,7 +72,7 @@ def d20(birth_chart, type: str) -> chart_minimal:
         lambda df: (
             odd_devis[df['Amsā'] + 1][0]
             if df['Natal sign'] % 2 == 1
-            else even_devis[df['Amsā']][0]
+            else even_devis[df['Amsā'] + 1][0]
         ), 
         axis = 1
     )
