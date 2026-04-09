@@ -72,6 +72,10 @@ settings_ui = ui.nav_panel(
                 selected = 'Parashari reversed'
             ),
             ui.input_select(
+                id = 'trimsamsa_type', label = 'Triṃśāṃśa',
+                choices = ['Parashari', 'Parivṛtti']
+            ), 
+            ui.input_select(
                 id = 'sastyamsa_type', label = 'Ṣaṣṭyāṃśa', 
                 choices = ['Parashari', 'Parashari reversed'], 
                 selected = 'Parashari reversed'

@@ -84,7 +84,7 @@ graha_dict = {
 divisionals = {
     'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
     'chathurtamsa': 'Caturthāṁśa', 'dasamsa': 'Daśāṃśa', 
-    'vimsamsa': 'Viṃśāṃśa', 'sastyamsa': 'Ṣaṣṭyāṃśa'
+    'vimsamsa': 'Viṃśāṃśa', 'trimsamsa': 'Triṃśāṃśa', 'sastyamsa': 'Ṣaṣṭyāṃśa'
 }
 
 '''
