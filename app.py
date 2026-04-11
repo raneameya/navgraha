@@ -12,7 +12,7 @@ import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
 from core.appui.custom_nav_panel import (
-    custom_nav_panel, dasa_sub_levels
+    custom_nav_panel, dasa_sub_levels, divisionals
 )
 from core.appui.time_input import input_time
 from core.misc.birth_event import BirthEvent
@@ -210,7 +210,7 @@ def server(input, output, session):
     def natal_divisional_choice():
         base_divisional = input.natal_divisional()
         divisional_type = (
-            '' if base_divisional == 'rasi' 
+            '' if base_divisional in ['rasi', 'khavedamsa']
             else input[base_divisional + '_type']()
         )
         divisional = divisional_map(
@@ -219,9 +219,13 @@ def server(input, output, session):
         )
         return {
             'Choice': divisional, 
-            'Plot title': 'Rāśi' if base_divisional == 'rasi' else ''.join([
-                divisionals[base_divisional], ' (', divisional_type, ')'
-            ])
+            'Plot title': (
+                divisionals[base_divisional] 
+                if base_divisional in ['rasi', 'khavedamsa'] 
+                else ''.join([
+                    divisionals[base_divisional], ' (', divisional_type, ')'
+                ])
+            )
         }
 
     @reactive.calc
@@ -304,7 +308,7 @@ def server(input, output, session):
     def tājaka_divisional_choice():
         base_divisional = input.tājaka_divisional()
         divisional_type = (
-            '' if base_divisional == 'rasi' 
+            '' if base_divisional in ['rasi', 'khavedamsa']
             else input[base_divisional + '_type']()
         )
         divisional = divisional_map(
@@ -313,9 +317,13 @@ def server(input, output, session):
         )
         return {
             'Choice': divisional, 
-            'Plot title': 'Rāśi' if base_divisional == 'rasi' else ''.join([
-                divisionals[base_divisional], ' (', divisional_type, ')'
-            ])
+            'Plot title': (
+                divisionals[base_divisional] 
+                if base_divisional in ['rasi', 'khavedamsa'] 
+                else ''.join([
+                    divisionals[base_divisional], ' (', divisional_type, ')'
+                ])
+            )
         }
     
     @reactive.calc

@@ -27,6 +27,8 @@ def divisional_map(divisional: str, type: str) -> str:
             return 'trimsamsa_psr'
         elif type == 'Parivṛtti':
             return 'trimsamsa_prv'
+    elif divisional == 'khavedamsa':
+        return 'khavedamsa'
     elif divisional == 'sastyamsa':
         if type == 'Parashari':
             return 'sastyamsa_psr'
