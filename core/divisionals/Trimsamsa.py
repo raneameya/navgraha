@@ -21,7 +21,7 @@ amsa_devatas = {
 }
 
 '''
-# Does this have any basis? From Gemini:
+# Does this have any basis? From Google Gemini:
 parivṛtti_amsa_devata = {
     1: ("Yama", "Restraint/Death", "Dharamarāja"),
     2: ("Niśācara", "Night-walker/Ghost", "Tāmasika"),
@@ -114,6 +114,18 @@ def d30(birth_chart, type: str) -> chart_minimal:
     p['Lon'] = p.apply(lambda x: x['Lon30'] + 30 * (x['Sign'] - 1), axis = 1)
     p['Amsā'] = p['Amsā'].apply(lambda x: x + 1)
     p = add_house(p = p)
+    add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada']
+    p = add_non_equi_col(
+        p1 = p,
+        p2 = rnp,
+        p1col = 'Lon',
+        p2col_range = 'Degrees',
+        p2col_get = add_cols
+    )
+    p = p[[
+        'Birth', 'Graha', 'Lon', 'Lon°', 'Lon30', 'Amsā', 'Amsā Devatā', 
+        'Sign', 'Bhava', 'Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada', 'Speed'
+    ]]
     out = chart_minimal(
         placements = p, 
         display_cols = [
