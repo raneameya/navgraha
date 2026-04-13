@@ -53,7 +53,10 @@ settings_ui = ui.nav_panel(
             ),
             ui.input_select(
                 id = 'hora_type', label = 'Horā',
-                choices = ['Uma Shambhu']#, 'Traditional Parashari']
+                choices = [
+                    'Parashari', 'Uma Shambhu', 'Parivṛtti', 'Kāśīnāth', 
+                    'Jagannāth', 'Samasaptaka', 'Maṇḍūka', 'Lābha maṇḍūka'
+                ], selected = 'Uma Shambhu'
             ),
             ui.input_select(
                 id = 'chathurtamsa_type', label = 'Caturthāṁśa',

@@ -21,7 +21,7 @@
         - ~~Indicate retrograde planets (e.g. an overbar?)~~
         - ~~Indicate degrees in chart (super/sub script)~~
     - Performance
-        ~~- Can pointer to array be used as output in `planet_info` (C func) instead of returning double and having to run twice (once for speed, once for lon)?~~
+        - ~~Can pointer to array be used as output in `planet_info` (C func) instead of returning double and having to run twice (once for speed, once for lon)?~~
         - Sunrise, sunset direct C funs possible? (Required for Gulika, Mandi)
 - Chart extras to add
     - ~~[Pushkara](https://komilla.com/lib-pushkara-part-two.html)~~
@@ -40,6 +40,7 @@
 - Vimsottari dasa
     - ~~Recursive function produces dasa shares faster than loop. Verify timings~~
     - ~~Add ability to shift dasa dates~~
+    - Make all sub-dasas as cached properties
 - UI
     - ~~Move inputs to sidebar~~
     - ~~Group tabs as natal vs tajaka. So natal dasa and natal chart should be in one tab. Similarly for the tajaka chart (and the future tajaka dasa)~~
@@ -55,22 +56,43 @@
 - Divisional charts
     - ~~D-1 varga~~
     - ~~D-2 varga~~
+        - ~~Parāśari~~
+        - ~~Uma Shambhu~~
+        - ~~Parivṛtti~~
+        - ~~Kāśīnāth~~
+        - ~~Jagannāth~~
+        - ~~Samasaptaka~~
+        - ~~Maṇḍūka~~
+        - ~~Lābha maṇḍūka~~
+        - Raman
+        - Nirañjana
     - D-3 varga
     - ~~D-4 varga~~
+        - ~~Parāśari~~
+        - ~~Parivṛtti~~
     - D-7 varga
     - ~~D-9 varga~~
     - ~~D-10 varga~~
+        - ~~Parāśari~~
+        - ~~Even sign reversed~~
+        - ~~Even sign reversed (6-9)~~
     - D-12 varga
     - D-16 varga
     - ~~D-20 varga~~
+        - ~~Parāśari~~
+        - ~~Parāśari, even sign reversed~~
     - D-24 varga
     - D-27 varga
-    - D-30 varga
-    - D-40 varga
+    - ~~D-30 varga~~
+        - ~~Parāśari~~
+        - ~~Parivṛtti~~
+    - ~~D-40 varga~~
     - D-45 varga
-    ~~- D-60 varga~~
+    - ~~D-60 varga~~
+        - ~~Parāśari~~
+        - ~~Parāśari, even sign reversed~~
 
 ### Bugs
-~~- In the place selector, if "West Bengal" is selected, we get:~~
+- ~~In the place selector, if "West Bengal" is selected, we get:~~
 ~~> Object of type int64 is not JSON serializable~~
-~~- In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.~~
+- ~~In the place selector, if "Mumbai Suburban" is selected, it is overwritten by "Mumbai Suburban District" and the `update_birth_data_selected` bit of code runs twice.~~

@@ -68,8 +68,36 @@ class _divisionals:
         return Navamsa.d9(self.parent)
 
     @cached_property
-    def hora(self):
-        return Hora.d2(self.parent)
+    def hora_psr(self):
+        return Hora.d2(self.parent, type = 'Parashari')
+
+    @cached_property
+    def hora_us(self):
+        return Hora.d2(self.parent, type = 'Uma Shambhu')
+
+    @cached_property
+    def hora_prv(self):
+        return Hora.d2(self.parent, type = 'Parivṛtti')
+
+    @cached_property
+    def hora_ksn(self):
+        return Hora.d2(self.parent, type = 'Kāśīnāth')
+
+    @cached_property
+    def hora_jgn(self):
+        return Hora.d2(self.parent, type = 'Jagannāth')
+    
+    @cached_property
+    def hora_ssp(self):
+        return Hora.d2(self.parent, type = 'Samasaptaka')
+    
+    @cached_property
+    def hora_mdk(self):
+        return Hora.d2(self.parent, type = 'Maṇḍūka')
+    
+    @cached_property
+    def hora_lmk(self):
+        return Hora.d2(self.parent, type = 'Lābha maṇḍūka')
 
     @cached_property
     def chathurtamsa_psr(self):

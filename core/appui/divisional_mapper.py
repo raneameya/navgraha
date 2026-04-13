@@ -4,7 +4,22 @@ def divisional_map(divisional: str, type: str) -> str:
     elif divisional == 'navamsa':
         return 'navamsa'
     elif divisional == 'hora':
-        return 'hora'
+        if type == 'Parashari':
+            return 'hora_psr'
+        elif type == 'Uma Shambhu':
+            return 'hora_us'
+        elif type == 'Parivṛtti':
+            return 'hora_prv'
+        elif type == 'Kāśīnāth':
+            return 'hora_ksn'
+        elif type == 'Jagannāth':
+            return 'hora_jgn'
+        elif type == 'Samasaptaka':
+            return 'hora_ssp'
+        elif type == 'Maṇḍūka':
+            return 'hora_mdk'
+        elif type == 'Lābha maṇḍūka':
+            return 'hora_lmk'
     elif divisional == 'chathurtamsa':
         if type == 'Parashari':
             return 'chathurtamsa_psr'
