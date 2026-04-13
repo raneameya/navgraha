@@ -37,7 +37,7 @@ class vimsottari_dasa:
             be computed. A full list of allowable inputs can be accessed at 
             TODO:...
         trunc_intervals (bool): Set False to retain higher precision daśā 
-            intervals. True truncates the intervals to the days.
+            intervals. True truncates the intervals to the hour of the day.
         yr_len (float): Approximately 365.25 for a year, but can make a 
             difference for dasas further into the future.
         lifespan (int): Total duration of the daśā cycle in years. Defaults 
@@ -137,9 +137,8 @@ class vimsottari_dasa:
             sub_dasa_shares['Period'] = sub_dasa_shares['Period'].apply(
                 func = lambda x: (
                     # 'closed' attribute of interval is ignored
-                    # Use "" because '' are used inside fstring
-                    f"{x.left.strftime('%d-%m-%Y')} - "
-                    f"{x.right.strftime('%d-%m-%Y')}"
+                    f'''{x.left.strftime('%d-%m-%Y %HH')} -\n'''
+                    f'''{x.right.strftime('%d-%m-%Y %HH')}'''
                 )
             )
         self.dasas = sub_dasa_shares
