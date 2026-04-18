@@ -59,6 +59,13 @@ settings_ui = ui.nav_panel(
                 ], selected = 'Uma Shambhu'
             ),
             ui.input_select(
+                id = 'drekkana_type', label = 'Drekkāṇa',
+                choices = [
+                    'Parashari', 'Uma Shambhu', 'Parivṛtti', 'Jagannāth', 
+                    'Somanāth'
+                ], selected = 'Uma Shambhu'
+            ),
+            ui.input_select(
                 id = 'chathurtamsa_type', label = 'Caturthāṁśa',
                 choices = ['Parashari', 'Parivṛtti']
             ), 

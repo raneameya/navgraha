@@ -20,6 +20,17 @@ def divisional_map(divisional: str, type: str) -> str:
             return 'hora_mdk'
         elif type == 'Lābha maṇḍūka':
             return 'hora_lmk'
+    elif divisional == 'drekkana':
+        if type == 'Parashari':
+            return 'drekkana_psr'
+        elif type == 'Uma Shambhu':
+            return 'drekkana_us'
+        elif type == 'Parivṛtti':
+            return 'drekkana_prv'
+        elif type == 'Somanāth':
+            return 'drekkana_smn'
+        elif type == 'Jagannāth':
+            return 'drekkana_jgn'
     elif divisional == 'chathurtamsa':
         if type == 'Parashari':
             return 'chathurtamsa_psr'

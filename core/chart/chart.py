@@ -4,8 +4,8 @@ from functools import cached_property
 
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
-    Rasi, Navamsa, Hora, Chathurtamsa, Dasamsa, Vimsamsa, Trimsamsa, 
-    Khavedamsa, Shashtiamsa
+    Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Vimsamsa, 
+    Trimsamsa, Khavedamsa, Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -55,7 +55,7 @@ class _divisionals:
     '''
     A class (in this instance, used as a namespace) to hold all divisional charts
     '''
-    def __init__(self, parent_chart:chart):
+    def __init__(self, parent_chart: chart):
         self.parent = parent_chart
     
     @cached_property
@@ -98,6 +98,26 @@ class _divisionals:
     @cached_property
     def hora_lmk(self):
         return Hora.d2(self.parent, type = 'Lābha maṇḍūka')
+    
+    @cached_property
+    def drekkana_psr(self):
+        return Drekkana.d3(self.parent, type = 'Parashari')
+
+    @cached_property
+    def drekkana_prv(self):
+        return Drekkana.d3(self.parent, type = 'Parivṛtti')
+
+    @cached_property
+    def drekkana_jgn(self):
+        return Drekkana.d3(self.parent, type = 'Jagannāth')
+
+    @cached_property
+    def drekkana_smn(self):
+        return Drekkana.d3(self.parent, type = 'Somanāth')
+
+    @cached_property
+    def drekkana_us(self):
+        return Drekkana.d3(self.parent, type = 'Uma Shambhu')
 
     @cached_property
     def chathurtamsa_psr(self):
