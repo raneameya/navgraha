@@ -19,12 +19,13 @@ def d2(birth_crt, type: str) -> chart_minimal:
     Returns:
         A chart_minimal object with the hora placements including degrees
     '''
+    d = 2
     p = birth_crt.rasi.placements.copy(deep = True)
     # Create a copy of sign in rasi. Used to classify whether graha in 
     # even/odd sign
     p['Rasi sign'] = p['Sign']
     # Which amsa is a planet in? (i.e. 0-1)
-    p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30 / 2)))
+    p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30 / d)))
     # How much has the planet progressed in the amsā? 
     # Classification of whether degrees are computed in reverse for even 
     # signs is matched to JHora's computation
@@ -32,12 +33,12 @@ def d2(birth_crt, type: str) -> chart_minimal:
         'Parashari', 'Parivṛtti', 'Kāśīnāth', 'Jagannāth', 'Samasaptaka',
         'Maṇḍūka', 'Lābha maṇḍūka'
     ]:
-        p['Lon30'] = p['Lon30'].apply(lambda x: (30 * ((x / (30 / 2)) % 1)))
+        p['Lon30'] = p['Lon30'].apply(lambda x: (30 * ((x / (30 / d)) % 1)))
     elif type in ['Uma Shambhu']:
         # Progression is reversed if graha is in an even sign in rāśi
         p['Lon30'] = p.apply(lambda df: (
-                30 * ((df['Lon30']/(30 / 2)) % 1) if df['Rasi sign'] % 2 != 0
-                else 30 - (30 * ((df['Lon30']/(30 / 2)) % 1))
+                30 * ((df['Lon30']/(30 / d)) % 1) if df['Rasi sign'] % 2 != 0
+                else 30 - (30 * ((df['Lon30']/(30 / d)) % 1))
             ), axis = 1
         )
     # Compute hora index (0-23) based on the sign and the half of the sign 
@@ -97,6 +98,7 @@ def d2(birth_crt, type: str) -> chart_minimal:
             9, 12   # Pi (Even, Day): Moon(N)=Sa, Sun(D)=Pi
         ]
     elif type == 'Jagannāth':
+        # TODO: Logic doesn't match with JHora's results. What's wrong?
         # Using the same day/night classification as Kāśīnāth, the mapping 
         # is 1/7. i.e. if odd & day sign, Sun hora mapped to itself, Moon 
         # hora mapped to 7th from it. If odd & night sign, Sun hora mapped 
@@ -108,12 +110,12 @@ def d2(birth_crt, type: str) -> chart_minimal:
             9, 3,  # Ge (Odd, Night): Sun(D)=Vi, Moon(N)=Ge
             4, 10, # Cn (Even, Night): Moon(N)=Cn, Sun(D)=Le
             5, 11, # Le (Odd, Day): Sun(D)=Le, Moon(N)=Cn
-            6, 12, # Vi (Even, Day): Moon(N)=Ge, Sun(D)=Vi
+            12, 6, # Vi (Even, Day): Moon(N)=Ge, Sun(D)=Vi
             7, 1,  # Li (Odd, Day): Sun(D)=Li, Moon(N)=Ta
             2, 8,  # Sc (Even, Day): Moon(N)=Ar, Sun(D)=Sc
-            9, 3,  # Sa (Odd, Night): Sun(D)=Pi, Moon(N)=Sa
-            4, 10, # Ca (Even, Night): Moon(N)=Ca, Sun(D)=Aq
-            5, 11, # Aq (Odd, Day): Sun(D)=Aq, Moon(N)=Ca
+            3, 9,  # Sa (Odd, Night): Sun(D)=Pi, Moon(N)=Sa
+            10, 4, # Ca (Even, Night): Moon(N)=Ca, Sun(D)=Aq
+            11, 5, # Aq (Odd, Day): Sun(D)=Aq, Moon(N)=Cn
             6, 12  # Pi (Even, Day): Moon(N)=Sa, Sun(D)=Pi
         ]
     elif type == 'Samasaptaka':
@@ -139,7 +141,7 @@ def d2(birth_crt, type: str) -> chart_minimal:
     p['Amsā Devatā'] = p.apply(
         lambda df: (
             amsa_devata_mapping[df['Amsā'] + 1] if df['Rasi sign'] % 2 != 0
-            else amsa_devata_mapping_rev[df['Amsā'] + 1]
+            else amsa_devata_mapping[d - df['Amsā']]
         ), axis = 1
     )
     p['Rāśi'] = p['Sign'].apply(lambda x: list(rasis['Rāśi'])[x - 1])
