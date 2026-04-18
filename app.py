@@ -12,7 +12,7 @@ import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
 from core.appui.icons import icon_gear
 from core.appui.custom_nav_panel import (
-    custom_nav_panel, dasa_sub_levels, divisionals
+    custom_nav_panel, dasa_sub_levels
 )
 from core.appui.time_input import input_time
 from core.misc.birth_event import BirthEvent
@@ -55,7 +55,7 @@ settings_ui = ui.nav_panel(
                 id = 'hora_type', label = 'Horā',
                 choices = [
                     'Parashari', 'Uma Shambhu', 'Parivṛtti', 'Kāśīnāth', 
-                    'Jagannāth', 'Samasaptaka', 'Maṇḍūka', 'Lābha maṇḍūka'
+                    'Samasaptaka', 'Maṇḍūka', 'Lābha maṇḍūka', # 'Jagannāth', 
                 ], selected = 'Uma Shambhu'
             ),
             ui.input_select(
