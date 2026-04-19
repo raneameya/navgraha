@@ -82,40 +82,40 @@ graha_dict = {
 }
 
 divisional_choices = {
-    'Rāśi': {'rasi': 'Rāśi'}, 
-    'Navāmśā': {'navamsa': 'Navāmśā'}, 
-    'Horā': {
+    'Rāśi (D-1)': {'rasi': 'Rāśi'}, 
+    'Navāmśā (D-9)': {'navamsa': 'Navāmśā'}, 
+    'Horā (D-2)': {
         'hora_psr': 'Horā (Parashari)', 'hora_us': 'Horā (Uma Shambhu)', 
         'hora_prv': 'Horā (Parivṛtti)', 'hora_ksn': 'Horā (Kāśīnāth)', 
         'hora_ssp': 'Horā (Samasaptaka)', 'hora_mdk': 'Horā (Maṇḍūka)',
         'hora_lmk': 'Horā (Lābha maṇḍūka)'
     }, 
-    'Drekkāṇa': {
+    'Drekkāṇa (D-3)': {
         'drekkana_psr': 'Drekkāṇa (Parashari)',
         'drekkana_us': 'Drekkāṇa (Uma Shambhu)',
         'drekkana_prv': 'Drekkāṇa (Parivṛtti)',
         'drekkana_smn': 'Drekkāṇa (Somanāth)',
         'drekkana_jgn': 'Drekkāṇa (Jagannāth)'
     }, 
-    'Caturthāṁśa': {
+    'Caturthāṁśa (D-4)': {
         'chathurtamsa_psr': 'Caturthāṁśa (Parashari)',
         'chathurtamsa_prv': 'Caturthāṁśa (Parivṛtti)'
     },
-    'Daśāṃśa': {
+    'Daśāṃśa (D-10)': {
         'dasamsa_psr': 'Daśāṃśa (Parashari)',
         'dasamsa_rev': 'Daśāṃśa (Parashari reversed)',
         'dasamsa_rev69': 'Daśāṃśa (Parashari reversed (6-9))',
     },
-    'Viṃśāṃśa': {
+    'Viṃśāṃśa (D-20)': {
         'vimsamsa_psr': 'Viṃśāṃśa (Parashari)',
         'vimsamsa_rev': 'Viṃśāṃśa (Parashari reversed)'
     }, 
-    'Triṃśāṃśa': {
+    'Triṃśāṃśa (D-30)': {
         'trimsamsa_psr': 'Triṃśāṃśa (Parashari)',
         'trimsamsa_prv': 'Triṃśāṃśa (Parivṛtti)'
     },
-    'Khavēdāṃśa': {'khavedamsa': 'Khavēdāṃśa'},
-    'Ṣaṣṭyāṃśa': {
+    'Khavēdāṃśa (D-40)': {'khavedamsa': 'Khavēdāṃśa'},
+    'Ṣaṣṭyāṃśa (D-60)': {
         'sastyamsa_psr': 'Ṣaṣṭyāṃśa (Parashari)',
         'sastyamsa_rev': 'Ṣaṣṭyāṃśa (Parashari reversed)'
     }

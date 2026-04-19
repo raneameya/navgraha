@@ -19,7 +19,6 @@ from core.appui.custom_nav_panel import (
 from core.appui.time_input import input_time
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
-from core.appui.divisional_mapper import divisional_map
 
 now = datetime.now()
 
