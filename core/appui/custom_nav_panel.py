@@ -1,6 +1,6 @@
 from shiny import ui
 
-from core.data.constants import divisionals
+from core.data.constants import divisional_choices
 
 dasa_sub_levels = {
     '0': 'Mahadaśā', '1': 'Antardaśā', '2': 'Pratyantardaśā',
@@ -41,7 +41,7 @@ def custom_nav_panel(id: str):
     select_divisional_ui = ui.input_select(
         id = f'{id}_divisional',
         label = '',
-        choices = divisionals
+        choices = divisional_choices
     )
     custom_select_ui = ui.layout_column_wrap(
         select_divisional_ui,

@@ -81,11 +81,44 @@ graha_dict = {
     'Bhr̥gu Bindu': (-8, '', 'Bb')
 }
 
-divisionals = {
-    'rasi': 'Rāśi', 'navamsa': 'Navāmśā', 'hora': 'Horā', 
-    'drekkana': 'Drekkāṇa' , 'chathurtamsa': 'Caturthāṁśa',
-    'dasamsa': 'Daśāṃśa', 'vimsamsa': 'Viṃśāṃśa', 'trimsamsa': 'Triṃśāṃśa', 
-    'khavedamsa': 'Khavēdāṃśa', 'sastyamsa': 'Ṣaṣṭyāṃśa'
+divisional_choices = {
+    'Rāśi': {'rasi': 'Rāśi'}, 
+    'Navāmśā': {'navamsa': 'Navāmśā'}, 
+    'Horā': {
+        'hora_psr': 'Horā (Parashari)', 'hora_us': 'Horā (Uma Shambhu)', 
+        'hora_prv': 'Horā (Parivṛtti)', 'hora_ksn': 'Horā (Kāśīnāth)', 
+        'hora_ssp': 'Horā (Samasaptaka)', 'hora_mdk': 'Horā (Maṇḍūka)',
+        'hora_lmk': 'Horā (Lābha maṇḍūka)'
+    }, 
+    'Drekkāṇa': {
+        'drekkana_psr': 'Drekkāṇa (Parashari)',
+        'drekkana_us': 'Drekkāṇa (Uma Shambhu)',
+        'drekkana_prv': 'Drekkāṇa (Parivṛtti)',
+        'drekkana_smn': 'Drekkāṇa (Somanāth)',
+        'drekkana_jgn': 'Drekkāṇa (Jagannāth)'
+    }, 
+    'Caturthāṁśa': {
+        'chathurtamsa_psr': 'Caturthāṁśa (Parashari)',
+        'chathurtamsa_prv': 'Caturthāṁśa (Parivṛtti)'
+    },
+    'Daśāṃśa': {
+        'dasamsa_psr': 'Daśāṃśa (Parashari)',
+        'dasamsa_rev': 'Daśāṃśa (Parashari reversed)',
+        'dasamsa_rev69': 'Daśāṃśa (Parashari reversed (6-9))',
+    },
+    'Viṃśāṃśa': {
+        'vimsamsa_psr': 'Viṃśāṃśa (Parashari)',
+        'vimsamsa_rev': 'Viṃśāṃśa (Parashari reversed)'
+    }, 
+    'Triṃśāṃśa': {
+        'trimsamsa_psr': 'Triṃśāṃśa (Parashari)',
+        'trimsamsa_prv': 'Triṃśāṃśa (Parivṛtti)'
+    },
+    'Khavēdāṃśa': {'khavedamsa': 'Khavēdāṃśa'},
+    'Ṣaṣṭyāṃśa': {
+        'sastyamsa_psr': 'Ṣaṣṭyāṃśa (Parashari)',
+        'sastyamsa_rev': 'Ṣaṣṭyāṃśa (Parashari reversed)'
+    }
 }
 
 '''

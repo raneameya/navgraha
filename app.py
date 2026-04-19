@@ -3,7 +3,9 @@ from zoneinfo import ZoneInfo
 
 from shiny import App, ui, render, req, reactive
 
-from core.data.constants import rnp, ayanamsas, yr_len, divisionals
+from core.data.constants import (
+    rnp, ayanamsas, yr_len, divisional_choices
+)
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
 import core.chart.chart as crt
@@ -20,6 +22,10 @@ from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 from core.appui.divisional_mapper import divisional_map
 
 now = datetime.now()
+
+divisional_choices_flat = {
+    k: v for inner in divisional_choices.values() for k, v in inner.items()
+}
 
 natal_ui = custom_nav_panel(id = 'natal')
 
@@ -44,52 +50,6 @@ settings_ui = ui.nav_panel(
         ),
         ui.accordion_panel(
             'Constants'
-        ),
-        ui.accordion_panel(
-            'Divisionals',
-            ui.input_select(
-                id = 'navamsa_type', label = 'Navāmśā', 
-                choices = ['Parashari']#, 'Parashari reversed']
-            ),
-            ui.input_select(
-                id = 'hora_type', label = 'Horā',
-                choices = [
-                    'Parashari', 'Uma Shambhu', 'Parivṛtti', 'Kāśīnāth', 
-                    'Samasaptaka', 'Maṇḍūka', 'Lābha maṇḍūka', # 'Jagannāth', 
-                ], selected = 'Uma Shambhu'
-            ),
-            ui.input_select(
-                id = 'drekkana_type', label = 'Drekkāṇa',
-                choices = [
-                    'Parashari', 'Uma Shambhu', 'Parivṛtti', 'Jagannāth', 
-                    'Somanāth'
-                ], selected = 'Uma Shambhu'
-            ),
-            ui.input_select(
-                id = 'chathurtamsa_type', label = 'Caturthāṁśa',
-                choices = ['Parashari', 'Parivṛtti']
-            ), 
-            ui.input_select(
-                id = 'dasamsa_type', label = 'Daśāṃśa',
-                choices = [
-                    'Parashari', 'Parashari reversed', 
-                    'Parashari reversed (6-9)'
-                ], selected = 'Parashari reversed (6-9)'
-            ),
-            ui.input_select(
-                id = 'vimsamsa_type', label = 'Viṃśāṃśa', 
-                choices = ['Parashari', 'Parashari reversed'], 
-                selected = 'Parashari reversed'
-            ),
-            ui.input_select(
-                id = 'trimsamsa_type', label = 'Triṃśāṃśa',
-                choices = ['Parashari', 'Parivṛtti']
-            ), 
-            ui.input_select(
-                id = 'sastyamsa_type', label = 'Ṣaṣṭyāṃśa', 
-                choices = ['Parashari', 'Parashari reversed'], 
-                selected = 'Parashari reversed'
-            )
         )
     ),
     icon = icon_gear
@@ -217,31 +177,9 @@ def server(input, output, session):
         return crt.chart(swisseph_adaptor = swisseph_adaptor())
 
     @reactive.calc
-    def natal_divisional_choice():
-        base_divisional = input.natal_divisional()
-        divisional_type = (
-            '' if base_divisional in ['rasi', 'khavedamsa']
-            else input[base_divisional + '_type']()
-        )
-        divisional = divisional_map(
-            divisional = base_divisional, 
-            type = divisional_type
-        )
-        return {
-            'Choice': divisional, 
-            'Plot title': (
-                divisionals[base_divisional] 
-                if base_divisional in ['rasi', 'khavedamsa'] 
-                else ''.join([
-                    divisionals[base_divisional], ' (', divisional_type, ')'
-                ])
-            )
-        }
-
-    @reactive.calc
     def natal_divisional():
         return getattr(
-            natal_chart().divisionals, natal_divisional_choice()['Choice']
+            natal_chart().divisionals, input.natal_divisional()
         )
 
     @render.plot
@@ -249,7 +187,7 @@ def server(input, output, session):
         return natal_divisional().chart_plot(
             dark = input.dark_mode() == 'dark',
             style = input.chart_style(),
-            title = natal_divisional_choice()['Plot title']
+            title = divisional_choices_flat[input.natal_divisional()]
         )
 
     @render.data_frame
@@ -264,7 +202,7 @@ def server(input, output, session):
     def natal_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = natal_chart(),
-            divisional = natal_divisional_choice()['Choice'],
+            divisional = input.natal_divisional(),
             sub_dasa_level = int(input.natal_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.natal_dasa_offset_days(),
             trunc_intervals = True
@@ -313,42 +251,17 @@ def server(input, output, session):
             )
         )
         return crt.chart(**args)
-
-    @reactive.calc
-    def tājaka_divisional_choice():
-        base_divisional = input.tājaka_divisional()
-        divisional_type = (
-            '' if base_divisional in ['rasi', 'khavedamsa']
-            else input[base_divisional + '_type']()
-        )
-        divisional = divisional_map(
-            divisional = base_divisional, 
-            type = divisional_type
-        )
-        return {
-            'Choice': divisional, 
-            'Plot title': (
-                divisionals[base_divisional] 
-                if base_divisional in ['rasi', 'khavedamsa'] 
-                else ''.join([
-                    divisionals[base_divisional], ' (', divisional_type, ')'
-                ])
-            )
-        }
     
     @reactive.calc
     def tājaka_divisional():
-        return getattr(
-            tājaka_chart().divisionals, 
-            tājaka_divisional_choice()['Choice']
-        )
+        return getattr(tājaka_chart().divisionals, input.tājaka_divisional())
 
     @render.plot
     def tājaka_plot():
         return tājaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
             style = input.chart_style(),
-            title = tājaka_divisional_choice()['Plot title']
+            title = divisional_choices_flat[input.tājaka_divisional()]
         )
 
     @render.data_frame
@@ -369,7 +282,7 @@ def server(input, output, session):
     def tājaka_vimsottari_dasa():
         return vd.vimsottari_dasa(
             chart = tājaka_chart(),
-            divisional = tājaka_divisional_choice()['Choice'],
+            divisional = input.tājaka_divisional(),
             sub_dasa_level = int(input.tājaka_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.tājaka_dasa_offset_days(),
             trunc_intervals = True,
