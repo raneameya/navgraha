@@ -6,7 +6,7 @@ from core.chart.chart import chart
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 from core.sweadaptor.swisseph_reader import SwissEphReader
-from core.chart.chart_helpers import graha_nakshatra_traversal
+from core.chart.chart_helpers import graha_nakshatra_traversal, sun_rise_set
 
 @dataclass
 class Panchanga:
@@ -108,9 +108,9 @@ class Panchanga:
 
     def vara(self):
         birth = self.birth_chart.birth_event.dt
-        sunrise, sunset, sunrise_next = SwissEphReader(
-            se = self.birth_chart.swisseph_adaptor
-        ).sun_rise_set()
+        sunrise, sunset, sunrise_next = sun_rise_set(
+            birth_chart = self.birth_chart
+        )
         varas = {
             'Sunday': {'Name': 'Ravivāsara', 'Lord': 'Sūrya'},
             'Monday': {'Name': 'Somavāsara', 'Lord': 'Candra'},

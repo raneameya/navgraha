@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from core.chart.chart import chart
 from core.data.constants import rnp # lookup table to provide to class
+from core.sweadaptor.swisseph_reader import SwissEphReader
 
 def graha_nakshatra_traversal(
     birth_chart: chart, 
@@ -40,3 +43,8 @@ def graha_nakshatra_traversal(
         'Nakshatra_traversed'
     ].squeeze()
     return (nakshatra, nakshatra_lord, 1 - nakshatra_traversed)
+
+def sun_rise_set(birth_chart: chart) -> tuple[datetime, datetime, datetime]:
+    return SwissEphReader(
+        se = birth_chart.swisseph_adaptor
+    ).sun_rise_set()
