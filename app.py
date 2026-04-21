@@ -12,11 +12,12 @@ import core.chart.chart as crt
 from core.panchanga.panchanga import Panchanga
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
-from core.appui.icons import icon_gear
-from core.appui.custom_nav_panel import (
+from core.app.icons import icon_gear
+from core.app.custom_nav_panel import (
     custom_nav_panel, dasa_sub_levels
 )
-from core.appui.time_input import input_time
+from core.app.time_input import input_time
+from core.app.helper import dasa_offset_text
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
@@ -120,7 +121,7 @@ def server(input, output, session):
         place = place_selected.name.iloc[0]
         tz = place_selected.timezone.iloc[0]
         # Updating inputs for user feedback should be in isolate scope
-        # to avoid 
+        # to avoid unnecessary reactive triggering
         with reactive.isolate():
             ui.update_numeric('b_lon', value = lon)
             ui.update_numeric('b_lat', value = lat)
@@ -224,20 +225,7 @@ def server(input, output, session):
     @render.text
     def natal_dasa_offset_info():
         dasa_offset_days = natal_vimsottari_dasa().dasa_offset_days
-        if dasa_offset_days > 0:
-            direction = 'future'
-        elif dasa_offset_days < 0:
-            direction = 'past'
-        else:
-            direction = ''
-        if abs(dasa_offset_days) > 0:
-            dasa_shift_text = (
-                f'Daśās shifted in the {direction} by '
-                f'{abs(dasa_offset_days)} days'
-            )
-        else:
-            dasa_shift_text = ''
-        return dasa_shift_text
+        return dasa_offset_text(dasa_offset_days)
 
     @reactive.calc
     def tājaka_chart():
@@ -279,6 +267,7 @@ def server(input, output, session):
 
     @reactive.calc
     def tājaka_vimsottari_dasa():
+        req(input.tājaka_dasa_offset_days())
         return vd.vimsottari_dasa(
             chart = tājaka_chart(),
             divisional = input.tājaka_divisional(),
@@ -291,20 +280,7 @@ def server(input, output, session):
     @render.text
     def tājaka_dasa_offset_info():
         dasa_offset_days = tājaka_vimsottari_dasa().dasa_offset_days
-        if dasa_offset_days > 0:
-            direction = 'future'
-        elif dasa_offset_days < 0:
-            direction = 'past'
-        else:
-            direction = ''
-        if abs(dasa_offset_days) > 0:
-            dasa_shift_text = (
-                f'Daśās shifted in the {direction} by '
-                f'{abs(dasa_offset_days)} days'
-            )
-        else:
-            dasa_shift_text = ''
-        return dasa_shift_text
+        return dasa_offset_text(dasa_offset_days)
 
     @render.data_frame
     def tājaka_vimsottari_dasa_df():
