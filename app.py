@@ -9,10 +9,11 @@ from core.data.constants import (
 import core.misc.stdout_to_pd as std2pd
 import core.misc.misc_functions as mf
 import core.chart.chart as crt
+from core.chart.chart_helpers import sun_rise_set
 from core.panchanga.panchanga import Panchanga
 import core.dasas.vimsottari_dasa as vd
 import core.tajaka.sol_cross as sc
-from core.app.icons import icon_gear
+from core.app.icons import icon_gear, icon_om_calendar
 from core.app.custom_nav_panel import (
     custom_nav_panel, dasa_sub_levels
 )
@@ -195,7 +196,7 @@ def server(input, output, session):
         return natal_divisional().display_table
     
     @render.data_frame
-    def natal_panchanga():
+    def natal_panchanga_df():
         return Panchanga(birth_chart = natal_chart()).df()
 
     @reactive.calc
@@ -217,10 +218,37 @@ def server(input, output, session):
             filters = int(input.natal_vimsottari_dasa_sub_level()) > 0
         )
 
-    @render.text
+    @render.ui
     def natal_info():
         # To give user feedback about birth place & time selection
-        return str(birth_event())
+        return ui.div(
+            natal_chart().repr_str, 
+            ui.input_action_link(
+                id = 'natal_panchanga',
+                label = icon_om_calendar,
+                style = 'margin-left: 20px;'
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.natal_panchanga)
+    def natal_panchanga_modal():
+        m = ui.modal(
+            ui.output_data_frame(id = 'natal_panchanga_df'),
+            ui.output_text_verbatim(id = 'natal_sun_rise_set'),
+            title = 'Pañcāṅga', footer = None, easy_close = True
+        )
+        ui.modal_show(modal = m)
+    
+    @render.text
+    def natal_sun_rise_set():
+        sunrise, sunset, sunrise_next = sun_rise_set(
+            birth_chart = natal_chart()
+        )
+        return '\n'.join([
+            'Sunrise: ' + sunrise.strftime('%H:%M:%S (%d %b)'), 
+            'Sunset: ' + sunset.strftime('%H:%M:%S (%d %b)')
+        ])
 
     @render.text
     def natal_dasa_offset_info():
@@ -257,13 +285,40 @@ def server(input, output, session):
         return out
  
     @render.data_frame
-    def tājaka_panchanga():
+    def tājaka_panchanga_df():
         p = Panchanga(birth_chart = tājaka_chart())
         return p.df()
 
-    @render.text
+    @render.ui
     def tājaka_info():
-        return tājaka_chart().repr_str
+        return ui.div(
+            tājaka_chart().repr_str, 
+            ui.input_action_link(
+                id = 'tājaka_panchanga',
+                label = icon_om_calendar,
+                style = 'margin-left: 20px;'
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.tājaka_panchanga)
+    def tājaka_panchanga_modal():
+        m = ui.modal(
+            ui.output_data_frame(id = 'tājaka_panchanga_df'),
+            ui.output_text_verbatim(id = 'tājaka_sun_rise_set'),
+            title = 'Pañcāṅga', footer = None, easy_close = True
+        )
+        ui.modal_show(modal = m)
+    
+    @render.text
+    def tājaka_sun_rise_set():
+        sunrise, sunset, sunrise_next = sun_rise_set(
+            birth_chart = tājaka_chart()
+        )
+        return '\n'.join([
+            'Sunrise: ' + sunrise.strftime('%H:%M:%S (%d %b)'), 
+            'Sunset: ' + sunset.strftime('%H:%M:%S (%d %b)')
+        ])
 
     @reactive.calc
     def tājaka_vimsottari_dasa():

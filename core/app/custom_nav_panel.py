@@ -49,12 +49,12 @@ def custom_nav_panel(id: str):
     ) if id == 'tājaka' else select_divisional_ui
     nav_panel = ui.nav_panel(
         id.capitalize(),
-        ui.output_text(id = f'{id}_info'),
+        ui.output_ui(id = f'{id}_info'),
         custom_select_ui,
         ui.accordion(
             chart_ui,
             table_ui,
-            panchanga_ui,
+            # panchanga_ui,
             dasa_ui
         )
     )
