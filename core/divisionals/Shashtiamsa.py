@@ -109,7 +109,11 @@ def d60(birth_chart, type: str) -> chart_minimal:
             if natal_rasi % 2 == 1:  # odd → forward
                 return ((natal_rasi - 1 + amsa) % 12) + 1
             else:  # even → backward
-                return ((natal_rasi - 1 - amsa) % 12) + 1
+                # Typically, result is `((start_rasi - 1 - amsa) % 12) + 1`
+                # However, this doesn't match JHora's results. There's an 
+                # off by one relative to JHora's sign in ṣaṣṭyāṃśa (rev). 
+                # Thus, have corrected for it by subtracting 2 instead of 1.
+                return ((natal_rasi - 2 - amsa) % 12) + 1
     p['Sign'] = p.apply(
         lambda df: d60_progression(
             df['Natal sign'], df['Amsā'], type = type
