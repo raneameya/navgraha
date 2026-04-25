@@ -37,7 +37,7 @@ amsa_devatās = {
 
 def d27(birth_chart, type: str) -> chart_minimal:
     '''
-    Compute the nakṣatrāṃśa (D-40) of a birth chart
+    Compute the nakṣatrāṃśa (D-27) of a birth chart
     Args:
         birth_crt (chart): The base natal (D-1) chart.
     Returns:
@@ -48,7 +48,7 @@ def d27(birth_chart, type: str) -> chart_minimal:
     # Create a copy of sign in rasi. Used to classify whether graha in 
     # even/odd sign
     p['Natal sign'] = p['Sign']
-    # Which amsa is a planet in? (i.e. 0, 1, 2, 3, ..., 39)
+    # Which amsa is a planet in? (i.e. 0, 1, 2, 3, ..., 26)
     p['Amsā'] = p['Lon30'].apply(lambda x: int(x // (30 / d)))
     # How much has the planet progressed in the amsā?
     if type == 'Parashari':
