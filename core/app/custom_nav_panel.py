@@ -17,10 +17,6 @@ def custom_nav_panel(id: str):
         'Table',
         ui.output_data_frame(id = f'{id}_table')
     )
-    panchanga_ui = ui.accordion_panel(
-        'Pañcāṅga',
-        ui.output_data_frame(id = f'{id}_panchanga')
-    )
     dasa_ui = ui.accordion_panel(
         'Daśa',
         ui.row(
@@ -54,7 +50,6 @@ def custom_nav_panel(id: str):
         ui.accordion(
             chart_ui,
             table_ui,
-            # panchanga_ui,
             dasa_ui
         )
     )
