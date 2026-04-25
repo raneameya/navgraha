@@ -110,6 +110,10 @@ divisional_choices = {
         'vimsamsa_psr': 'Viṃśāṃśa (Parashari)',
         'vimsamsa_rev': 'Viṃśāṃśa (Parashari reversed)'
     }, 
+    'Nakṣatrāṃśa': {
+        'naksatramsa_psr': 'Nakṣatrāṃśa (Parashari)',
+        'naksatramsa_rev': 'Nakṣatrāṃśa (Parashari reversed)'
+    }, 
     'Triṃśāṃśa (D-30)': {
         'trimsamsa_psr': 'Triṃśāṃśa (Parashari)',
         'trimsamsa_prv': 'Triṃśāṃśa (Parivṛtti)'
