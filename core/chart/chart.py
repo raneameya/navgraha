@@ -5,7 +5,7 @@ from functools import cached_property
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
     Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Dvadasamsa, 
-    Vimsamsa, Nakshatramsa, Trimsamsa, Khavedamsa, Shashtiamsa
+    Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa, Khavedamsa, Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -36,7 +36,7 @@ class chart:
         self,
         dark: bool,
         style: str,
-        rasis: dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
+        rasis: dict = rasi_dict # dict map of house/sign num to unicode glyph
     ):
         '''
         Plots the chart. Strips the chart down to chart_minimal and plots it.
@@ -53,7 +53,8 @@ class chart:
 
 class _divisionals:
     '''
-    A class (in this instance, used as a namespace) to hold all divisional charts
+    A class (in this instance, used as a namespace) to hold
+    all divisional charts
     '''
     def __init__(self, parent_chart: chart):
         self.parent = parent_chart
@@ -154,6 +155,14 @@ class _divisionals:
     @cached_property
     def vimsamsa_rev(self):
         return Vimsamsa.d20(self.parent, type = 'Parashari reversed')
+
+    @cached_property
+    def siddhamsa_psr(self):
+        return Siddhamsa.d24(self.parent, type = 'Parashari')
+
+    @cached_property
+    def siddhamsa_rev(self):
+        return Siddhamsa.d24(self.parent, type = 'Parashari reversed')
 
     @cached_property
     def naksatramsa_psr(self):
