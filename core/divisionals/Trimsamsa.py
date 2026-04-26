@@ -89,8 +89,7 @@ def d30(birth_chart, type: str) -> chart_minimal:
                     amsa_devatas[d - df['Amsā']][0],
                     amsa_devatas[d - df['Amsā']][5]
                 )
-            ), 
-            axis = 1, result_type='expand'
+            ), axis = 1, result_type = 'expand'
         )
     elif type == 'Parivṛtti':
         # Currently using Parashari amsa devatas. Are they different for 
@@ -100,8 +99,7 @@ def d30(birth_chart, type: str) -> chart_minimal:
                 amsa_devatas[df['Amsā'] + 1][0]
                 if df['Natal sign'] % 2 == 1
                 else amsa_devatas[d - df['Amsā']][0]
-            ), 
-            axis = 1
+            ), axis = 1
         )
         def d30_progression(natal_rasi: int, amsa: int) -> int:
             start_rasi = 1 if natal_rasi % 2 == 1 else 7
