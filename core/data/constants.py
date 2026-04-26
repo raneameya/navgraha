@@ -106,6 +106,10 @@ divisional_choices = {
         'dasamsa_rev': 'Daśāṃśa (Parashari reversed)',
         'dasamsa_rev69': 'Daśāṃśa (Parashari reversed (6-9))',
     },
+    'Dvādaśāṃśa (D-12)': {
+        'dvadasamsa_psr': 'Dvādaśāṃśa (Parashari)',
+        'dvadasamsa_rev': 'Dvādaśāṃśa (Parashari reversed)'
+    },
     'Viṃśāṃśa (D-20)': {
         'vimsamsa_psr': 'Viṃśāṃśa (Parashari)',
         'vimsamsa_rev': 'Viṃśāṃśa (Parashari reversed)'

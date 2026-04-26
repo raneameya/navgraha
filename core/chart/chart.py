@@ -4,8 +4,8 @@ from functools import cached_property
 
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
-    Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Vimsamsa, 
-    Nakshatramsa, Trimsamsa, Khavedamsa, Shashtiamsa
+    Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Dvadasamsa, 
+    Vimsamsa, Nakshatramsa, Trimsamsa, Khavedamsa, Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -31,19 +31,19 @@ class chart:
 
     def __repr__(self):
         return self.repr_str
-    
+
     def chart_plot(
-        self, 
-        dark:bool, 
-        style:str, 
-        rasis:dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
+        self,
+        dark: bool,
+        style: str,
+        rasis: dict = rasi_dict # dict mapping house/sign number to unicode of that rasi
     ):
         '''
         Plots the chart. Strips the chart down to chart_minimal and plots it.
         Args:
             dark (bool): Set to true for dark mode friendly plotting
             style (str): Can be one of 'North Indian' or 'South Indian'
-            rasis (dict): Leave unchanged. By default imports a dictionary 
+            rasis (dict): Leave unchanged. By default imports a dictionary
                         mapping rasi to unicode glyph of that rasi
         Returns:
             A matplot figure
@@ -57,12 +57,12 @@ class _divisionals:
     '''
     def __init__(self, parent_chart: chart):
         self.parent = parent_chart
-    
+
     @cached_property
     def rasi(self):
         out = Rasi.d1(self.parent)
         return out
-    
+
     @cached_property
     def navamsa(self):
         return Navamsa.d9(self.parent)
@@ -86,19 +86,19 @@ class _divisionals:
     @cached_property
     def hora_jgn(self):
         return Hora.d2(self.parent, type = 'Jagannāth')
-    
+
     @cached_property
     def hora_ssp(self):
         return Hora.d2(self.parent, type = 'Samasaptaka')
-    
+
     @cached_property
     def hora_mdk(self):
         return Hora.d2(self.parent, type = 'Maṇḍūka')
-    
+
     @cached_property
     def hora_lmk(self):
         return Hora.d2(self.parent, type = 'Lābha maṇḍūka')
-    
+
     @cached_property
     def drekkana_psr(self):
         return Drekkana.d3(self.parent, type = 'Parashari')
@@ -140,6 +140,14 @@ class _divisionals:
         return Dasamsa.d10(self.parent, type = 'Parashari reversed (6-9)')
 
     @cached_property
+    def dvadasamsa_psr(self):
+        return Dvadasamsa.d12(self.parent, type = 'Parashari')
+
+    @cached_property
+    def dvadasamsa_rev(self):
+        return Dvadasamsa.d12(self.parent, type = 'Parashari reversed')
+
+    @cached_property
     def vimsamsa_psr(self):
         return Vimsamsa.d20(self.parent, type = 'Parashari')
 
@@ -162,7 +170,7 @@ class _divisionals:
     @cached_property
     def trimsamsa_prv(self):
         return Trimsamsa.d30(self.parent, type = 'Parivṛtti')
-    
+
     @cached_property
     def khavedamsa(self):
         return Khavedamsa.d40(self.parent)
