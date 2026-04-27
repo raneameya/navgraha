@@ -6,7 +6,7 @@ from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
     Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Dvadasamsa, 
     Sodasamsa, Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa, Khavedamsa, 
-    Shashtiamsa
+    Aksavedamsa, Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -191,6 +191,10 @@ class _divisionals:
     @cached_property
     def khavedamsa(self):
         return Khavedamsa.d40(self.parent)
+
+    @cached_property
+    def aksavedamsa(self):
+        return Aksavedamsa.d45(self.parent)
 
     @cached_property
     def sastyamsa_psr(self):

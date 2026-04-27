@@ -131,6 +131,7 @@ divisional_choices = {
         'trimsamsa_prv': 'Triṃśāṃśa (Parivṛtti)'
     },
     'Khavēdāṃśa (D-40)': {'khavedamsa': 'Khavēdāṃśa'},
+    'Akṣavedāṃśa (D-45)': {'aksavedamsa': 'Akṣavedāṃśa'},
     'Ṣaṣṭyāṃśa (D-60)': {
         'sastyamsa_psr': 'Ṣaṣṭyāṃśa (Parashari)',
         'sastyamsa_rev': 'Ṣaṣṭyāṃśa (Parashari reversed)'
