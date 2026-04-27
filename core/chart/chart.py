@@ -5,7 +5,8 @@ from functools import cached_property
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
     Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Dvadasamsa, 
-    Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa, Khavedamsa, Shashtiamsa
+    Sodasamsa, Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa, Khavedamsa, 
+    Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -61,8 +62,7 @@ class _divisionals:
 
     @cached_property
     def rasi(self):
-        out = Rasi.d1(self.parent)
-        return out
+        return Rasi.d1(self.parent)
 
     @cached_property
     def navamsa(self):
@@ -147,6 +147,14 @@ class _divisionals:
     @cached_property
     def dvadasamsa_rev(self):
         return Dvadasamsa.d12(self.parent, type = 'Parashari reversed')
+
+    @cached_property
+    def sodasamsa_psr(self):
+        return Sodasamsa.d16(self.parent, type = 'Parashari')
+
+    @cached_property
+    def sodasamsa_rev(self):
+        return Sodasamsa.d16(self.parent, type = 'Parashari reversed')
 
     @cached_property
     def vimsamsa_psr(self):
