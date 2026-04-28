@@ -101,6 +101,11 @@ divisional_choices = {
         'chathurtamsa_psr': 'Caturthāṁśa (Parashari)',
         'chathurtamsa_prv': 'Caturthāṁśa (Parivṛtti)'
     },
+    'Saptāṃśa (D-7)': {
+        'saptamsa_psr': 'Saptāṃśa (Parashari)',
+        'saptamsa_rev17': 'Saptāṃśa (Parashari reversed (1-7))',
+        'saptamsa_rev71': 'Saptāṃśa (Parashari reversed (7-1))'
+    }, 
     'Daśāṃśa (D-10)': {
         'dasamsa_psr': 'Daśāṃśa (Parashari)',
         'dasamsa_rev': 'Daśāṃśa (Parashari reversed)',

@@ -4,9 +4,9 @@ from functools import cached_property
 
 from core.chart.chart_plot_constants import rasi_dict
 from core.divisionals import (
-    Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Dasamsa, Dvadasamsa, 
-    Sodasamsa, Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa, Khavedamsa, 
-    Aksavedamsa, Shashtiamsa
+    Rasi, Navamsa, Hora, Drekkana, Chathurtamsa, Saptamsa, Dasamsa,
+    Dvadasamsa, Sodasamsa, Vimsamsa, Siddhamsa, Nakshatramsa, Trimsamsa,
+    Khavedamsa, Aksavedamsa, Shashtiamsa
 )
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
@@ -127,6 +127,18 @@ class _divisionals:
     @cached_property
     def chathurtamsa_prv(self):
         return Chathurtamsa.d4(self.parent, type = 'Parivṛtti')
+
+    @cached_property
+    def saptamsa_psr(self):
+        return Saptamsa.d7(self.parent, type = 'Parashari')
+
+    @cached_property
+    def saptamsa_rev17(self):
+        return Saptamsa.d7(self.parent, type = 'Parashari reversed (1-7)')
+
+    @cached_property
+    def saptamsa_rev71(self):
+        return Saptamsa.d7(self.parent, type = 'Parashari reversed (7-1)')
 
     @cached_property
     def dasamsa_psr(self):
