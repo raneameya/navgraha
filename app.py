@@ -6,13 +6,13 @@ from shiny import App, ui, render, req, reactive
 from core.data.constants import (
     rnp, ayanamsas, yr_len, divisional_choices
 )
-import core.misc.stdout_to_pd as std2pd
-import core.misc.misc_functions as mf
-import core.chart.chart as crt
+from core.misc.stdout_to_pd import read_stdout
+from core.misc.misc_functions import chart_kwargs, parse_time
+from core.chart.chart import chart
 from core.chart.chart_helpers import sun_rise_set
 from core.panchanga.panchanga import Panchanga
-import core.dasas.vimsottari_dasa as vd
-import core.tajaka.sol_cross as sc
+from core.dasas.vimsottari_dasa import vimsottari_dasa
+from core.tajaka.sol_cross import sol_cross
 from core.app.icons import icon_gear, icon_om_calendar
 from core.app.custom_nav_panel import (
     custom_nav_panel, dasa_sub_levels
@@ -92,7 +92,7 @@ def server(input, output, session):
             'country code', 'elevation', 'population', 'timezone'
         ]
         # Providing column names makes it ignore column names present in file
-        places = std2pd.read_stdout(
+        places = read_stdout(
             cmd = cmd, reader = 'csv', sep = '\t', col_names = colnames
         )
         places.sort_values(
@@ -138,7 +138,7 @@ def server(input, output, session):
         # Default to today unless date is valid
         b_date = input.b_date() or datetime.today()
         # Get hr, min, sec from time input which is text
-        b_hr, b_mi, b_sc = mf.parse_time(input.b_time())
+        b_hr, b_mi, b_sc = parse_time(input.b_time())
         # Don't take a reactive dependency on place input
         with reactive.isolate():
             place = input.b_place()
@@ -175,7 +175,7 @@ def server(input, output, session):
         '''
         Return a chart object that can be reused across the app
         '''
-        return crt.chart(swisseph_adaptor = swisseph_adaptor())
+        return chart(swisseph_adaptor = swisseph_adaptor())
 
     @reactive.calc
     def natal_divisional():
@@ -201,7 +201,7 @@ def server(input, output, session):
 
     @reactive.calc
     def natal_vimsottari_dasa():
-        return vd.vimsottari_dasa(
+        return vimsottari_dasa(
             chart = natal_chart(),
             divisional = input.natal_divisional(),
             sub_dasa_level = int(input.natal_vimsottari_dasa_sub_level()),
@@ -257,15 +257,15 @@ def server(input, output, session):
 
     @reactive.calc
     def tājaka_chart():
-        args = mf.chart_kwargs(
+        args = chart_kwargs(
             chart = natal_chart(),
-            dt = sc.sol_cross(
+            dt = sol_cross(
                 yr = int(input.tājaka_year()),
                 birth_crt = natal_chart(),
                 tropical = True
             )
         )
-        return crt.chart(**args)
+        return chart(**args)
     
     @reactive.calc
     def tājaka_divisional():
@@ -322,8 +322,7 @@ def server(input, output, session):
 
     @reactive.calc
     def tājaka_vimsottari_dasa():
-        req(input.tājaka_dasa_offset_days())
-        return vd.vimsottari_dasa(
+        return vimsottari_dasa(
             chart = tājaka_chart(),
             divisional = input.tājaka_divisional(),
             sub_dasa_level = int(input.tājaka_vimsottari_dasa_sub_level()),
