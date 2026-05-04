@@ -91,6 +91,9 @@ def server(input, output, session):
             'geonameid', 'name', 'asciiname', 'latitude', 'longitude',
             'country code', 'elevation', 'population', 'timezone'
         ]
+        colnames_ord = [
+            'asciiname', 'country code', 'latitude', 'longitude', 'timezone'
+        ]
         # Providing column names makes it ignore column names present in file
         places = read_stdout(
             cmd = cmd, reader = 'csv', sep = '\t', col_names = colnames
@@ -98,7 +101,7 @@ def server(input, output, session):
         places.sort_values(
             by = ['population'], ascending = False, inplace = True
         )
-        return render.DataGrid(places, selection_mode = 'rows')
+        return render.DataGrid(places[colnames_ord], selection_mode = 'rows')
 
     @reactive.effect
     @reactive.event(input.search_place)
@@ -119,7 +122,7 @@ def server(input, output, session):
         req(not place_selected.empty)
         lon = place_selected.longitude.iloc[0]
         lat = place_selected.latitude.iloc[0]
-        place = place_selected.name.iloc[0]
+        place = place_selected.asciiname.iloc[0]
         tz = place_selected.timezone.iloc[0]
         # Updating inputs for user feedback should be in isolate scope
         # to avoid unnecessary reactive triggering
@@ -366,19 +369,19 @@ def server(input, output, session):
             ui.input_text(
                 id = 'b_place',
                 label = 'Place',
-                value = 'Auckland'
+                value = 'Glenorchy'
             ),
             ui.input_numeric(
                 id = 'b_lon',
                 label = 'Longitude',
-                value = 174.74304,
+                value = 168.38664,
                 min = -180,
                 max = 180
             ),
             ui.input_numeric(
                 id = 'b_lat',
                 label = 'Latitude',
-                value = -36.85582,
+                value = -44.85036,
                 min = -90,
                 max = 90
             ),
