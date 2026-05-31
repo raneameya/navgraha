@@ -20,13 +20,13 @@ example_chart1 = chart(
         ephemeris_path = 'ephe'
     )
 )
-# 6 planet (+ BB) stellium in lagna
+# 6 planet (+ BB) stellium in 6H
 example_chart2 = chart(
     swisseph_adaptor = SwissEphAdaptor(
         base_path = './swisseph-master/',
         binary = 'swetest', 
         birth_event = BirthEvent(
-            dt = datetime(2025, 3, 29, 8, 22, 0, tzinfo = ZoneInfo('Pacific/Auckland')), 
+            dt = datetime(2025, 3, 29, 20, 22, 0, tzinfo = ZoneInfo('Pacific/Auckland')), 
             latitude = -36.85582, longitude = 174.74304, z_height = 0, 
             place = 'Auckland'
         ),
@@ -175,6 +175,22 @@ example_chart11 = chart(
             place = 'Auckland'
         ),
         ayanamsa = 'True Citra',
+        house = 'W',
+        output_cols = 'TPlLsBj',
+        ephemeris_path = 'ephe'
+    )
+)
+# 6 planet (+ BB) stellium in lagna
+example_chart12 = chart(
+    swisseph_adaptor = SwissEphAdaptor(
+        base_path = './swisseph-master/',
+        binary = 'swetest', 
+        birth_event = BirthEvent(
+            dt = datetime(2025, 3, 29, 8, 22, 0, tzinfo = ZoneInfo('Pacific/Auckland')), 
+            latitude = -36.85582, longitude = 174.74304, z_height = 0, 
+            place = 'Auckland'
+        ),
+        ayanamsa = 'True Pushya (PVRN Rao)',
         house = 'W',
         output_cols = 'TPlLsBj',
         ephemeris_path = 'ephe'
