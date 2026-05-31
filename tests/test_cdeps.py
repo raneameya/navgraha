@@ -14,6 +14,9 @@ charts_to_test = [
 ]
 tol = 1e-7
 
+# Tests whether the implementations in /core/cdeps/swe_simple.c match the 
+# results from an equivalent swetest call.
+
 class TestCustomSWE(unittest.TestCase):
 
     def check_chart_positions(self, crt):
@@ -35,7 +38,10 @@ class TestCustomSWE(unittest.TestCase):
         # Clean, sort, and isolate the columns you want to compare
         df1 = swetest_df.set_index('Graha').sort_index()[['Lon', 'Speed']]
         df2 = cfun_df.set_index('Graha').sort_index()[['Lon', 'Speed']]
-        print(pd.merge(df1, df2, on = 'Graha'))
+        merged = pd.merge(df1, df2, on = 'Graha', suffixes = ('_swe', '_c'))
+        merged['Lon_abs_diff'] = abs(merged['Lon_swe'] - merged['Lon_c'])
+        merged['Speed_abs_diff'] = abs(merged['Speed_swe'] - merged['Speed_c'])
+        print(merged)
         # Assert equality within tolerance
         tm.assert_frame_equal(df1, df2, atol = tol, check_exact = False)
 
