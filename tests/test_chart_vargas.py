@@ -27,6 +27,42 @@ class TestVargaCalculations(unittest.TestCase):
                     'example_2_jh_4.txt', 'example_2_jh_5.txt', 'example_2_jh_6.txt',
                     'example_2_jh_7.txt'
                 ]
+            },
+            {
+                'name': 'Example Chart 3',
+                'chart_obj': example_chart3,
+                'filenames': [
+                    'example_3_jh_1.txt', 'example_3_jh_2.txt', 'example_3_jh_3.txt',
+                    'example_3_jh_4.txt', 'example_3_jh_5.txt', 'example_3_jh_6.txt',
+                    'example_3_jh_7.txt'
+                ]
+            },
+            {
+                'name': 'Example Chart 4',
+                'chart_obj': example_chart4,
+                'filenames': [
+                    'example_4_jh_1.txt', 'example_4_jh_2.txt', 'example_4_jh_3.txt',
+                    'example_4_jh_4.txt', 'example_4_jh_5.txt', 'example_4_jh_6.txt',
+                    'example_4_jh_7.txt'
+                ]
+            },
+            {
+                'name': 'Example Chart 5',
+                'chart_obj': example_chart5,
+                'filenames': [
+                    'example_5_jh_1.txt', 'example_5_jh_2.txt', 'example_5_jh_3.txt',
+                    'example_5_jh_4.txt', 'example_5_jh_5.txt', 'example_5_jh_6.txt',
+                    'example_5_jh_7.txt'
+                ]
+            },
+            {
+                'name': 'Example Chart 6',
+                'chart_obj': example_chart6,
+                'filenames': [
+                    'example_6_jh_1.txt', 'example_6_jh_2.txt', 'example_6_jh_3.txt',
+                    'example_6_jh_4.txt', 'example_6_jh_5.txt', 'example_6_jh_6.txt',
+                    'example_6_jh_7.txt'
+                ]
             }
         ]
 
