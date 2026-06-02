@@ -12,7 +12,6 @@ import core.misc.stdout_to_pd as sp
 @dataclass
 class SwissEphReader:
     se: SwissEphAdaptor
-    post_process: str = None
 
     @staticmethod
     def str_to_date(datetime_str, tzi):
@@ -42,14 +41,13 @@ class SwissEphReader:
             self.se.no_header_arg() | 
             self.se.output_cols_arg()
         )
-        args = ' '.join([v for k, v in args.items()])
-        final_call = bin_call + ' ' + args + self.post_process
+        args = [bin_call] + [v for k, v in args.items() if v]
         colnames = [
             'Date', 'Time', 'tz', 'Graha', 'Lon', 'Lon°', 'Speed',
             'Lat°', 'House'
         ]
         p = sp.read_stdout(
-            cmd = final_call, reader = 'table', sep = r'\s+', 
+            cmd = args, reader = 'fixed_width', sep = None, 
             col_names = colnames
         )
         return p
@@ -73,23 +71,16 @@ class SwissEphReader:
             'ephemeris_path', 'birth_date', 'geopos', 'no_header_info', 
             'num_rows', 'sunrise_flag', 'sunrise_definition'
         ]
-        args = {k: args[k] for k in args_needed}
-        args = ' '.join([v for k, v in args.items()])
-        # Does a cut version of this exists?
-        post_process = (
-            self.post_process or 
-            ' | awk -v FS=\' \' \'{print $5, $3, $6}\''
-        )
-        final_call = bin_call + ' ' + args + post_process
-        cmd_run = run(
-            final_call, capture_output = True, text = True, check = True, 
-            shell = True
-        )
-        colnames = ['Date', 'Rise time', 'Set time']
+        args = [bin_call] + [args[k] for k in args_needed if args[k]]
+        colnames = [
+            'Rise', 'Date-1', 'Rise time', 'Set', 'Date', 
+            'Set time', 'Day time'
+        ]
         out = sp.read_stdout(
-            cmd = final_call, reader = 'table', sep = r'\s+', 
+            cmd = args, reader = 'fixed_width', sep = None, 
             col_names = colnames
-        )[1:]
+        )
+        out = out.iloc[1:, [4, 2, 5]]
         out['Rise time'] = out.apply(
             lambda df: df['Date'] + ' ' + df['Rise time'], axis = 1
         ).apply(
@@ -142,18 +133,13 @@ class SwissEphReader:
             'no_header_info', 'planets_poi', 'planets_pod', 'num_rows', 
             'time_delta_arg', 'output_cols'
         ]
-        args = {k: args[k] for k in args_needed}
-        post_process = (
-            self.post_process 
-            or ' | awk -v FS=\' \' \'{print $1, $2, $3, $5}\''
-        )
-        args = ' '.join([v for k, v in args.items()])
-        final_call = bin_call + ' ' + args + post_process
-        colnames = ['P1-P2', 'Date', 'Time', 'Angular difference']
+        args = [bin_call] + [args[k] for k in args_needed if args[k]]
+        colnames = ['P1-P2', 'Date', 'Time', 'Timezone', 'Angular difference']
         p = sp.read_stdout(
-            cmd = final_call, reader = 'table', sep = r'\s+', 
+            cmd = args, reader = 'table', sep = r'\s+', 
             col_names = colnames
         )
+        p = p.iloc[:, [0, 1, 2, 4]]
         p['Datetime'] = p.apply(lambda df: self.str_to_date(
             datetime_str = df['Date'] + ' ' + df['Time'], 
             tzi = self.se.birth_event.dt.tzinfo

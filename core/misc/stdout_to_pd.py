@@ -19,11 +19,12 @@ def read_stdout(
         pd.DataFrame: A pandas dataframe with the contents of stdout
     '''
     cmd_run = run(
-        cmd, capture_output = True, text = True, check = True, shell = True
+        cmd, capture_output = True, text = True, check = True, shell = False
     )
     reader_map = {
         'table': pd.read_table,
-        'csv': pd.read_csv
+        'csv': pd.read_csv,
+        'fixed_width': pd.read_fwf
     }
     if reader not in reader_map:
         raise ValueError(f'Unsupported reader type: {reader}')
