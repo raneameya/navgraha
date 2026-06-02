@@ -90,7 +90,7 @@ example_chart6 = chart(
         base_path = './swisseph-master/',
         binary = 'swetest', 
         birth_event = BirthEvent(
-            dt = datetime(2021, 2, 19, 1, 22, 0, tzinfo = ZoneInfo('America/Los_Angeles')), 
+            dt = datetime(2021, 2, 21, 22, 22, 0, tzinfo = ZoneInfo('Pacific/Auckland')), 
             latitude = -36.85582, longitude = 174.74304, z_height = 0, 
             place = 'Auckland'
         ),
