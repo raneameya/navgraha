@@ -114,7 +114,7 @@ class chart_minimal:
                 # List of grahas in bhava_i
                 grahas_i = [g for g in grahas if grahas[g][house_or_sign] == i]
                 # Add grahas to bhava_i
-                if grahas_i is not []:
+                if grahas_i:
                     num_grahas_in_house = len(grahas_i)
                     for g_num, g in enumerate(grahas_i):
                         # Style text for graha
@@ -123,8 +123,7 @@ class chart_minimal:
                         deg_txt = f'''{round(grahas[g]['Lon'] % 30, 1):.1f}'''
                         if grahas[g]['Speed'] >= 0:
                             # Doubly subscripted text indicating degrees
-                            txt = (r'$\mathrm{' + g_txt 
-                            + r'_{_{' + deg_txt + r'}}}$')
+                            txt = rf'$\mathrm{{{g_txt}_{{_{{{deg_txt}}}}}}}$'
                         else:
                             # Overbar for retro graha
                             txt = (r'$\overline{\mathrm{' 
@@ -140,8 +139,8 @@ class chart_minimal:
                             horizontalalignment = 'center', 
                             verticalalignment = 'center'
                         )
-            ax.set_xlim(0, 4)
-            ax.set_ylim(0, 4)
+            ax.set_xlim(-0.05, 4.05)
+            ax.set_ylim(-0.05, 4.05)
             fig.set_facecolor(bgcolour)
             plt.axis('off')
             plt.title(title, color = writecolour)
