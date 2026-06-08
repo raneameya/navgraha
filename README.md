@@ -30,6 +30,13 @@ Easy on the eyes.
 ## Setup and use
 I have tested on Linux based servers, but shouldn't be too hard to port to other OSes. 
 The only nootable dependency is `rg` (ripgrep). Please ensure it is installed before running the [setup](./setups/setup.sh).
+* Install ripgrep (varies based on distro)
+    - Debian based: sudo apt update && sudo apt install ripgrep
+    - Fedora based: sudo dnf install ripgrep
+    - Arch  based: sudo pacman -S ripgrep
+    - openSUSE: sudo zypper install ripgrep
+* Make [setup.sh](./setups/setup.sh) executable and run it. For your peace of mind, **please be convinced that the script does not do antyhing nefarious**!
+* On any device connected to the same network as the server, navigate to server_ip:8888.(You can get your server ip by running `ip addr` in the terminal on the server.)
 
 ## Supported Platforms
 
