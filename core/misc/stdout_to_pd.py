@@ -9,12 +9,13 @@ def read_stdout(
     Run a shell command, read the stdout and return it as a pandas dataframe.
 
     Args:
-        cmd (str): a shell command to run. Since this is not exposed to users, this should be fine.
+        cmd (str): a shell command to run. Since this is not exposed to 
+            users, this should be fine.
         reader (str): One of 'table' or 'csv' depending on stdout
         sep (str): Column separator to be used to read contents of stdout
-        col_names (list[str]): A list of column names to assign to the resulting
-            DataFrame
-    
+        col_names (list[str]): A list of column names to assign to the 
+            resulting DataFrame.
+
     Returns:
         pd.DataFrame: A pandas dataframe with the contents of stdout
     '''

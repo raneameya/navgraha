@@ -1,10 +1,12 @@
 from datetime import datetime, time
 from zoneinfo import ZoneInfo
+from subprocess import CalledProcessError
 
 from shiny import App, ui, render, req, reactive
+from pandas import DataFrame
 
 from core.data.constants import (
-    rnp, ayanamsas, yr_len, divisional_choices
+    ayanamsas, divisional_choices
 )
 from core.misc.stdout_to_pd import read_stdout
 from core.misc.misc_functions import chart_kwargs, parse_time
@@ -22,6 +24,7 @@ from core.app.helper import dasa_offset_text
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
+# Default time of now for chart initialisation
 now = datetime.now()
 
 divisional_choices_flat = {
@@ -50,7 +53,7 @@ settings_ui = ui.nav_panel(
             )
         ),
         ui.accordion_panel(
-            'Constants'
+            'Not yet added'
         )
     ),
     icon = icon_gear
@@ -85,8 +88,7 @@ def server(input, output, session):
     @reactive.event(input.search_place)
     def filtered_places():
         # Filter file for only matches to entered birth place
-        cmd = ['rg', '-i', input.b_place(), 'places.txt']
-        # Column names as reference. Not used as explained below
+        cmd = ['rg', '-i', input.b_place().strip(), 'places.txt']
         colnames = [
             'geonameid', 'name', 'asciiname', 'latitude', 'longitude',
             'country code', 'elevation', 'population', 'timezone'
@@ -94,14 +96,23 @@ def server(input, output, session):
         colnames_ord = [
             'asciiname', 'country code', 'latitude', 'longitude', 'timezone'
         ]
-        # Providing column names makes it ignore column names present in file
-        places = read_stdout(
-            cmd = cmd, reader = 'csv', sep = '\t', col_names = colnames
-        )
-        places.sort_values(
-            by = ['population'], ascending = False, inplace = True
-        )
-        return render.DataGrid(places[colnames_ord], selection_mode = 'rows')
+        try:
+            places = read_stdout(
+                cmd = cmd, reader = 'csv', sep = '\t', col_names = colnames
+            )
+            places.sort_values(
+                by = ['population'], ascending = False, inplace = True
+            )
+            return render.DataGrid(
+                places[colnames_ord], selection_mode = 'rows'
+            )
+        except CalledProcessError as cpe:
+            error_msg = (
+                f'{input.b_place()} not found in place list. '
+                f'Please enter coordinates & timezone manually'
+            )
+            ui.notification_show(error_msg, type = 'error', duration = 3)
+            return render.DataGrid(DataFrame(columns = colnames_ord))
 
     @reactive.effect
     @reactive.event(input.search_place)
@@ -120,17 +131,16 @@ def server(input, output, session):
     def update_birth_data_selected():
         place_selected = filtered_places.data_view(selected = True)
         req(not place_selected.empty)
-        lon = place_selected.longitude.iloc[0]
-        lat = place_selected.latitude.iloc[0]
-        place = place_selected.asciiname.iloc[0]
-        tz = place_selected.timezone.iloc[0]
+        lon, lat, place, tz = tuple(place_selected[
+            ['longitude', 'latitude', 'asciiname', 'timezone']
+        ].iloc[0])
         # Updating inputs for user feedback should be in isolate scope
         # to avoid unnecessary reactive triggering
         with reactive.isolate():
-            ui.update_numeric('b_lon', value = lon)
-            ui.update_numeric('b_lat', value = lat)
-            ui.update_text('b_tz', value = tz)
-            ui.update_text('b_place', value = place)
+            ui.update_numeric(id = 'b_lon', value = lon)
+            ui.update_numeric(id = 'b_lat', value = lat)
+            ui.update_text(id = 'b_tz', value = tz)
+            ui.update_text(id = 'b_place', value = place)
             # Close the place search modal user clicks on row
             ui.modal_remove()
             # Close sidebar when user selects place
@@ -197,7 +207,7 @@ def server(input, output, session):
     @render.data_frame
     def natal_table():
         return natal_divisional().display_table
-    
+
     @render.data_frame
     def natal_panchanga_df():
         return Panchanga(birth_chart = natal_chart()).df()
@@ -242,7 +252,7 @@ def server(input, output, session):
             title = 'Pañcāṅga', footer = None, easy_close = True
         )
         ui.modal_show(modal = m)
-    
+
     @render.text
     def natal_sun_rise_set():
         sunrise, sunset, sunrise_next = sun_rise_set(
@@ -269,7 +279,7 @@ def server(input, output, session):
             )
         )
         return chart(**args)
-    
+
     @reactive.calc
     def tājaka_divisional():
         return getattr(tājaka_chart().divisionals, input.tājaka_divisional())
@@ -312,7 +322,7 @@ def server(input, output, session):
             title = 'Pañcāṅga', footer = None, easy_close = True
         )
         ui.modal_show(modal = m)
-    
+
     @render.text
     def tājaka_sun_rise_set():
         sunrise, sunset, sunrise_next = sun_rise_set(
