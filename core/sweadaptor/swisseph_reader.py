@@ -74,7 +74,7 @@ class SwissEphReader:
         args = [bin_call] + [args[k] for k in args_needed if args[k]]
         colnames = [
             'Rise', 'Date-1', 'Rise time', 'Set', 'Date', 
-            'Set time', 'Day time'
+            'Set time', 'DT', 'Equal sign', 'Day length'
         ]
         out = sp.read_stdout(
             cmd = args, reader = 'fixed_width', sep = None, 
