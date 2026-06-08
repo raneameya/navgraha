@@ -1,64 +1,64 @@
-## Chart now
-A Python Shiny app to check planetary positions.
+# Navgraha
 
-# Features
-* Basic info of main grahas:
-    - Longitude°
-    - Speed
-    - Nakshatra (& lord)
-    - Pada
-    - Pushkaramsa
-* Pañcāṅga including sunrise and sunset for birthday
-* Divisional charts
-    - Rāśi
-    - Navāṁśa
-    - Horā
-        - Parāśari
-        - Uma Shambhu
-        - Parivṛtti
-        - Kāśīnāth
-        - Jagannāth
-        - Samasaptaka
-        - Maṇḍūka
-        - Lābha maṇḍūka
-        - TODO:Raman
-        - TODO:Nirañjana
-    - Drekkāṇa
-        - Parāśari
-        - Uma Shambhu
-        - Parivṛtti
-        - Jagannāth
-        - Somanāth
-    - Caturthāṁśa
-        - Parāśari
-        - Parivṛtti
-    - Daśāṁśa
-        - Parāśari
-        - Parāśari, even sign reversed
-        - Parāśari, even sign reversed (6-9)
-    - Dvādaśāṁśa
-    - Viṁśāṁśa
-        - Parāśari
-        - Parāśari, even sign reversed
-    - Siddhāṃśa
-        - Parāśari
-        - Parāśari, even sign reversed
-    - Nakṣatrāṃśa
-        - Parāśari
-        - Parāśari, even sign reversed
-    - Triṁśāṁśa
-        - Parāśari
-        - Parivṛtti
-    - Khavēdāṃśa
-    - Ṣaṣṭyāṃśa
-        - Parāśari
-        - Parāśari, even sign reversed
-* Vimsottari dasa (up to 5 sublevels)
-    - Up to 5 levels deep
-    - Dasa dates respond to choice of divisional chart
-    - Dasas also available for tajaka charts
-* Tajaka for a given birth chart
-* Switch between all ayanamsas made available by swiss ephemeris
-* North & South Indian style charts
-* Dark mode is easy on the eyes
-* Define constants like length of year, length of vimsottari dasa etc. on the fly
+A vedic astrology service, built with a focus on speed and accessibility. Installing the service once means many clients (devices) can access the app without the need to install anything on their devices, as long as they have a browser.
+
+<img src="./screenshots/app.png" alt="Description" height="600">
+
+## About the Project
+
+Navgraha was created to provide practicing astrologers, students, and enthusiasts with an elegant, ad-free, and streamlined interface that operates flawlessly across all devices—without relying on legacy software or web tools cluttered with advertisements.
+
+The engine supports some custom calculation parameters, including your choice of ayanāṃśa, variations of vargas, and temporal variations in tājaka calculations.
+
+## Features
+
+### Ṣoḍaśavargas
+Generate and dynamically explore all sixteen classical divisional charts (*vargas*) derived from the primary *Rāśi* chart.
+
+### Viṃśottarī daśā, varga based
+Some schools of thought assume bodies (planets) in vargas have only signs and no degrees. However, allowing for degrees to be assigned to planets unlocks the ability to access varga based dasas which can improve predictive accuracy.
+
+### Annual tājaka charts
+Unlock varṣaphala (solar return) insights using updated tājaka principles (thank you Shri PVR Narasimha Rao) for targeted yearly predictive analysis.
+
+### Pañcāṅga
+Real-time, location-based calculation of the five essential daily temporal markers.
+
+### Dark mode
+Easy on the eyes.
+
+## Setup and use
+I have tested on Linux based servers, but shouldn't be too hard to port to other OSes. 
+The only nootable dependency is `rg` (ripgrep). Please ensure it is installed before running the [setup](./setups/setup.sh).
+
+## Supported Platforms
+
+Any device with access to a reasonably modern browser can access Navgraha.
+
+* **Desktop:** Native layout optimization for most modern broswers.
+* **Mobile & Tablet:** Fully touch-optimized, responsive viewport adjusting seamlessly to small-form factor screens.
+* **PWA Capability:** Can be pinned to home screens for an app-like standalone experience.
+
+## Future Plans
+Active development is ongoing, although I develop in my spare time. Upcoming releases intend to introduce:
+* Create docker/podman images for portability
+* Ability to change seed of viṃśottarī daśā
+* Navtara tables
+
+## Acknowledgements
+This project wouldn't have been possible without the building blocks provided by many learned and kind souls. In no particular order, special thanks to the following:
+
+### [Shri PVR Narasimha Rao](https://vedicastrologer.org/)
+I learnt a lot from his videos, books & JHora. Many of the varga variations in JHora are included here.
+
+### [Swiss Ephemeris](https://www.astro.com/swisseph/swepha_e.htm)
+These ephemeris files form the basis of being able to access the historical & future longitidues of bodies.
+
+### [Ripgrep](https://ripgrep.org/)
+Sped up place lookups for greater responsiveness.
+
+### Python & the Shiny framework
+The actual app is built in Python.
+
+## License
+See the [LICENSE](LICENSE) file for details.
