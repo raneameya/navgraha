@@ -39,21 +39,22 @@ settings_ui = ui.nav_panel(
     '',
     ui.accordion(
         ui.accordion_panel(
-            'Preferences',
+            'Visual',
             ui.input_select(
-                id = 'b_ayanamsa',
-                label = 'Ayanāṁśa',
-                choices = ayanamsas, 
-                selected = 'True Pushya (PVRN Rao)'
-            ),
-            ui.input_select(
-                id = 'chart_style',
-                label = 'Chart style',
+                id = 'chart_style', label = 'Chart style',
                 choices = ['South Indian', 'North Indian']
             )
         ),
         ui.accordion_panel(
-            'Not yet added'
+            'Calculation',
+            ui.input_select(
+                id = 'b_ayanamsa', label = 'Ayanāṁśa',
+                choices = ayanamsas, selected = 'True Pushya (PVRN Rao)'
+            ),
+            ui.input_radio_buttons(
+                id = 'tājaka_return_type', label = 'Tājaka return type',
+                choices = ['Tropical', 'Sidereal'], inline = True
+            )
         )
     ),
     icon = icon_gear
@@ -275,7 +276,7 @@ def server(input, output, session):
             dt = sol_cross(
                 yr = int(input.tājaka_year()),
                 birth_crt = natal_chart(),
-                tropical = True
+                tropical = input.tājaka_return_type() == 'Tropical'
             )
         )
         return chart(**args)
