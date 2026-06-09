@@ -3,7 +3,7 @@
 ## Software License
 This project is a derivative work based on the [Swiss Ephemeris](https://www.astro.com/swisseph/) by Astrodienst AG and the port by [aloistr/swisseph](https://github.com/aloistr/swisseph).
 
-In accordance with the original licensing terms of the Swiss Ephemeris, the software code in this repository is licensed under the **GNU General Public License v2 (GPL-2.0)** or later. 
+In accordance with the original licensing terms of the Swiss Ephemeris, the software code in this repository is licensed under the **GNU Affero General Public License v3 (AGPLv3)**.
 
 If you wish to use this software in a proprietary/commercial closed-source application, you must obtain a commercial license directly from [Astrodienst AG](https://www.astro.com/swisseph/sweph_lic_e.htm).
 
@@ -14,7 +14,7 @@ The GeoNames data is licensed under the [Creative Commons Attribution 4.0 Licens
 ---
 
 ```text
-GNU AFFERO GENERAL PUBLIC LICENSE
+                    GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. [https://fsf.org/](https://fsf.org/)
