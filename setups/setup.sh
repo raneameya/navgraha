@@ -2,7 +2,7 @@
 
 ## Clone repo
 echo "Downloading repo"
-gh repo clone raneameya/chart_now
+gh repo clone raneameya/navgraha
 cd chart_now
 
 ## Create py virtual env and install dependencies
