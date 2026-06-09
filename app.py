@@ -75,6 +75,19 @@ app_ui = ui.page_sidebar(
         settings_ui,
         ui.nav_control(ui.input_dark_mode(id = 'dark_mode')),
         id = 'pill'
+    ),
+    # For AGPL Compliance
+    ui.tags.footer(
+        ui.tags.p(
+            "You can browse the source of this app ",
+            ui.tags.a(
+                'here', href = 'https://github.com/raneameya/navgraha',
+                target = '_blank'
+            ),
+            ".",
+            style = 'color: #6c757d; font-size: 0.85rem;'
+        ),
+        style = 'margin-top: 25px;'
     )
 )
 
