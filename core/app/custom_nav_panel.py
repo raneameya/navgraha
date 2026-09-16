@@ -34,15 +34,23 @@ def custom_nav_panel(id: str):
         ui.output_text(id = f'{id}_dasa_offset_info'),
         ui.output_data_frame(id = f'{id}_vimsottari_dasa_df')
     )
-    select_divisional_ui = ui.input_select(
-        id = f'{id}_divisional',
+    select_varga_ui = ui.input_select(
+        id = f'{id}_varga',
         label = '',
         choices = divisional_choices
     )
-    custom_select_ui = ui.layout_column_wrap(
-        select_divisional_ui,
-        ui.output_ui(id = f'{id}_year_choices')
-    ) if id == 'tājaka' else select_divisional_ui
+    custom_select_ui = (
+        ui.div(
+            select_varga_ui,
+            ui.output_ui(id = f'{id}_year_choices'),
+            class_ = 'd-flex gap-2 align-items-end'
+        )
+        if id == 'tājaka'
+        else ui.div(
+            select_varga_ui,
+            class_ = 'd-flex gap-2 align-items-end'
+        )
+    )
     nav_panel = ui.nav_panel(
         id.capitalize(),
         ui.output_ui(id = f'{id}_info'),

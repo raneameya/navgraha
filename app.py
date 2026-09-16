@@ -207,7 +207,7 @@ def server(input, output, session):
     @reactive.calc
     def natal_divisional():
         return getattr(
-            natal_chart().divisionals, input.natal_divisional()
+            natal_chart().divisionals, input.natal_varga()
         )
 
     @render.plot
@@ -215,7 +215,7 @@ def server(input, output, session):
         return natal_divisional().chart_plot(
             dark = input.dark_mode() == 'dark',
             style = input.chart_style(),
-            title = divisional_choices_flat[input.natal_divisional()]
+            title = divisional_choices_flat[input.natal_varga()]
         )
 
     @render.data_frame
@@ -230,7 +230,7 @@ def server(input, output, session):
     def natal_vimsottari_dasa():
         return vimsottari_dasa(
             chart = natal_chart(),
-            divisional = input.natal_divisional(),
+            divisional = input.natal_varga(),
             sub_dasa_level = int(input.natal_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.natal_dasa_offset_days(),
             trunc_intervals = True
@@ -296,14 +296,14 @@ def server(input, output, session):
 
     @reactive.calc
     def tājaka_divisional():
-        return getattr(tājaka_chart().divisionals, input.tājaka_divisional())
+        return getattr(tājaka_chart().divisionals, input.tājaka_varga())
 
     @render.plot
     def tājaka_plot():
         return tājaka_divisional().chart_plot(
             dark = (input.dark_mode() == 'dark'),
             style = input.chart_style(),
-            title = divisional_choices_flat[input.tājaka_divisional()]
+            title = divisional_choices_flat[input.tājaka_varga()]
         )
 
     @render.data_frame
@@ -351,7 +351,7 @@ def server(input, output, session):
     def tājaka_vimsottari_dasa():
         return vimsottari_dasa(
             chart = tājaka_chart(),
-            divisional = input.tājaka_divisional(),
+            divisional = input.tājaka_varga(),
             sub_dasa_level = int(input.tājaka_vimsottari_dasa_sub_level()),
             dasa_offset_days = input.tājaka_dasa_offset_days(),
             trunc_intervals = True,
