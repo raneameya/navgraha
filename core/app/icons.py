@@ -23,3 +23,37 @@ icon_om_calendar = ui.HTML(
     
     '</svg>'
 )
+
+icon_save = ui.HTML(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" '
+    'fill="currentColor" viewBox="0 0 24 24">'
+    '<path d="m20.71 9.29-6-6a1 1 0 0 0-.32-.21A1.09 1.09 0 0 0 14 3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-8a1 1 0 0 0-.29-.71ZM9 5h4v2H9Zm6 14H9v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1Zm4-1a1 1 0 0 1-1 1h-1v-3a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v3H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V6.41l4 4Z"/>'
+    '</svg>'
+)
+
+icon_load = ui.HTML(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" '
+    'fill="currentColor" viewBox="0 0 512 512">'
+    '<path fill-rule="evenodd" d="'
+    'M72 20 '
+    'C43 20 20 43 20 72 '
+    'V418 '
+    'C20 447 43 470 72 470 '
+    'H439 '
+    'C468 470 492 447 492 418 '
+    'V137 '
+    'C492 108 468 84 439 84 '
+    'H267 '
+    'L204 25 '
+    'C196 22 185 20 176 20 '
+    'Z '
+    'M84 425 '
+    'L190 231 '
+    'C196 220 202 215 214 215 '
+    'H425 '
+    'C436 215 444 224 444 236 '
+    'V405 '
+    'C444 416 436 425 425 425 '
+    'Z"/>'
+    '</svg>'
+)
