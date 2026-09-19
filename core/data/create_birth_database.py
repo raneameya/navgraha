@@ -9,7 +9,7 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS births (
     id INTEGER PRIMARY KEY,
     name TEXT,
-    datetime TEXT,
+    birth TEXT,
     latitude REAL,
     longitude REAL,
     timezone TEXT,
@@ -27,7 +27,7 @@ seed_data = [
 
 # Insert rows
 cursor.executemany("""
-INSERT OR REPLACE INTO births (id, name, datetime, latitude, longitude, timezone, place)
+INSERT OR REPLACE INTO births (id, name, birth, latitude, longitude, timezone, place)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 """, seed_data)
 
