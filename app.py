@@ -15,12 +15,15 @@ from core.chart.chart_helpers import sun_rise_set
 from core.panchanga.panchanga import Panchanga
 from core.dasas.vimsottari_dasa import vimsottari_dasa
 from core.tajaka.sol_cross import sol_cross
-from core.app.icons import icon_gear, icon_om_calendar
+from core.app.icons import (
+    icon_gear, icon_om_calendar, icon_load, icon_save
+)
 from core.app.custom_nav_panel import (
     custom_nav_panel, dasa_sub_levels
 )
 from core.app.time_input import input_time
 from core.app.helper import dasa_offset_text
+from core.app.get_births import get_births
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
@@ -375,7 +378,20 @@ def server(input, output, session):
 
     @render.ui
     def birth_input():
+        birth_toolbar = ui.div(
+            ui.input_action_button(
+                id = 'save_birth',
+                label = icon_save,
+                title = 'Save birth'
+            ),
+            ui.input_action_button(
+                id = 'load_birth',
+                label = icon_load,
+                title = 'Load birth'
+            )
+        )
         ui_out = ui.row(
+            birth_toolbar,
             ui.input_date(
                 id = 'b_date',
                 label = 'Date',
