@@ -23,12 +23,20 @@ from core.app.custom_nav_panel import (
 )
 from core.app.time_input import input_time
 from core.app.helper import dasa_offset_text
-from core.app.get_births import get_births
+from core.app.connect_to_birthsdb import (
+    get_charts, save_chart, delete_chart
+)
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
 # Default time of now for chart initialisation
 now = datetime.now()
+
+# CSS style to remove button borders:
+make_button_icon = (
+    'background: transparent; border: none; '
+    'color: inherit; padding: 4px 8px;'
+)
 
 divisional_choices_flat = {
     k: v for inner in divisional_choices.values() for k, v in inner.items()
@@ -143,6 +151,49 @@ def server(input, output, session):
         )
         ui.modal_show(m)
 
+    @reactive.effect
+    @reactive.event(input.save_birth)
+    def ask_user_chart_name():
+        m = ui.modal(
+            ui.input_text(id = 'chart_name', label = '', placeholder = 'Enter name...'),
+            footer = ui.div(
+                ui.input_action_button(
+                    id = 'confirm_save_birth', 
+                    label = 'Save', 
+                    class_ = 'btn-primary'
+                ),
+                ui.modal_button(
+                    label = 'Cancel', class_ = 'btn-secondary'
+                ),
+                style = 'display: flex; justify-content: flex-end; gap: 10px;'
+            ),
+            title = 'Save chart',
+            easy_close = True,
+            size = 's'
+        )
+        ui.modal_show(m)
+
+    @reactive.effect
+    @reactive.event(input.confirm_save_birth)
+    def write_birth_to_db():
+        name = input.chart_name().strip()
+        # Ensure non empty name
+        req(name)
+        be = birth_event()
+        save_chart(
+            name = name, 
+            birth = be.dt.strftime('%Y-%m-%d %H:%M:%S'), 
+            latitude = be.latitude, 
+            longitude = be.longitude, 
+            timezone = be.dt.tzinfo.key,
+            place = be.place
+        )
+        ui.modal_remove()
+        ui.notification_show(
+            f'''{name}'s chart saved to local database.''', 
+            type = 'message', duration = 3
+        )
+
     # Update values in input fields based on place selection by user
     @reactive.effect
     def update_birth_data_selected():
@@ -162,6 +213,108 @@ def server(input, output, session):
             ui.modal_remove()
             # Close sidebar when user selects place
             ui.update_sidebar(id = 'sidebar', show = False)
+
+    # Define reactive value to refresh birth table when user deletes a chart
+    refresh_births = reactive.Value(0)
+
+    # Load table of birth data, triggers when user clicks on load birth
+    @render.data_frame
+    @reactive.event(input.load_all_births, refresh_births)
+    def load_births_df():
+        return render.DataGrid(get_charts(), selection_mode = 'rows')
+
+    # Show user table of saved birthdates when load all births is clicked
+    @reactive.effect
+    @reactive.event(input.load_all_births)
+    def input_modal():
+        # Modal showing all charts of saves birth data
+        m = ui.modal(
+            ui.output_data_frame(id = 'load_births_df'),
+            title = 'Select chart',
+            footer = ui.div(
+                # Delete chart button has a smaller size to avoid unintentional click
+                ui.input_action_button(
+                    id = 'delete_chart', 
+                    label = 'Delete Selected', 
+                    class_ = 'btn-outline-danger btn-sm' # Smaller, outline style
+                ),
+                # Non destructive actions
+                ui.div(
+                    ui.input_action_button(
+                        id = 'load_chart', 
+                        label = 'Load', 
+                        class_ = 'btn-primary'
+                    ),
+                    ui.modal_button(label = 'Close', class_ = 'btn-secondary'),
+                    style = 'display: flex; gap: 10px;'
+                ),
+                style = (
+                    'display: flex; justify-content: space-between; '
+                    'align-items: center; width: 100%;'
+                )
+            ),
+            easy_close = True,
+            size = 'xl'
+        )
+        ui.modal_show(m)
+
+    # Update birth details when user clicks on chart to load
+    @reactive.effect
+    @reactive.event(input.load_chart)
+    def load_selected_birth_data():
+        chart_selected = load_births_df.data_view(selected = True)
+        req(not chart_selected.empty)
+        chart_id, name, birth_datetime, place, lat, lon, tz = tuple(
+            chart_selected[
+                ['ID', 'Name', 'Birth', 'Place', 'Latitude',
+                'Longitude', 'Timezone']
+            ].iloc[0]
+        )
+        birth_datetime = datetime.strptime(birth_datetime, '%Y-%m-%d %H:%M:%S')
+        b_date = birth_datetime.date()
+        b_time = birth_datetime.strftime('%H:%M:%S')
+        # Updating inputs for user feedback in isolate scope to avoid 
+        # unnecessary reactive triggering. Technically not required as 
+        # long as inputs aren't being read - defensive programming
+        with reactive.isolate():
+            ui.update_date(id = 'b_date', value = b_date)
+            # Custom update time bit - requires JS which is present in custom.js
+            session.send_input_message('b_time', {'value': b_time})
+            ui.update_numeric(id = 'b_lon', value = lon)
+            ui.update_numeric(id = 'b_lat', value = lat)
+            ui.update_text(id = 'b_tz', value = tz)
+            ui.update_text(id = 'b_place', value = place)
+            # Close the place search modal user clicks on chart to load
+            ui.modal_remove()
+            # Close sidebar when user selects place
+            ui.update_sidebar(id = 'sidebar', show = False)
+        ui.notification_show(
+            f'''{name}'s chart loaded.''', type = 'message', duration = 3
+        )
+
+    @reactive.effect
+    @reactive.event(input.delete_chart)
+    def delete_chart_from_db():
+        chart_selected = load_births_df.data_view(selected = True)
+        # Ensure a row is actually selected before trying to delete
+        if chart_selected.empty:
+            ui.notification_show(
+                'Please select a chart from the table to delete.', 
+                type = 'warning', duration = 3
+            )
+        else:
+            chart_id = chart_selected.iloc[0]['ID'] # gives a numpy.int64
+            chart_name = chart_selected.iloc[0]['Name']
+            # Delete from database. Need to convert chart_id from numpy.int64 
+            # to py int otherwise delete fails
+            delete_chart(chart_id = int(chart_id))
+            # Trigger the table to re-query SQLite
+            refresh_births.set(refresh_births.get() + 1)
+            ui.notification_show(
+                f'''{chart_name}'s chart deleted.''', 
+                type = 'message', duration = 3
+            )
+        return None
 
     @reactive.calc
     def birth_event():
@@ -382,12 +535,14 @@ def server(input, output, session):
             ui.input_action_button(
                 id = 'save_birth',
                 label = icon_save,
-                title = 'Save birth'
+                title = 'Save birth',
+                style = make_button_icon
             ),
             ui.input_action_button(
-                id = 'load_birth',
+                id = 'load_all_births',
                 label = icon_load,
-                title = 'Load birth'
+                title = 'Load birth',
+                style = make_button_icon
             )
         )
         ui_out = ui.row(

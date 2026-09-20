@@ -37,6 +37,13 @@ $.extend(TimeInputBinding, {
     },
     unsubscribe: function(el) {
         $(el).off(".TimeInputBinding");
+    },
+    receiveMessage: function(el, data) {
+        // Recives updates from server side
+        if (data.value !== undefined) {
+            $(el).val(data.value);
+            $(el).trigger('change');
+        }
     }
 });
 
