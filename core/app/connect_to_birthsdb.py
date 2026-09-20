@@ -2,8 +2,10 @@ import sqlite3
 
 from pandas import DataFrame
 
-def get_births():
-    connection = sqlite3.connect('./core/data/birth_data.db')
+birth_data_path = './core/data/birth_data.db'
+
+def get_charts():
+    connection = sqlite3.connect(birth_data_path)
     df = DataFrame(
         connection.execute(
             '''
@@ -21,8 +23,8 @@ def get_births():
     df = df.round({'Latitude': 5, 'Longitude': 5})
     return df
 
-def save_birth(name, birth, latitude, longitude, timezone, place):
-    connection = sqlite3.connect('./core/data/birth_data.db')
+def save_chart(name, birth, latitude, longitude, timezone, place):
+    connection = sqlite3.connect(birth_data_path)
     cursor = connection.cursor()
     # Insert rows and commit. SQLite automatically inrements id as it is the primary key
     cursor.execute('''
@@ -32,3 +34,11 @@ def save_birth(name, birth, latitude, longitude, timezone, place):
     connection.commit()
     connection.close()
     return None   
+
+def delete_chart(chart_id):
+    connection = sqlite3.connect(birth_data_path)
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM births WHERE id = ?", (chart_id,))
+    connection.commit()
+    connection.close()
+    return None
