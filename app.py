@@ -163,6 +163,55 @@ def server(input, output, session):
             # Close sidebar when user selects place
             ui.update_sidebar(id = 'sidebar', show = False)
 
+    # Load table of birth data, triggers when user clicks on load birth
+    @render.data_frame
+    @reactive.event(input.load_birth)
+    def load_births_df():
+        return render.DataGrid(get_births(), selection_mode = 'rows')
+
+    # Show user table of saved birthdates when load birth is clicked
+    @reactive.effect
+    @reactive.event(input.load_birth)
+    def input_modal():
+        # Modal containing birth data
+        m = ui.modal(
+            ui.output_data_frame(id = 'load_births_df'),
+            title = 'Select chart',
+            easy_close = True,
+            size = 'xl'
+        )
+        ui.modal_show(m)
+    
+    # Update birth details when user clicks on chart to load
+    @reactive.effect
+    def load_selected_birth_data():
+        chart_selected = load_births_df.data_view(selected = True)
+        req(not chart_selected.empty)
+        chart_id, name, birth_datetime, place, lat, lon, tz = tuple(
+            chart_selected[
+                ['ID', 'Name', 'Birth', 'Place', 'Latitude',
+                'Longitude', 'Timezone']
+            ].iloc[0]
+        )
+        birth_datetime = datetime.strptime(birth_datetime, '%Y-%m-%d %H:%M:%S')
+        b_date = birth_datetime.date()
+        b_time = birth_datetime.strftime('%H:%M:%S')
+        # Updating inputs for user feedback in isolate scope to avoid 
+        # unnecessary reactive triggering. Technically not required as 
+        # long as inputs aren't being read - defensive programming
+        with reactive.isolate():
+            ui.update_date(id = 'b_date', value = b_date)
+            # Custom update time bit - requires JS which is present in custom.js
+            session.send_input_message('b_time', {'value': b_time})
+            ui.update_numeric(id = 'b_lon', value = lon)
+            ui.update_numeric(id = 'b_lat', value = lat)
+            ui.update_text(id = 'b_tz', value = tz)
+            ui.update_text(id = 'b_place', value = place)
+            # Close the place search modal user clicks on row
+            ui.modal_remove()
+            # Close sidebar when user selects place
+            ui.update_sidebar(id = 'sidebar', show = False)
+
     @reactive.calc
     def birth_event():
         # Default to today unless date is valid
