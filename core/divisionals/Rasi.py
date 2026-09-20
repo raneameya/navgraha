@@ -3,16 +3,15 @@ from datetime import datetime
 
 import pandas as pd
 
-from core.misc.misc_functions import add_non_equi_col
-import core.chart.chart as crt
+from core.misc.misc_functions import add_non_equi_col, dms
 from core.chart.chart_minimal import chart_minimal
+from core.chart.chartlike import ChartLike
 from core.divisionals.divisional_helpers import add_house
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 from core.sweadaptor.swe_helper import get_planet_info, get_planet_info_arr
 from core.data.constants import graha_dict, rnp
-from core.misc.misc_functions import dms
 
-def d1(birth_crt: crt.chart) -> chart_minimal:
+def d1(birth_crt: ChartLike) -> chart_minimal:
     p = swetest(adapter = birth_crt.swisseph_adaptor)
     # Add other details
     add_cols = ['Rāśi', 'Nakṣatra', 'Graha devatā', 'Pada', 'Puṣkara']

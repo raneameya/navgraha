@@ -1,5 +1,5 @@
 import core.misc.misc_functions as mf
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -10,7 +10,7 @@ amsa_devata_mapping = {
     7: 'Deva', 8: 'Nara', 9: 'Rākṣasa'
 }
 
-def d9(birth_crt:crt.chart) -> chart_minimal:
+def d9(birth_crt: ChartLike) -> chart_minimal:
     '''
     Compute the navamsa (D-9) of a birth chart
     Args:

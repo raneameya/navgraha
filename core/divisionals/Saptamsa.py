@@ -1,6 +1,6 @@
 # Saptāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -15,7 +15,7 @@ from core.divisionals.divisional_helpers import add_house
     7: ('Śuddha Jala', 'Nectar/Ambrosia', 'Represents the highest blessing, longevity, and spiritual success of progeny')
 }
 
-def d7(birth_chart, type: str) -> chart_minimal:
+def d7(birth_chart: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the saptāṃśa (D-16) of a birth chart
     Args:

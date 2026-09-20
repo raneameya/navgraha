@@ -1,5 +1,5 @@
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -11,7 +11,7 @@ amsa_devata_mapping_rev = {
     1: 'Pitṛs - Moon', 2: 'Devās - Sun'
 }
 
-def d2(birth_crt, type: str) -> chart_minimal:
+def d2(birth_crt: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the hora (D-2) of a birth chart
     Args:

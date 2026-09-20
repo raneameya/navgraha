@@ -1,6 +1,6 @@
 # Khavēdāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -22,7 +22,7 @@ amsa_devatas = {
     12: ('Varuṇa', 'Justice', 'Moral Affairs and Adaptability')
 }
 
-def d40(birth_chart) -> chart_minimal:
+def d40(birth_chart: ChartLike) -> chart_minimal:
     '''
     Compute the khavēdāṃśa (D-40) of a birth chart
     Args:

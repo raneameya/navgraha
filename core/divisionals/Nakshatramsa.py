@@ -1,6 +1,6 @@
 # Nakṣatrāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -35,7 +35,7 @@ amsa_devatās = {
     27: ('Pūṣan', 'Nurturing', 'Protector of journeys, safe passage')
 }
 
-def d27(birth_chart, type: str) -> chart_minimal:
+def d27(birth_chart: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the nakṣatrāṃśa (D-27) of a birth chart
     Args:

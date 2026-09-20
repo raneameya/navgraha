@@ -1,6 +1,6 @@
 # Drekkāṇa
 from core.misc.misc_functions import add_non_equi_col, dms, cyclic_shift
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -11,7 +11,7 @@ amsa_devata_map = {
     'dual': {1: 'Durvāsa', 2: 'Nārada', 3: 'Agastya'}
 }
 
-def d3(birth_crt, type: str) -> chart_minimal:
+def d3(birth_crt: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the drekkāṇa (D-3) of a birth chart
     Args:

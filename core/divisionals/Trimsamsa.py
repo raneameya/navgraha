@@ -1,6 +1,6 @@
 # Triṃśāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -56,7 +56,7 @@ parivṛtti_amsa_devata = {
 }
 '''
 
-def d30(birth_chart, type: str) -> chart_minimal:
+def d30(birth_chart: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the triṃśāṃśa (D-30) of a birth chart
     Args:

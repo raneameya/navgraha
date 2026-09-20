@@ -1,6 +1,6 @@
 # Siddhāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -34,7 +34,7 @@ amsa_devatās = {
 }
 
 
-def d24(birth_chart, type: str) -> chart_minimal:
+def d24(birth_chart: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the siddhāṃśa (D-24) of a birth chart
     Args:

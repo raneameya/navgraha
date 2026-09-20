@@ -1,6 +1,6 @@
 # Daśāṃśa
 from core.misc.misc_functions import add_non_equi_col, dms
-import core.chart.chart as crt
+from core.chart.chartlike import ChartLike
 from core.chart.chart_minimal import chart_minimal
 from core.data.constants import rasis, rnp
 from core.divisionals.divisional_helpers import add_house
@@ -18,7 +18,7 @@ amsa_devata_mapping = {
     10: ('Ananta', 'Adhaḥ (Nadir)', 'Stability and Support')
 }
 
-def d10(birth_chart, type: str) -> chart_minimal:
+def d10(birth_chart: ChartLike, type: str) -> chart_minimal:
     '''
     Compute the daśāṃśa (D-10) of a birth chart
     Args:
