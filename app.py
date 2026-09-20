@@ -23,12 +23,20 @@ from core.app.custom_nav_panel import (
 )
 from core.app.time_input import input_time
 from core.app.helper import dasa_offset_text
-from core.app.get_births import get_births
+from core.app.connect_to_birthsdb import (
+    get_births, save_birth
+)
 from core.misc.birth_event import BirthEvent
 from core.sweadaptor.swisseph_adaptor import SwissEphAdaptor
 
 # Default time of now for chart initialisation
 now = datetime.now()
+
+# CSS style to remove button borders:
+make_button_icon = (
+    'background: transparent; border: none; '
+    'color: inherit; padding: 4px 8px;'
+)
 
 divisional_choices_flat = {
     k: v for inner in divisional_choices.values() for k, v in inner.items()
@@ -143,6 +151,49 @@ def server(input, output, session):
         )
         ui.modal_show(m)
 
+    @reactive.effect
+    @reactive.event(input.save_birth)
+    def ask_user_chart_name():
+        m = ui.modal(
+            ui.input_text(id = 'chart_name', label = '', placeholder = 'Enter name...'),
+            footer = ui.div(
+                ui.input_action_button(
+                    id = 'confirm_save_birth', 
+                    label = 'Save', 
+                    class_ = 'btn-primary'
+                ),
+                ui.modal_button(
+                    label = 'Cancel', class_ = 'btn-secondary'
+                ),
+                style = 'display: flex; justify-content: flex-end; gap: 10px;'
+            ),
+            title = 'Save chart',
+            easy_close = True,
+            size = 's'
+        )
+        ui.modal_show(m)
+
+    @reactive.effect
+    @reactive.event(input.confirm_save_birth)
+    def write_birth_to_db():
+        name = input.chart_name().strip()
+        # Ensure non empty name
+        req(name)
+        be = birth_event()
+        save_birth(
+            name = name, 
+            birth = be.dt.strftime('%Y-%m-%d %H:%M:%S'), 
+            latitude = be.latitude, 
+            longitude = be.longitude, 
+            timezone = be.dt.tzinfo.key,
+            place = be.place
+        )
+        ui.modal_remove()
+        ui.notification_show(
+            f'''Chart '{name}' saved successfully!''', 
+            type = 'message', duration = 3
+        )
+
     # Update values in input fields based on place selection by user
     @reactive.effect
     def update_birth_data_selected():
@@ -207,7 +258,7 @@ def server(input, output, session):
             ui.update_numeric(id = 'b_lat', value = lat)
             ui.update_text(id = 'b_tz', value = tz)
             ui.update_text(id = 'b_place', value = place)
-            # Close the place search modal user clicks on row
+            # Close the place search modal user clicks on chart to load
             ui.modal_remove()
             # Close sidebar when user selects place
             ui.update_sidebar(id = 'sidebar', show = False)
@@ -431,12 +482,14 @@ def server(input, output, session):
             ui.input_action_button(
                 id = 'save_birth',
                 label = icon_save,
-                title = 'Save birth'
+                title = 'Save birth',
+                style = make_button_icon
             ),
             ui.input_action_button(
                 id = 'load_birth',
                 label = icon_load,
-                title = 'Load birth'
+                title = 'Load birth',
+                style = make_button_icon
             )
         )
         ui_out = ui.row(
